@@ -1,77 +1,92 @@
 <template>
-	<div class="login-container flex">
-		<div class="login-left">
-			<div class="login-left-logo">
-				<img :src="logoMini" />
-				<div class="login-left-logo-text">
-					<span>{{ getThemeConfig.globalViceTitle }}</span>
-					<!-- <span class="login-left-logo-text-msg">{{ getThemeConfig.globalViceTitleMsg }}</span> -->
-				</div>
-			</div>
-			<div class="login-left-img">
-				<img :src="loginMain" />
-			</div>
-			<img :src="loginBg" class="login-left-waves" />
-		</div>
-		<div class="login-right flex">
-			<div class="login-right-warp flex-margin">
-				<span class="login-right-warp-one"></span>
-				<span class="login-right-warp-two"></span>
-				<div class="login-right-warp-mian">
-					<div class="login-right-warp-main-title">{{ getThemeConfig.globalTitle }} 欢迎您！</div>
-					<div class="login-right-warp-main-form">
-						<div v-if="!state.isScan">
-							<el-tabs v-model="state.tabsActiveName">
-								<el-tab-pane label="账号密码登录" name="account">
-									<Account />
-								</el-tab-pane>
-								<el-tab-pane label="手机号登录" name="mobile">
-									<Mobile />
-								</el-tab-pane>
-							</el-tabs>
-						</div>
-						<Scan v-if="state.isScan" />
-						<div class="login-content-main-sacn" @click="state.isScan = !state.isScan">
-							<i class="iconfont" :class="state.isScan ? 'icon-diannao1' : 'icon-barcode-qr'"></i>
-							<div class="login-content-main-sacn-delta"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div class="login-container flex">
+    <div class="login-left">
+      <div class="login-left-logo">
+        <img :src="logoMini" />
+        <div class="login-left-logo-text">
+          <span>{{ getThemeConfig.globalViceTitle }}</span>
+          <!-- <span class="login-left-logo-text-msg">{{ getThemeConfig.globalViceTitleMsg }}</span> -->
+        </div>
+      </div>
+      <div class="login-left-img">
+        <img :src="loginMain" />
+      </div>
+      <img
+        :src="loginBg"
+        class="login-left-waves"
+      />
+    </div>
+    <div class="login-right flex">
+      <div class="login-right-warp flex-margin">
+        <span class="login-right-warp-one"></span>
+        <span class="login-right-warp-two"></span>
+        <div class="login-right-warp-mian">
+          <div class="login-right-warp-main-title">{{ getThemeConfig.globalTitle }} 欢迎您！</div>
+          <div class="login-right-warp-main-form">
+            <div v-if="!state.isScan">
+              <el-tabs v-model="state.tabsActiveName">
+                <el-tab-pane
+                  label="账号密码登录"
+                  name="account"
+                >
+                  <Account />
+                </el-tab-pane>
+                <el-tab-pane
+                  label="手机号登录"
+                  name="mobile"
+                >
+                  <Mobile />
+                </el-tab-pane>
+              </el-tabs>
+            </div>
+            <Scan v-if="state.isScan" />
+            <div
+              class="login-content-main-sacn"
+              @click="state.isScan = !state.isScan"
+            >
+              <i
+                class="iconfont"
+                :class="state.isScan ? 'icon-diannao1' : 'icon-barcode-qr'"
+              ></i>
+              <div class="login-content-main-sacn-delta"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts" name="loginIndex">
-import { defineAsyncComponent, onMounted, reactive, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import { NextLoading } from '/@/utils/loading';
-import logoMini from '/@/assets/logo-mini.svg';
-import loginMain from '/@/assets/login-main.svg';
-import loginBg from '/@/assets/login-bg.svg';
+import { defineAsyncComponent, onMounted, reactive, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useThemeConfig } from '/@/stores/themeConfig'
+import { NextLoading } from '/@/utils/loading'
+import logoMini from '/@/assets/logo-mini.svg'
+import loginMain from '/@/assets/login-main.svg'
+import loginBg from '/@/assets/login-bg.svg'
 
 // 引入组件
-const Account = defineAsyncComponent(() => import('/@/views/login/component/account.vue'));
-const Mobile = defineAsyncComponent(() => import('/@/views/login/component/mobile.vue'));
-const Scan = defineAsyncComponent(() => import('/@/views/login/component/scan.vue'));
+const Account = defineAsyncComponent(() => import('/@/views/login/component/account.vue'))
+const Mobile = defineAsyncComponent(() => import('/@/views/login/component/mobile.vue'))
+const Scan = defineAsyncComponent(() => import('/@/views/login/component/scan.vue'))
 
 // 定义变量内容
-const storesThemeConfig = useThemeConfig();
-const { themeConfig } = storeToRefs(storesThemeConfig);
+const storesThemeConfig = useThemeConfig()
+const { themeConfig } = storeToRefs(storesThemeConfig)
 const state = reactive({
 	tabsActiveName: 'account',
 	isScan: false,
-});
+})
 
 // 获取布局配置信息
 const getThemeConfig = computed(() => {
-	return themeConfig.value;
-});
+	return themeConfig.value
+})
 // 页面加载时
 onMounted(() => {
-	NextLoading.done();
-});
+	NextLoading.done()
+})
 </script>
 
 <style scoped lang="scss">

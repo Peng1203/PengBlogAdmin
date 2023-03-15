@@ -1,9 +1,8 @@
 {
-  "name": "vue-next-admin-template",
-  "version": "2.4.3",
+  "name": "PengBlogAdmin",
+  "version": "0.0.0",
   "description": "vue3 vite next admin template",
-  "author": "lyt_20201208",
-  "license": "MIT",
+  "author": "Peng",
   "scripts": {
     "dev": "vite --force",
     "build": "vite build",

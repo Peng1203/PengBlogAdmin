@@ -18,19 +18,20 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
     root: process.cwd(),
     resolve: { alias },
     base: mode.command === 'serve' ? './' : env.VITE_PUBLIC_PATH,
+    // base: '/PengBlogAdmin/',
     server: {
       host: '0.0.0.0',
       port: env.VITE_PORT as unknown as number,
       open: JSON.parse(env.VITE_OPEN),
       hmr: true,
-      proxy: {
-        '/gitee': {
-          target: 'https://gitee.com',
-          ws: true,
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/gitee/, ''),
-        },
-      },
+      // proxy: {
+      //   '/gitee': {
+      //     target: 'https://gitee.com',
+      //     ws: true,
+      //     changeOrigin: true,
+      //     rewrite: (path) => path.replace(/^\/gitee/, ''),
+      //   },
+      // },
     },
     build: {
       outDir: 'dist',

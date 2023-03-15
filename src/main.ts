@@ -14,4 +14,7 @@ const app = createApp(App);
 directive(app);
 other.elSvg(app);
 
-app.use(pinia).use(router).use(ElementPlus).mount('#app');
+app.use(pinia)
+  .use(router)
+  .use(ElementPlus)
+  .mount('#app');
