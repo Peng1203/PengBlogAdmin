@@ -80,6 +80,7 @@
       ></i>
     </div>
     <el-dropdown
+      trigger="click"
       :show-timeout="70"
       :hide-timeout="50"
       @command="onHandleCommandClick"
@@ -95,7 +96,8 @@
         </el-icon>
       </span>
       <template #dropdown>
-        <el-dropdown-menu><el-dropdown-item command="/home">首页</el-dropdown-item>
+        <el-dropdown-menu>
+          <el-dropdown-item command="/home">首页</el-dropdown-item>
           <el-dropdown-item
             divided
             command="logOut"
