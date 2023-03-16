@@ -54,9 +54,10 @@
       <el-col :span="1"></el-col>
       <el-col :span="8">
         <el-button
-          class="login-content-code"
           v-waves
-        >1234</el-button>
+          class="login-content-code"
+          @click="getLoginCaptcha"
+        >{{ captchaCode }}</el-button>
       </el-col>
     </el-form-item>
     <el-form-item class="login-animation4">
@@ -75,7 +76,7 @@
 </template>
 
 <script setup lang="ts" name="loginAccount">
-import { reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import Cookies from 'js-cookie'
@@ -83,10 +84,12 @@ import { storeToRefs } from 'pinia'
 import { useThemeConfig } from '/@/stores/themeConfig'
 import { initFrontEndControlRoutes } from '/@/router/frontEnd'
 import { initBackEndControlRoutes } from '/@/router/backEnd'
-import { Session } from '/@/utils/storage'
+import { Local, Session } from '/@/utils/storage'
 import { formatAxis } from '/@/utils/formatTime'
 import { NextLoading } from '/@/utils/loading'
+import { useLoginApi } from '/@/api/login'
 
+const { getCaptcha } = useLoginApi()
 // 定义变量内容
 const storesThemeConfig = useThemeConfig()
 const { themeConfig } = storeToRefs(storesThemeConfig)
@@ -103,6 +106,34 @@ const state = reactive({
 		signIn: false,
 	},
 })
+
+onMounted(() => {
+	getLoginCaptcha()
+})
+
+// 验证码
+const captchaCode = ref()
+// 获取登录验证码
+const getLoginCaptcha = async () => {
+	try {
+		const { data: res } = await getCaptcha()
+		const { code, message, data, uuid } = res
+		if (code !== 200 || message !== 'Success') return
+		uuid && Local.set('uuid', uuid)
+		captchaCode.value = data
+		console.log('captchaCode.value -----', captchaCode.value)
+	} catch (e) {
+		console.log(e)
+	}
+}
+// // 获取登录验证码
+// async function getLoginCaptcha() {
+// 	try {
+// 		console.log('captchaCode.value -----', captchaCode.value)
+// 	} catch (e) {
+// 		console.log(e)
+// 	}
+// }
 
 // 时间获取
 const currentTime = computed(() => {
