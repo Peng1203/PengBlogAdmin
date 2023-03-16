@@ -62,3 +62,10 @@ export const Session = {
 		window.sessionStorage.clear();
 	},
 };
+
+export const Cookie = {
+	// 设置带过期时间的cookie
+	setExpires<T>(key: string, val: T, expiresDay: number) {
+		Cookies.set(key, val, { expires: expiresDay })
+	},
+}

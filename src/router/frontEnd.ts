@@ -119,7 +119,6 @@ export function setFilterMenuAndCacheTagsViewRoutes() {
 	const stores = useUserInfo(pinia);
 	const storesRoutesList = useRoutesList(pinia);
 	const { userInfos } = storeToRefs(stores);
-	console.log(' dynamicRoutes-----', dynamicRoutes)
 	const handleAfterMenus = setFilterHasRolesMenu(dynamicRoutes[0].children, userInfos.value.roles)
 	console.log('handleAfterMenus -----', handleAfterMenus)
 	storesRoutesList.setRoutesList(handleAfterMenus);

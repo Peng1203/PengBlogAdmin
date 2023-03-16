@@ -8,7 +8,7 @@
         text
         clearable
         autocomplete="off"
-        v-model="state.ruleForm.userName"
+        v-model="state.loginForm.userName"
         placeholder="用户名 admin 或不输均为 common"
       >
         <template #prefix>
@@ -20,7 +20,7 @@
       <el-input
         :type="state.isShowPassword ? 'text' : 'password'"
         placeholder="密码：123456"
-        v-model="state.ruleForm.password"
+        v-model="state.loginForm.password"
         autocomplete="off"
       >
         <template #prefix>
@@ -42,7 +42,7 @@
           text
           maxlength="4"
           placeholder="请输入验证码"
-          v-model="state.ruleForm.code"
+          v-model="state.loginForm.code"
           clearable
           autocomplete="off"
         >
@@ -94,7 +94,7 @@ const route = useRoute()
 const router = useRouter()
 const state = reactive({
 	isShowPassword: false,
-	ruleForm: {
+	loginForm: {
 		userName: 'admin',
 		password: '123456',
 		code: '1234',
@@ -114,12 +114,15 @@ const onSignIn = async () => {
 	// 存储 token 到浏览器缓存
 	Session.set('token', Math.random().toString(36).substr(0))
 	// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
-	Cookies.set('userName', state.ruleForm.userName)
+	Cookies.set('userName', state.loginForm.userName)
+
 	if (!themeConfig.value.isRequestRoutes) {
+		console.log('前端 -----')
 		// 前端控制路由，2、请注意执行顺序
 		const isNoPower = await initFrontEndControlRoutes()
 		signInSuccess(isNoPower)
 	} else {
+		console.log('后端 -----')
 		// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
 		// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
 		const isNoPower = await initBackEndControlRoutes()
