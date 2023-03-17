@@ -55,7 +55,7 @@
           clearable
           maxlength="4"
           autocomplete="off"
-          placeholder="请输入验证码"
+          placeholder="验证码 (注意区分大小写)"
           v-model.trim="loginState.loginForm.captcha"
           @keyup.native.enter="handleUserLogin"
         >
@@ -233,7 +233,7 @@ const handleUserLogin = async () => {
 		// }
 		loginState.loading.signIn = false
 	} catch (e) {
-		console.log('触发了catch -----', e)
+		console.log( e)
 	}
 }
 // 时间获取
