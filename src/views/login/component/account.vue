@@ -1,27 +1,36 @@
 <template>
   <el-form
     size="large"
+    ref="loginFormRef"
     class="login-content-form"
+    :model="loginState.loginForm"
+    :rules="loginState.loginFormRules"
   >
-    <el-form-item class="login-animation1">
+    <el-form-item
+      prop="userName"
+      class="login-animation1"
+    >
       <el-input
         text
         clearable
         autocomplete="off"
-        v-model="state.loginForm.userName"
-        placeholder="用户名 admin 或不输均为 common"
+        placeholder="请输入用户名"
+        v-model.trim="loginState.loginForm.userName"
       >
         <template #prefix>
           <el-icon class="el-input__icon"><ele-User /></el-icon>
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item class="login-animation2">
+    <el-form-item
+      prop="password"
+      class="login-animation2"
+    >
       <el-input
-        :type="state.isShowPassword ? 'text' : 'password'"
-        placeholder="密码：123456"
-        v-model="state.loginForm.password"
         autocomplete="off"
+        placeholder="请输入密码"
+        v-model.trim="loginState.loginForm.password"
+        :type="loginState.isShowPassword ? 'text' : 'password'"
       >
         <template #prefix>
           <el-icon class="el-input__icon"><ele-Unlock /></el-icon>
@@ -29,22 +38,26 @@
         <template #suffix>
           <i
             class="iconfont el-input__icon login-content-password"
-            :class="state.isShowPassword ? 'icon-yincangmima' : 'icon-xianshimima'"
-            @click="state.isShowPassword = !state.isShowPassword"
+            :class="loginState.isShowPassword ? 'icon-yincangmima' : 'icon-xianshimima'"
+            @click="loginState.isShowPassword = !loginState.isShowPassword"
           >
           </i>
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item class="login-animation3">
+    <el-form-item
+      prop="captcha"
+      class="login-animation3"
+    >
       <el-col :span="15">
         <el-input
           text
-          maxlength="4"
-          placeholder="请输入验证码"
-          v-model="state.loginForm.code"
           clearable
+          maxlength="4"
           autocomplete="off"
+          placeholder="请输入验证码"
+          v-model.trim="loginState.loginForm.captcha"
+          @keyup.native.enter="handleUserLogin"
         >
           <template #prefix>
             <el-icon class="el-input__icon"><ele-Position /></el-icon>
@@ -56,18 +69,18 @@
         <el-button
           v-waves
           class="login-content-code"
-          @click="getLoginCaptcha"
+          @click="handleRefreshCaptcha"
         >{{ captchaCode }}</el-button>
       </el-col>
     </el-form-item>
     <el-form-item class="login-animation4">
       <el-button
-        type="primary"
-        class="login-content-submit"
         round
         v-waves
-        @click="onSignIn"
-        :loading="state.loading.signIn"
+        type="primary"
+        class="login-content-submit"
+        :loading="loginState.loading.signIn"
+        @click="handleUserLogin"
       >
         <span>登 录</span>
       </el-button>
@@ -78,7 +91,7 @@
 <script setup lang="ts" name="loginAccount">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { ElMessage, FormRules } from 'element-plus'
 import Cookies from 'js-cookie'
 import { storeToRefs } from 'pinia'
 import { useThemeConfig } from '/@/stores/themeConfig'
@@ -89,19 +102,36 @@ import { formatAxis } from '/@/utils/formatTime'
 import { NextLoading } from '/@/utils/loading'
 import { useLoginApi } from '/@/api/login'
 
-const { getCaptcha } = useLoginApi()
+const { getCaptcha, verifyCaptcha, signIn } = useLoginApi()
 // 定义变量内容
 const storesThemeConfig = useThemeConfig()
 const { themeConfig } = storeToRefs(storesThemeConfig)
 const route = useRoute()
 const router = useRouter()
-const state = reactive({
+
+const loginState = reactive({
 	isShowPassword: false,
+	// 登录表单
 	loginForm: {
 		userName: 'admin',
 		password: '123456',
-		code: '1234',
+		captcha: '',
 	},
+	// 登录表单校验规则
+	loginFormRules: reactive<FormRules>({
+		userName: [
+			{ required: true, message: '用户名不能为空', trigger: 'blur' },
+			{ min: 2, max: 6, message: '用户名长度在 2 到 6 位', trigger: 'blur' },
+		],
+		password: [
+			{ required: true, message: '密码不能为空', trigger: 'blur' },
+			{ min: 6, max: 15, message: '密码长度在 6 到 15 位', trigger: 'blur' },
+		],
+		captcha: [
+			{ required: true, message: '验证码不能为空', trigger: 'blur' },
+			{ min: 4, max: 4, message: '验证码长度为 4 位', trigger: 'blur' },
+		],
+	}),
 	loading: {
 		signIn: false,
 	},
@@ -111,58 +141,108 @@ onMounted(() => {
 	getLoginCaptcha()
 })
 
-// 验证码
-const captchaCode = ref()
+// 刷新 定时器
+const timer = ref<number>(0)
+// 刷新验证码
+const handleRefreshCaptcha = () => {
+	clearTimeout(timer.value)
+	// 防抖
+	timer.value = setTimeout(() => {
+		loginState.loginForm.captcha = ''
+		getLoginCaptcha()
+	}, 500)
+}
+
 // 获取登录验证码
-const getLoginCaptcha = async () => {
+const captchaCode = ref<string>('')
+const getLoginCaptcha = async (): Promise<void> => {
 	try {
 		const { data: res } = await getCaptcha()
 		const { code, message, data, uuid } = res
 		if (code !== 200 || message !== 'Success') return
 		uuid && Local.set('uuid', uuid)
 		captchaCode.value = data
-		console.log('captchaCode.value -----', captchaCode.value)
-	} catch (e) {
-		console.log(e)
+	} catch (error) {
+		throw error
 	}
 }
-// // 获取登录验证码
-// async function getLoginCaptcha() {
-// 	try {
-// 		console.log('captchaCode.value -----', captchaCode.value)
-// 	} catch (e) {
-// 		console.log(e)
-// 	}
-// }
 
+// 校验验证码
+const postCaptchaCode = async (): Promise<boolean> => {
+	try {
+		const params = {
+			code: loginState.loginForm.captcha,
+			uuid: Local.get('uuid'),
+		}
+		const { data: res } = await verifyCaptcha(params)
+		const { data, code, message } = res
+		if (code === 200 && message === 'Success') return true
+		// 验证码失效 刷新验证码
+		if (message === 'Expire') handleRefreshCaptcha()
+		ElMessage.warning(data)
+		return false
+	} catch (error) {
+		throw error
+	}
+}
+
+// 登录 获取用户信息
+const getLoginUserInfo = async (): Promise<any> => {
+	try {
+		const params = {
+			...loginState.loginForm,
+			uuid: Local.get('uuid'),
+		}
+		const { data: res } = await signIn(params)
+		const { code, data, message, token } = res
+		if (code !== 200 || message !== 'Success') return ElMessage.error(data)
+		return { userInfo: data, token }
+	} catch (error) {
+		throw error
+	}
+}
+
+const loginFormRef = ref(null) as any
+// 处理登录
+const handleUserLogin = async () => {
+	try {
+		await loginFormRef.value.validate()
+		loginState.loading.signIn = true
+		// 调用后端验证码校验接口
+		const captchIsPass = await postCaptchaCode()
+		console.log('captchIsPass -----', captchIsPass)
+		if (!captchIsPass) return (loginState.loading.signIn = false)
+		const { userInfo, token } = await getLoginUserInfo()
+		// 存储 token 到浏览器缓存
+		Session.set('token', token)
+		Session.set('userInfo', userInfo)
+		// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
+		Cookies.set('userName', loginState.loginForm.userName)
+		// if (!themeConfig.value.isRequestRoutes) {
+		// 	console.log('前端 -----')
+		// 	// 前端控制路由，2、请注意执行顺序
+		// 	const isNoPower = await initFrontEndControlRoutes()
+		// 	// signInSuccess(isNoPower)
+		// } else {
+		// 	console.log('后端 -----')
+		// 	// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
+		// 	// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
+		// 	const isNoPower = await initBackEndControlRoutes()
+		// 	// 执行完 initBackEndControlRoutes，再执行 signInSuccess
+		// 	// signInSuccess(isNoPower)
+		// }
+		loginState.loading.signIn = false
+	} catch (e) {
+		console.log('触发了catch -----', e)
+	}
+}
 // 时间获取
 const currentTime = computed(() => {
 	return formatAxis(new Date())
 })
-// 登录
-const onSignIn = async () => {
-	state.loading.signIn = true
-	// 存储 token 到浏览器缓存
-	Session.set('token', Math.random().toString(36).substr(0))
-	// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
-	Cookies.set('userName', state.loginForm.userName)
-
-	if (!themeConfig.value.isRequestRoutes) {
-		console.log('前端 -----')
-		// 前端控制路由，2、请注意执行顺序
-		const isNoPower = await initFrontEndControlRoutes()
-		signInSuccess(isNoPower)
-	} else {
-		console.log('后端 -----')
-		// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
-		// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-		const isNoPower = await initBackEndControlRoutes()
-		// 执行完 initBackEndControlRoutes，再执行 signInSuccess
-		signInSuccess(isNoPower)
-	}
-}
 // 登录成功后的跳转
 const signInSuccess = (isNoPower: boolean | undefined) => {
+	console.log('isNoPower -----', isNoPower)
 	if (isNoPower) {
 		ElMessage.warning('抱歉，您没有登录权限')
 		Session.clear()
@@ -172,11 +252,13 @@ const signInSuccess = (isNoPower: boolean | undefined) => {
 		// 登录成功，跳到转首页
 		// 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
 		if (route.query?.redirect) {
+			console.log('if -----')
 			router.push({
 				path: <string>route.query?.redirect,
 				query: Object.keys(<string>route.query?.params).length > 0 ? JSON.parse(<string>route.query?.params) : '',
 			})
 		} else {
+			console.log('else -----')
 			router.push('/')
 		}
 		// 登录成功提示
@@ -185,7 +267,7 @@ const signInSuccess = (isNoPower: boolean | undefined) => {
 		// 添加 loading，防止第一次进入界面时出现短暂空白
 		NextLoading.start()
 	}
-	state.loading.signIn = false
+	loginState.loading.signIn = false
 }
 </script>
 

@@ -17,12 +17,9 @@ export const useUserInfo = defineStore('userInfo', {
 		},
 	}),
 	actions: {
-		async setUserInfos() {
+		async setUserInfos(data: any) {
 			// 存储用户信息到浏览器缓存
-			if (Session.get('userInfo')) return this.userInfos = Session.get('userInfo');
-			const userInfos: any = await this.getApiUserInfo();
-			this.userInfos = userInfos;
-
+			this.userInfos = data
 		},
 		// 模拟接口数据
 		// https://gitee.com/lyt-top/vue-next-admin/issues/I5F1HP

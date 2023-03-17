@@ -1,7 +1,8 @@
+import qs from 'qs';
 import axios, { AxiosInstance } from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus';
+import { useRouter } from 'vue-router'
 import { Session, Local } from '/@/utils/storage';
-import qs from 'qs';
 import { BASE_URL } from '/@/api/baseURL'
 // 配置新建一个 axios 实例
 const service: AxiosInstance = axios.create({
@@ -39,6 +40,18 @@ service.interceptors.response.use(
 	},
 	error => {
 		console.log('error -----', error)
+		const { data, status } = error.response
+		switch (status) {
+			case 400:
+				ElMessage.error(data.message)
+				break;
+			case 401:
+				ElMessage.warning(`身份验证失败 请重新登录!`)
+				// 调用退出登录接口
+				useRouter().push('/login')
+			default:
+				break;
+		}
 	}
 );
 
