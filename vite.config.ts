@@ -9,6 +9,7 @@ const pathResolve = (dir: string) => {
 
 const alias: Record<string, string> = {
   '/@': pathResolve('./src/'),
+  '@': pathResolve('./src/'),
 };
 
 const viteConfig = defineConfig((mode: ConfigEnv) => {

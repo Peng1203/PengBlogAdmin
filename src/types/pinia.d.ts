@@ -6,10 +6,14 @@
 declare interface UserInfosState<T = any> {
 	userInfos: {
 		authBtnList: string[];
-		photo: string;
-		roles: string[];
-		time: number;
+		menus: string[];
 		userName: string;
+		avatar: string | null;
+		id: number,
+		roleId: number,
+		roleName: string;
+		createdTime: string;
+		updateTime: string;
 		[key: string]: T;
 	};
 }

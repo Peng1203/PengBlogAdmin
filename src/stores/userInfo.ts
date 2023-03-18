@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import Cookies from 'js-cookie';
-import { Session } from '/@/utils/storage';
+import { Session } from '@/utils/storage';
 
 /**
  * 用户信息
@@ -9,11 +9,15 @@ import { Session } from '/@/utils/storage';
 export const useUserInfo = defineStore('userInfo', {
 	state: (): UserInfosState => ({
 		userInfos: {
+			id: 0,
 			userName: '',
-			photo: '',
-			time: 0,
-			roles: [],
+			roleId: 0,
+			roleName: '',
+			avatar: '',
+			menus: [],
 			authBtnList: [],
+			createdTime: '',
+			updateTime: '',
 		},
 	}),
 	actions: {

@@ -2,8 +2,8 @@ import qs from 'qs';
 import axios, { AxiosInstance } from 'axios';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { useRouter } from 'vue-router'
-import { Session, Local } from '/@/utils/storage';
-import { BASE_URL } from '/@/api/baseURL'
+import { Session, Local } from '@/utils/storage';
+import { BASE_URL } from '@/api/baseURL'
 // 配置新建一个 axios 实例
 const service: AxiosInstance = axios.create({
 	// baseURL: import.meta.env.VITE_API_URL,

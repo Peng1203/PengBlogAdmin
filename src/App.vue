@@ -18,18 +18,18 @@ import { defineAsyncComponent, computed, ref, onBeforeMount, onMounted, onUnmoun
 import { useRoute } from 'vue-router'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { storeToRefs } from 'pinia'
-import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes'
-import { useThemeConfig } from '/@/stores/themeConfig'
-import other from '/@/utils/other'
-import { Local, Session } from '/@/utils/storage'
-import mittBus from '/@/utils/mitt'
-import setIntroduction from '/@/utils/setIconfont'
-import handlePromiseError from '/@/utils/handlePromiseError'
+import { useTagsViewRoutes } from '@/stores/tagsViewRoutes'
+import { useThemeConfig } from '@/stores/themeConfig'
+import other from '@/utils/other'
+import { Local, Session } from '@/utils/storage'
+import mittBus from '@/utils/mitt'
+import setIntroduction from '@/utils/setIconfont'
+import handlePromiseError from '@/utils/handlePromiseError'
 
 // 引入组件
-const LockScreen = defineAsyncComponent(() => import('/@/layout/lockScreen/index.vue'))
-const Setings = defineAsyncComponent(() => import('/@/layout/navBars/breadcrumb/setings.vue'))
-const CloseFull = defineAsyncComponent(() => import('/@/layout/navBars/breadcrumb/closeFull.vue'))
+const LockScreen = defineAsyncComponent(() => import('@/layout/lockScreen/index.vue'))
+const Setings = defineAsyncComponent(() => import('@/layout/navBars/breadcrumb/setings.vue'))
+const CloseFull = defineAsyncComponent(() => import('@/layout/navBars/breadcrumb/closeFull.vue'))
 
 // 定义变量内容
 const setingsRef = ref()
