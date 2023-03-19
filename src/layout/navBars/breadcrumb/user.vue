@@ -188,13 +188,13 @@ const onHandleCommandClick = (path: string) => {
 		})
 			.then(async () => {
 				// 清除缓存/token等
-				Session.clear()
-				// 使用 reload 时，不需要调用 resetRoute() 重置路由
-				window.location.reload()
+				await stores.userLogout()
+
+				// Session.clear()
+				// // 使用 reload 时，不需要调用 resetRoute() 重置路由
+				// window.location.reload()
 			})
 			.catch(() => {})
-	} else if (path === 'wareHouse') {
-		window.open('https://gitee.com/lyt-top/vue-next-admin')
 	} else {
 		router.push(path)
 	}

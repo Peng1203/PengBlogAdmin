@@ -33,7 +33,7 @@ export function useLoginApi() {
 		},
 		signOut: (data: object) => {
 			return request({
-				url: '/user/signOut',
+				url: '/user/logout',
 				method: 'post',
 				data,
 			});

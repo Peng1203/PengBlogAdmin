@@ -89,10 +89,9 @@
 </template>
 
 <script setup lang="ts" name="loginAccount">
-import Cookies from 'js-cookie'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage, FormRules } from 'element-plus'
+import { ElMessage, ElNotification, FormRules } from 'element-plus'
 import { useUserInfo } from '@/stores/userInfo'
 import { handleUserAuthRouters } from '@/router/handleAuthRouters'
 import { Local, Session } from '@/utils/storage'
@@ -211,30 +210,17 @@ const handleUserLogin = async () => {
 		const { userInfo, token } = await getLoginUserInfo()
 		// 存储 token 到浏览器缓存
 		Session.set('token', token)
-		Session.set('userInfo', userInfo)
-		console.log('useUserInfoStores -----', useUserInfoStores)
+		Session.set('userInfo', { ...userInfo, token })
+		Session.set('userName', loginState.loginForm.userName)
 		useUserInfoStores.setUserInfos(userInfo)
-		// setUserInfos(userInfo)
-		// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
-		Cookies.set('userName', loginState.loginForm.userName)
-		// if (!themeConfig.value.isRequestRoutes) {
-		// 	console.log('前端 -----')
-		// 	// 前端控制路由，2、请注意执行顺序
 		// 处理登录用户角色的路由表
-		const showPageName = handleUserAuthRouters()
+		const showPageName = await handleUserAuthRouters()
 		router.push({ name: showPageName })
-
-		// const isNoPower = await initFrontEndControlRoutes(userInfo)
-		// console.log('isNoPower -----', isNoPower)
-		// 	// signInSuccess(isNoPower)
-		// } else {
-		// 	console.log('后端 -----')
-		// 	// 模拟后端控制路由，isRequestRoutes 为 true，则开启后端控制路由
-		// 	// 添加完动态路由，再进行 router 跳转，否则可能报错 No match found for location with path "/"
-		// 	const isNoPower = await initBackEndControlRoutes()
-		// 	// 执行完 initBackEndControlRoutes，再执行 signInSuccess
-		// 	// signInSuccess(isNoPower)
-		// }
+		const signInText = '欢迎回来！'
+		ElNotification.success({
+			title: loginState.loginForm.userName,
+			message: `${currentTime.value}，${signInText}`,
+		})
 		loginState.loading.signIn = false
 	} catch (e) {
 		console.log(e)
