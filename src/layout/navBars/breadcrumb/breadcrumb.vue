@@ -1,3 +1,4 @@
+<!-- 面包屑导航 -->
 <template>
   <div
     v-if="isShowBreadcrumb"
@@ -27,6 +28,7 @@
             <div v-if="!v.meta.tagsViewName">{{ v.meta.title }}</div>
             <div v-else>{{ v.meta.tagsViewName }}</div>
           </span>
+
           <a
             v-else
             @click.prevent="onBreadcrumbClick(v)"
@@ -91,7 +93,11 @@ const setLocalThemeConfig = () => {
 }
 // 处理面包屑数据
 const getBreadcrumbList = (arr: RouteItems) => {
+	const haveList = state.breadcrumbList.map((item) => item.name)
+
 	arr.forEach((item: RouteItem) => {
+		if (haveList.includes(item.name)) return
+
 		state.routeSplit.forEach((v: string, k: number, arrs: string[]) => {
 			if (state.routeSplitFirst === item.path) {
 				state.routeSplitFirst += `/${arrs[state.routeSplitIndex]}`

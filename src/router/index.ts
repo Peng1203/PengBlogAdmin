@@ -1,16 +1,16 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import pinia from '/@/stores/index';
+import pinia from '@/stores/index';
 import { storeToRefs } from 'pinia';
-import { useKeepALiveNames } from '/@/stores/keepAliveNames';
-import { useRoutesList } from '/@/stores/routesList';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import { Session } from '/@/utils/storage';
-import { staticRoutes, notFoundAndNoPower } from '/@/router/route';
-import { initFrontEndControlRoutes } from '/@/router/frontEnd';
-import { initBackEndControlRoutes } from '/@/router/backEnd';
-
+import { useKeepALiveNames } from '@/stores/keepAliveNames';
+import { useRoutesList } from '@/stores/routesList';
+import { useThemeConfig } from '@/stores/themeConfig';
+import { Session } from '@/utils/storage';
+import { staticRoutes, notFoundAndNoPower } from '@/router/route';
+import { initFrontEndControlRoutes } from '@/router/frontEnd';
+import { initBackEndControlRoutes } from '@/router/backEnd';
+import { handleUserAuthRouters } from './handleAuthRouters'
 /**
  * 1、前端控制路由时：isRequestRoutes 为 false，需要写 roles，需要走 setFilterRoute 方法。
  * 2、后端控制路由时：isRequestRoutes 为 true，不需要写 roles，不需要走 setFilterRoute 方法），
@@ -39,7 +39,14 @@ export const router = createRouter({
 	 * 2、backEnd.ts(后端控制路由)、frontEnd.ts(前端控制路由) 中也需要加 notFoundAndNoPower 404、401 界面。
 	 *    防止 404、401 不在 layout 布局中，不设置的话，404、401 界面将全屏显示
 	 */
-	routes: [...notFoundAndNoPower, ...staticRoutes],
+	routes: [
+		{
+			path: '/',
+			redirect: 'login',
+		},
+		...notFoundAndNoPower,
+		...staticRoutes
+	],
 });
 
 /**
@@ -80,7 +87,7 @@ export function formatTwoStageRoutes(arr: any) {
 			}
 			newArr[0].children.push({ ...v });
 			// 存 name 值，keep-alive 中 include 使用，实现路由的缓存
-			// 路径：/@/layout/routerView/parent.vue
+			// 路径：@/layout/routerView/parent.vue
 			if (newArr[0].meta.isKeepAlive && v.meta.isKeepAlive) {
 				cacheList.push(v.name);
 				const stores = useKeepALiveNames(pinia);
@@ -107,10 +114,22 @@ router.beforeEach(async (to, from, next) => {
 		Session.clear();
 		NProgress.done();
 	} else if (token && to.path === '/login') {
-		next()
+		// next()
+		next('/home')
 		NProgress.done();
 	} else {
-		next()
+		const storesRoutesList = useRoutesList(pinia);
+		const { routesList } = storeToRefs(storesRoutesList);
+		// 解决界面刷新路由规则丢失问题
+		if (from.name === undefined && !routesList.value.length && token) {
+			handleUserAuthRouters()
+			next({ path: to.path });
+			// next({: to.name })
+			// next(`${to.path}`)
+			// return
+		} else {
+			next()
+		}
 	}
 	// else {
 	// 	const storesRoutesList = useRoutesList(pinia);

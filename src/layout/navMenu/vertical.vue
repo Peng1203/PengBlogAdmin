@@ -1,3 +1,4 @@
+<!-- 父级菜单 -->
 <template>
   <el-menu
     router
@@ -10,8 +11,9 @@
     <template v-for="val in menuLists">
       <el-sub-menu
         :index="val.path"
-        v-if="val.children && val.children.length > 0"
         :key="val.path"
+        @click="handleClickMenuItem"
+        v-if="val.children && val.children.length > 0"
       >
         <template #title>
           <SvgIcon :name="val.meta.icon" />
@@ -86,6 +88,9 @@ const setParentHighlight = (currentRoute: RouteToFrom) => {
 	if (pathSplit.length >= 4 && meta?.isHide) return pathSplit.splice(0, 3).join('/')
 	else return path
 }
+
+const handleClickMenuItem = () => {}
+
 // 打开外部链接
 const onALinkClick = (val: RouteItem) => {
 	other.handleOpenLink(val)

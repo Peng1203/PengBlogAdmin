@@ -89,23 +89,20 @@
 </template>
 
 <script setup lang="ts" name="loginAccount">
+import Cookies from 'js-cookie'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, FormRules } from 'element-plus'
-import Cookies from 'js-cookie'
-import { storeToRefs } from 'pinia'
-import { useThemeConfig } from '/@/stores/themeConfig'
-import { initFrontEndControlRoutes } from '/@/router/frontEnd'
-import { initBackEndControlRoutes } from '/@/router/backEnd'
-import { Local, Session } from '/@/utils/storage'
-import { formatAxis } from '/@/utils/formatTime'
-import { NextLoading } from '/@/utils/loading'
-import { useLoginApi } from '/@/api/login'
+import { useUserInfo } from '@/stores/userInfo'
+import { handleUserAuthRouters } from '@/router/handleAuthRouters'
+import { Local, Session } from '@/utils/storage'
+import { formatAxis } from '@/utils/formatTime'
+import { NextLoading } from '@/utils/loading'
+import { useLoginApi } from '@/api/login'
 
 const { getCaptcha, verifyCaptcha, signIn } = useLoginApi()
 // 定义变量内容
-const storesThemeConfig = useThemeConfig()
-const { themeConfig } = storeToRefs(storesThemeConfig)
+const useUserInfoStores = useUserInfo()
 const route = useRoute()
 const router = useRouter()
 
@@ -210,18 +207,25 @@ const handleUserLogin = async () => {
 		loginState.loading.signIn = true
 		// 调用后端验证码校验接口
 		const captchIsPass = await postCaptchaCode()
-		console.log('captchIsPass -----', captchIsPass)
 		if (!captchIsPass) return (loginState.loading.signIn = false)
 		const { userInfo, token } = await getLoginUserInfo()
 		// 存储 token 到浏览器缓存
 		Session.set('token', token)
 		Session.set('userInfo', userInfo)
+		console.log('useUserInfoStores -----', useUserInfoStores)
+		useUserInfoStores.setUserInfos(userInfo)
+		// setUserInfos(userInfo)
 		// 模拟数据，对接接口时，记得删除多余代码及对应依赖的引入。用于 `/src/stores/userInfo.ts` 中不同用户登录判断（模拟数据）
 		Cookies.set('userName', loginState.loginForm.userName)
 		// if (!themeConfig.value.isRequestRoutes) {
 		// 	console.log('前端 -----')
 		// 	// 前端控制路由，2、请注意执行顺序
-		// 	const isNoPower = await initFrontEndControlRoutes()
+		// 处理登录用户角色的路由表
+		const showPageName = handleUserAuthRouters()
+		router.push({ name: showPageName })
+
+		// const isNoPower = await initFrontEndControlRoutes(userInfo)
+		// console.log('isNoPower -----', isNoPower)
 		// 	// signInSuccess(isNoPower)
 		// } else {
 		// 	console.log('后端 -----')
@@ -233,7 +237,7 @@ const handleUserLogin = async () => {
 		// }
 		loginState.loading.signIn = false
 	} catch (e) {
-		console.log( e)
+		console.log(e)
 	}
 }
 // 时间获取

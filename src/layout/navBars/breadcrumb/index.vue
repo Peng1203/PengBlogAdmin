@@ -2,6 +2,7 @@
   <div class="layout-navbars-breadcrumb-index">
     <Logo v-if="setIsShowLogo" />
     <Breadcrumb />
+    <!-- 横向菜单 -->
     <Horizontal
       :menuList="state.menuList"
       v-if="isLayoutTransverse"

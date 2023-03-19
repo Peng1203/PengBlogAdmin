@@ -1,13 +1,13 @@
 import { RouteRecordRaw } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { formatTwoStageRoutes, formatFlatteningRoutes, router } from '/@/router/index';
-import { dynamicRoutes, notFoundAndNoPower } from '/@/router/route';
-import pinia from '/@/stores/index';
-import { Session } from '/@/utils/storage';
-import { useUserInfo } from '/@/stores/userInfo';
-import { useTagsViewRoutes } from '/@/stores/tagsViewRoutes';
-import { useRoutesList } from '/@/stores/routesList';
-import { NextLoading } from '/@/utils/loading';
+import { formatTwoStageRoutes, formatFlatteningRoutes, router } from '@/router/index';
+import { dynamicRoutes, notFoundAndNoPower } from '@/router/route';
+import pinia from '@/stores/index';
+import { Session } from '@/utils/storage';
+import { useUserInfo } from '@/stores/userInfo';
+import { useTagsViewRoutes } from '@/stores/tagsViewRoutes';
+import { useRoutesList } from '@/stores/routesList';
+import { NextLoading } from '@/utils/loading';
 
 // 前端控制路由
 
@@ -29,7 +29,7 @@ export async function initFrontEndControlRoutes(userInfo: any) {
 	await useUserInfo(pinia).setUserInfos(userInfo);
 	// 无登录权限时，添加判断
 	// https://gitee.com/lyt-top/vue-next-admin/issues/I64HVO
-	if (useUserInfo().userInfos.roles.length <= 0) return Promise.resolve(true);
+	// if (useUserInfo().userInfos.roles.length <= 0) return Promise.resolve(true);
 	// 添加动态路由
 	await setAddRoute();
 	// 设置递归过滤有权限的路由到 pinia routesList 中（已处理成多级嵌套路由）及缓存多级嵌套数组处理后的一维数组
@@ -39,11 +39,13 @@ export async function initFrontEndControlRoutes(userInfo: any) {
 /**
  * 添加动态路由
  * @method router.addRoute
- * @description 此处循环为 dynamicRoutes（/@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
+ * @description 此处循环为 dynamicRoutes（@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
  * @link 参考：https://next.router.vuejs.org/zh/api/#addroute
  */
 export async function setAddRoute() {
-	await setFilterRouteEnd().forEach((route: RouteRecordRaw) => {
+	const filterRouter = setFilterRouteEnd()
+	console.log('filterRouter -----', filterRouter)
+	await filterRouter.forEach((route: RouteRecordRaw) => {
 		router.addRoute(route);
 	});
 }
@@ -51,7 +53,7 @@ export async function setAddRoute() {
 /**
  * 删除/重置路由
  * @method router.removeRoute
- * @description 此处循环为 dynamicRoutes（/@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
+ * @description 此处循环为 dynamicRoutes（@/router/route）第一个顶级 children 的路由一维数组，非多级嵌套
  * @link 参考：https://next.router.vuejs.org/zh/api/#push
  */
 export async function frontEndsResetRoute() {
@@ -63,7 +65,7 @@ export async function frontEndsResetRoute() {
 
 /**
  * 获取有当前用户权限标识的路由数组，进行对原路由的替换
- * @description 替换 dynamicRoutes（/@/router/route）第一个顶级 children 的路由
+ * @description 替换 dynamicRoutes（@/router/route）第一个顶级 children 的路由
  * @returns 返回替换后的路由数组
  */
 export function setFilterRouteEnd() {
@@ -78,12 +80,13 @@ export function setFilterRouteEnd() {
  * 获取当前用户权限标识去比对路由表（未处理成多级嵌套路由）
  * @description 这里主要用于动态路由的添加，router.addRoute
  * @link 参考：https://next.router.vuejs.org/zh/api/#addroute
- * @param chil dynamicRoutes（/@/router/route）第一个顶级 children 的下路由集合
+ * @param chil dynamicRoutes（@/router/route）第一个顶级 children 的下路由集合
  * @returns 返回有当前用户权限标识的路由数组
  */
 export function setFilterRoute(chil: any) {
 	const stores = useUserInfo(pinia);
 	const { userInfos } = storeToRefs(stores);
+	console.log('userInfos -----', userInfos.value)
 	let filterRoute: any = [];
 	chil.forEach((route: any) => {
 		if (route.meta.roles) {
