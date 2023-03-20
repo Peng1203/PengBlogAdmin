@@ -37,10 +37,12 @@ export async function handleUserAuthRouters(): Promise<any> {
     await storesRoutesList.setRoutesList(allAuthRoutes[0].children as any);
     await storesTagsView.setTagsViewRoutes((allAuthRoutes[0].children as any))
     // 返回第一个跳转后第一个展示的菜单展示
+    NextLoading.done();
     return (allAuthRoutes[0].children as any)[0].name
   } else {
     console.log('router -----', router)
     console.log('其他用户 -----',)
+    NextLoading.done();
     return ''
   }
 }

@@ -6,7 +6,7 @@
           <div class="left-item">
             <div class="left-item-animation left-item-num">401</div>
             <div class="left-item-animation left-item-title">您未被授权，没有操作权限~</div>
-            <div class="left-item-animation left-item-msg">联系方式：加QQ群探讨 665452019</div>
+            <div class="left-item-animation left-item-msg"></div>
             <div class="left-item-animation left-item-btn">
               <el-button
                 type="primary"

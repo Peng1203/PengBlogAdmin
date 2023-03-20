@@ -88,14 +88,14 @@ onBeforeMount(() => {
 		if (differTime <= 5) {
 			// 刷新时有概率执行
 			console.log('浏览器关闭')
-			axios.get('http://127.0.0.1:3000/index?info=关闭')
+			// axios.get('http://127.0.0.1:3000/index?info=关闭')
 			if (Session.get('token')) {
 				Session.clear()
 				await userInfoStores.userLogout()
 			}
 		} else {
 			console.log('浏览器刷新')
-			axios.get('http://127.0.0.1:3000/index?info=刷新')
+			// axios.get('http://127.0.0.1:3000/index?info=刷新')
 		}
 	})
 

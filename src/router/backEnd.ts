@@ -36,7 +36,7 @@ const dynamicViewsModules: Record<string, Function> = Object.assign({}, { ...lay
 export async function initBackEndControlRoutes(userInfo: any) {
 	console.log('执行了后端处理')
 	// 界面 loading 动画开始执行
-	if (window.nextLoading === undefined) NextLoading.start();
+	// if (window.nextLoading === undefined) NextLoading.start();
 	// 无 token 停止执行下一步
 	if (!Session.get('token')) return false;
 	// 触发初始化用户信息 pinia

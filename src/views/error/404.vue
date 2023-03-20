@@ -27,13 +27,15 @@
 
 <script setup lang="ts" name="notFound">
 import { useRouter } from 'vue-router'
+import { Session } from '/@/utils/storage'
 
 // 定义变量内容
 const router = useRouter()
 
 // 返回首页
 const onGoHome = () => {
-	router.push('/')
+	if (Session.get('token')) router.go(-1)
+	else router.push('/')
 }
 </script>
 
