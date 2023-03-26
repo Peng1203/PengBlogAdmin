@@ -208,6 +208,7 @@ const handleUserLogin = async () => {
 		const captchIsPass = await postCaptchaCode()
 		if (!captchIsPass) return (loginState.loading.signIn = false)
 		const { userInfo, token } = await getLoginUserInfo()
+		if (!userInfo) return (loginState.loading.signIn = false)
 		// 存储 token 到浏览器缓存
 		Session.set('token', token)
 		Session.set('userInfo', { ...userInfo, token })
@@ -223,7 +224,8 @@ const handleUserLogin = async () => {
 		})
 		loginState.loading.signIn = false
 	} catch (e) {
-		console.log(e)
+		loginState.loading.signIn = false
+		throw e
 	}
 }
 // 时间获取

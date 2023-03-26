@@ -47,6 +47,7 @@ export const Session = {
 	// 获取临时缓存
 	get(key: string) {
 		let json = <string>window.sessionStorage.getItem(Local.setKey(key));
+		if(!json || json == 'undefined') return false
 		return JSON.parse(json);
 	},
 	// 移除临时缓存
