@@ -102,7 +102,7 @@ export function formatTwoStageRoutes(arr: any) {
 router.beforeEach(async (to, from, next) => {
 	NProgress.configure({ showSpinner: false });
 	if (to.meta.title) NProgress.start();
-	if (to.path === '/login') {
+	if (to.path === '/login' && !sessionStorage.getItem('PengBlogAdmin:token')) {
 		next();
 		NProgress.done();
 		return
