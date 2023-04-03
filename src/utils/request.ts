@@ -42,7 +42,7 @@ service.interceptors.response.use(
 	response => {
 		return response
 	},
-	async error => {
+	error => {
 		console.log('error -----', error)
 		const { data, status } = error.response
 		switch (status) {
@@ -53,8 +53,9 @@ service.interceptors.response.use(
 				const userInfoStore = useUserInfo()
 				ElMessage.warning(`身份验证失败 请重新登录!`)
 				// 调用退出登录接口
-				const token = Local.get('token')
-				if (token) await userInfoStore.userLogout()
+				setTimeout(async () => {
+					await userInfoStore.userLogout()
+				}, 1000)
 				break;
 			case 403:
 				ElMessage.warning(`${data.message} ${data.errors}`)
