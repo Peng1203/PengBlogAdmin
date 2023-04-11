@@ -11,3 +11,10 @@ declare interface ColumnItem {
   align?: 'left' | 'center' | 'right'
   childrenColumns?: ColumnItem[]
 }
+
+declare interface PageInfo {
+  page: number,
+  pageSize: number,
+  total: number,
+  pageSizeList?: number[]
+}

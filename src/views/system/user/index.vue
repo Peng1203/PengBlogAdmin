@@ -6,10 +6,13 @@
     >
       <div class="system-user-search mb15">
         <el-input
+          clearable
           size="default"
           placeholder="请输入用户名称"
           style="max-width: 180px"
-        > </el-input>
+          v-model.trim="tableState.queryStr"
+          @keyup.native.enter="handleSearch"
+        />
         <el-button
           size="default"
           type="primary"
@@ -34,10 +37,18 @@
       </div>
       <!-- 用户表格 -->
       <PengTable
+        :loading="tableState.loading"
         :data="tableState.data"
         :isFilterShowColumn="true"
+        :pagerInfo="tableState.pagerInfo"
         :columns="tableState.tableColumns"
+        @pageNumOrSizeChange="handlePageInfoChange"
+        @columnSort="handleColumnChange"
       >
+        <!-- 用户名 -->
+        <template #uName="{ row, prop }">
+          <span v-html="queryStrStyle(row[prop])" />
+        </template>
         <!-- 状态 -->
         <template #state="{ row, prop }">
           <el-tag
@@ -62,23 +73,25 @@
 
         <!-- 操作 -->
         <template #operation="{ row }">
-          {{'哈哈哈哈'}}
+          <el-button
+            circle
+            title="修改信息"
+            size="small"
+            type="primary"
+            :icon="Edit"
+            :disabled="row.id === 1"
+          />
+          <el-button
+            circle
+            title="删除"
+            size="small"
+            type="danger"
+            :icon="Delete"
+            :disabled="row.id === 1"
+          />
         </template>
       </PengTable>
 
-      <el-pagination
-        @size-change="onHandleSizeChange"
-        @current-change="onHandleCurrentChange"
-        class="mt15"
-        :pager-count="5"
-        :page-sizes="[10, 20, 30]"
-        v-model:current-page="tableState.page"
-        background
-        v-model:page-size="tableState.pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="tableState.total"
-      >
-      </el-pagination>
     </el-card>
     <UserDialog
       ref="userDialogRef"
@@ -90,52 +103,55 @@
 <script setup lang="ts" name="systemUser">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { Delete, Edit } from '@element-plus/icons-vue'
 import { useUserApi } from '@/api/user'
 
 const { getUserList } = useUserApi()
 
 const tableState = reactive({
-	tableColumns: [
-		{ label: '用户名', prop: 'userName', minWidth: 100 },
-		{ label: '角色', prop: 'roleId' },
-		{ label: '用户状态', prop: 'state', slotName: 'state', minWidth: 100 },
-		{ label: '邮箱', prop: 'email', minWidth: 200 },
-		// {
-		// 	label: '其他信息',
-		// 	prop: 'authInfo',
-		// 	childrenColumns: [
-		// 		{ label: '用户名', prop: 'userName', minWidth: 100 },
-		// 		{ label: '角色', prop: 'roleId' },
-		// 	],
-		// },
-		{ label: '解禁时间', prop: 'unsealTime', minWidth: 200 },
-		{ label: '更新时间', prop: 'updateTime', minWidth: 200 },
-		{ label: '创建时间', prop: 'createdTime', minWidth: 200 },
-		{ label: '操作', minWidth: 200, slotName: 'operation', fixed: 'right' },
-	],
-	page: 1,
-	pageSize: 10,
+	loading: false,
 	data: [],
-	total: 0,
+	tableColumns: [
+		{ label: '用户名', prop: 'userName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'uName' },
+		{ label: '角色', prop: 'roleId' },
+		{ label: '用户状态', prop: 'state', slotName: 'state', minWidth: 120, sort: true },
+		{ label: '邮箱', prop: 'email', minWidth: 200, tooltip: true },
+		{ label: '解禁时间', prop: 'unsealTime', minWidth: 200, sort: true },
+		{ label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
+		{ label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
+		{ label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
+	],
+	column: '',
+	order: '',
+	queryStr: '',
+
+	// 分页器信息
+	pagerInfo: {
+		page: 1,
+		pageSize: 10,
+		total: 0,
+	},
 })
 // 获取用户表格数据
 const getUserTableData = async () => {
 	try {
+		tableState.loading = true
 		const params = {
-			page: 1,
-			pageSize: 10,
-			queryStr: '',
-			column: '',
-			order: 'ASC',
+			page: tableState.pagerInfo.page,
+			pageSize: tableState.pagerInfo.pageSize,
+			queryStr: tableState.queryStr,
+			column: tableState.column,
+			order: tableState.order,
 		}
 		const { data: res } = await getUserList(params)
-		console.log('res -----', res)
 		const { code, message, data, total } = res
 		if (code !== 200 || message !== 'Success') return
 		tableState.data = data
-		tableState.total = total
+		tableState.pagerInfo.total = total
 	} catch (e) {
 		throw e
+	} finally {
+		tableState.loading = false
 	}
 }
 // 引入组件
@@ -202,16 +218,33 @@ const onRowDel = (row: RowUserType) => {
 		})
 		.catch(() => {})
 }
-// 分页改变
-const onHandleSizeChange = (val: number) => {
-	state.tableData.param.pageSize = val
-	getTableData()
+
+const handleSearch = () => {
+	tableState.pagerInfo.page = 1
+	getUserTableData()
 }
-// 分页改变
-const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNum = val
-	getTableData()
+
+// 分页器修改时触发
+const handlePageInfoChange = (pageInfo: any) => {
+	const { page, pageSize } = pageInfo
+	tableState.pagerInfo.page = page
+	tableState.pagerInfo.pageSize = pageSize
+	getUserTableData()
 }
+
+const handleColumnChange = ({ column, order }: any) => {
+	console.log('父组件 -----', column, order)
+	tableState.column = column
+	tableState.order = order
+	getUserTableData()
+}
+// 文字搜索高亮
+const queryStrStyle = (str: string) => {
+	const result = str.indexOf(tableState.queryStr)
+	if (result === -1) return str
+	return str.replaceAll(tableState.queryStr, `<font color="red">${tableState.queryStr}</font>`)
+}
+
 // 页面加载时
 onMounted(() => {
 	// getTableData()
