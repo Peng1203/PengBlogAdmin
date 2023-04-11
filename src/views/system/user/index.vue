@@ -59,113 +59,13 @@
             v-else-if="row[prop] === 3"
           >封禁</el-tag>
         </template>
+
+        <!-- 操作 -->
+        <template #operation="{ row }">
+          {{'哈哈哈哈'}}
+        </template>
       </PengTable>
 
-      <el-table
-        :data="state.tableData.data"
-        v-loading="state.tableData.loading"
-        style="width: 100%"
-      >
-        <!-- label="过滤" -->
-        <el-table-column
-          width="60"
-          align="center"
-          fixed="right"
-          :filters="[
-            { text: '账户名称', value:'userName' },
-            { text: '用户昵称', value:'userNickname' },
-          ]"
-          filter-placement="bottom"
-        >
-          <template #header>
-            <el-icon>
-              <Tools />
-            </el-icon>
-          </template>
-        </el-table-column>
-        <el-table-column
-          type="index"
-          label="序号"
-          width="60"
-        />
-        <el-table-column
-          prop="userName"
-          label="账户名称"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="userNickname"
-          label="用户昵称"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="roleSign"
-          label="关联角色"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="department"
-          label="部门"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="phone"
-          label="手机号"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="email"
-          label="邮箱"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="status"
-          label="用户状态"
-          show-overflow-tooltip
-        >
-          <template #default="scope">
-            <el-tag
-              type="success"
-              v-if="scope.row.status"
-            >启用</el-tag>
-            <el-tag
-              type="info"
-              v-else
-            >禁用</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="describe"
-          label="用户描述"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="创建时间"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          label="操作"
-          width="100"
-        >
-          <template #default="scope">
-            <el-button
-              :disabled="scope.row.userName === 'admin'"
-              size="small"
-              text
-              type="primary"
-              @click="onOpenEditUser('edit', scope.row)"
-            >修改</el-button>
-            <el-button
-              :disabled="scope.row.userName === 'admin'"
-              size="small"
-              text
-              type="primary"
-              @click="onRowDel(scope.row)"
-            >删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
       <el-pagination
         @size-change="onHandleSizeChange"
         @current-change="onHandleCurrentChange"
@@ -196,13 +96,22 @@ const { getUserList } = useUserApi()
 
 const tableState = reactive({
 	tableColumns: [
-		{ label: '用户名', prop: 'userName', width: 'auto' },
-		{ label: '角色', prop: 'roleId', width: 'auto' },
-		{ label: '用户状态', prop: 'state', width: 'auto', slotName: 'state' },
-		{ label: '邮箱', prop: 'email', width: 'auto' },
-		{ label: '解禁时间', prop: 'unsealTime', width: 'auto' },
-		{ label: '创建时间', prop: 'updateTime', width: 'auto' },
-		{ label: '创建时间', prop: 'createdTime', width: 'auto' },
+		{ label: '用户名', prop: 'userName', minWidth: 100 },
+		{ label: '角色', prop: 'roleId' },
+		{ label: '用户状态', prop: 'state', slotName: 'state', minWidth: 100 },
+		{ label: '邮箱', prop: 'email', minWidth: 200 },
+		// {
+		// 	label: '其他信息',
+		// 	prop: 'authInfo',
+		// 	childrenColumns: [
+		// 		{ label: '用户名', prop: 'userName', minWidth: 100 },
+		// 		{ label: '角色', prop: 'roleId' },
+		// 	],
+		// },
+		{ label: '解禁时间', prop: 'unsealTime', minWidth: 200 },
+		{ label: '更新时间', prop: 'updateTime', minWidth: 200 },
+		{ label: '创建时间', prop: 'createdTime', minWidth: 200 },
+		{ label: '操作', minWidth: 200, slotName: 'operation', fixed: 'right' },
 	],
 	page: 1,
 	pageSize: 10,

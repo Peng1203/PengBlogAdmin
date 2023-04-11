@@ -2,7 +2,7 @@
 declare interface ColumnItem {
   label: string
   prop: string
-  width: number | string
+  width?: number | string | 'auto'
   minWidth?: number | string
   sort?: boolean | 'custom'
   tooltip?: boolean
