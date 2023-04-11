@@ -2,6 +2,13 @@ import request from '@/utils/request';
 
 export function useUserApi() {
   return {
+    getUserList(params: object) {
+      return request({
+        url: '/user/getUserList',
+        method: 'get',
+        params
+      })
+    },
     /**
      * 上传用户头像
      * @author Peng

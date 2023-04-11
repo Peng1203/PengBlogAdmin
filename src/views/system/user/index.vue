@@ -32,11 +32,57 @@
           新增用户
         </el-button>
       </div>
+      <!-- 用户表格 -->
+      <PengTable
+        :data="tableState.data"
+        :isFilterShowColumn="true"
+        :columns="tableState.tableColumns"
+      >
+        <!-- 状态 -->
+        <template #state="{ row, prop }">
+          <el-tag
+            size="small"
+            effect="dark"
+            type="success"
+            v-if="row[prop] === 1"
+          >正常</el-tag>
+          <el-tag
+            size="small"
+            effect="dark"
+            type="warning"
+            v-else-if="row[prop] === 2"
+          >锁定</el-tag>
+          <el-tag
+            size="small"
+            effect="dark"
+            type="danger"
+            v-else-if="row[prop] === 3"
+          >封禁</el-tag>
+        </template>
+      </PengTable>
+
       <el-table
         :data="state.tableData.data"
         v-loading="state.tableData.loading"
         style="width: 100%"
       >
+        <!-- label="过滤" -->
+        <el-table-column
+          width="60"
+          align="center"
+          fixed="right"
+          :filters="[
+            { text: '账户名称', value:'userName' },
+            { text: '用户昵称', value:'userNickname' },
+          ]"
+          filter-placement="bottom"
+        >
+          <template #header>
+            <el-icon>
+              <Tools />
+            </el-icon>
+          </template>
+        </el-table-column>
         <el-table-column
           type="index"
           label="序号"
@@ -126,11 +172,11 @@
         class="mt15"
         :pager-count="5"
         :page-sizes="[10, 20, 30]"
-        v-model:current-page="state.tableData.param.pageNum"
+        v-model:current-page="tableState.page"
         background
-        v-model:page-size="state.tableData.param.pageSize"
+        v-model:page-size="tableState.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="state.tableData.total"
+        :total="tableState.total"
       >
       </el-pagination>
     </el-card>
@@ -144,7 +190,45 @@
 <script setup lang="ts" name="systemUser">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
+import { useUserApi } from '@/api/user'
 
+const { getUserList } = useUserApi()
+
+const tableState = reactive({
+	tableColumns: [
+		{ label: '用户名', prop: 'userName', width: 'auto' },
+		{ label: '角色', prop: 'roleId', width: 'auto' },
+		{ label: '用户状态', prop: 'state', width: 'auto', slotName: 'state' },
+		{ label: '邮箱', prop: 'email', width: 'auto' },
+		{ label: '解禁时间', prop: 'unsealTime', width: 'auto' },
+		{ label: '创建时间', prop: 'updateTime', width: 'auto' },
+		{ label: '创建时间', prop: 'createdTime', width: 'auto' },
+	],
+	page: 1,
+	pageSize: 10,
+	data: [],
+	total: 0,
+})
+// 获取用户表格数据
+const getUserTableData = async () => {
+	try {
+		const params = {
+			page: 1,
+			pageSize: 10,
+			queryStr: '',
+			column: '',
+			order: 'ASC',
+		}
+		const { data: res } = await getUserList(params)
+		console.log('res -----', res)
+		const { code, message, data, total } = res
+		if (code !== 200 || message !== 'Success') return
+		tableState.data = data
+		tableState.total = total
+	} catch (e) {
+		throw e
+	}
+}
 // 引入组件
 const UserDialog = defineAsyncComponent(() => import('@/views/system/user/dialog.vue'))
 
@@ -221,7 +305,8 @@ const onHandleCurrentChange = (val: number) => {
 }
 // 页面加载时
 onMounted(() => {
-	getTableData()
+	// getTableData()
+	getUserTableData()
 })
 </script>
 

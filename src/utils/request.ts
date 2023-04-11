@@ -54,6 +54,7 @@ service.interceptors.response.use(
 				ElMessage.warning(`身份验证失败 请重新登录!`)
 				// 调用退出登录接口
 				setTimeout(async () => {
+					console.log('123 -----', 123)
 					await userInfoStore.userLogout()
 				}, 1000)
 				break;

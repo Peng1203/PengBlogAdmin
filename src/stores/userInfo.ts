@@ -37,11 +37,9 @@ export const useUserInfo = defineStore('userInfo', {
 				const params = {
 					id: this.userInfos.id,
 					userName: this.userInfos.userName,
-					token: this.userInfos.token
+					// token: this.userInfos.token
 				}
-				console.log('params -----', params)
 				const { data: res } = await signOut(params)
-				console.log('退出登录结果 -----', res)
 				const { code, message, data } = res
 				if (code !== 200 && message !== 'Success') return
 				ElMessage.success(data)

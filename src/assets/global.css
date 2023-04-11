@@ -1,0 +1,14 @@
+.el-table__column-filter-trigger {
+  width: 100%;
+}
+
+.el-table-fixed-column--right.is-first-column.is-leaf.el-table__cell>.cell {
+  position: relative;
+}
+
+.el-table-fixed-column--right.is-first-column.is-leaf.el-table__cell>.cell>.filter-header {
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  transform: translate(-50%, 0);
+}
