@@ -4,25 +4,8 @@
       shadow="hover"
       class="layout-padding-auto"
     >
-      <div class="system-user-search mb15">
-        <el-input
-          clearable
-          size="default"
-          placeholder="请输入用户名称"
-          style="max-width: 180px"
-          v-model.trim="tableState.queryStr"
-          @keyup.native.enter="handleSearch"
-        />
-        <el-button
-          size="default"
-          type="primary"
-          class="ml10"
-        >
-          <el-icon>
-            <ele-Search />
-          </el-icon>
-          查询
-        </el-button>
+      <!-- 顶部操作 -->
+      <div class="system-user-search mb15 flex-sb-c">
         <el-button
           size="default"
           type="success"
@@ -34,6 +17,13 @@
           </el-icon>
           新增用户
         </el-button>
+
+        <Peng-Search
+          placeholder="请输入用户名"
+          :loading="tableState.loading"
+          v-model="tableState.queryStr"
+          @search="handleSearch"
+        />
       </div>
       <!-- 用户表格 -->
       <PengTable
@@ -219,6 +209,7 @@ const onRowDel = (row: RowUserType) => {
 		.catch(() => {})
 }
 
+// 搜索
 const handleSearch = () => {
 	tableState.pagerInfo.page = 1
 	getUserTableData()
@@ -233,16 +224,17 @@ const handlePageInfoChange = (pageInfo: any) => {
 }
 
 const handleColumnChange = ({ column, order }: any) => {
-	console.log('父组件 -----', column, order)
 	tableState.column = column
 	tableState.order = order
 	getUserTableData()
 }
 // 文字搜索高亮
 const queryStrStyle = (str: string) => {
-	const result = str.indexOf(tableState.queryStr)
-	if (result === -1) return str
-	return str.replaceAll(tableState.queryStr, `<font color="red">${tableState.queryStr}</font>`)
+	// const result = str.indexOf(tableState.queryStr)
+	// if (result === -1) return str
+	// return str.replaceAll(tableState.queryStr, `<font color="red">${tableState.queryStr}</font>`)
+	const regex = new RegExp(tableState.queryStr, 'ig')
+	return str.replace(regex, `<font color="red">$&</font>`)
 }
 
 // 页面加载时
