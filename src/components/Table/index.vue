@@ -9,10 +9,18 @@
     @filter-change="handleFilterTable"
     @sort-change="handleColumnSort"
   >
+    <el-table-column
+      v-if="props.isSelection"
+      type="selection"
+      width="30"
+      :selectable="checkBoxIsEnableCallBack"
+    />
+    <!-- :selectable="handleCheckboxIsEnable" -->
     <template
       :key="i"
       v-for="({ label, prop, width, minWidth, sort, tooltip, fixed, align, slotName, childrenColumns }, i) in tableColumns"
     >
+
       <!-- 自定义某列 -->
       <el-table-column
         v-if="slotName"
@@ -127,43 +135,41 @@
 
 <script lang="ts" setup>
 import { ref, reactive, watch, onMounted, PropType, defineEmits } from 'vue'
+interface PengTableAttribute {
+	data: any[]
+	columns: ColumnItem[]
+	border?: boolean
+	isSelection?: boolean
+	checkBoxIsEnableCallBack?: Function
+	loading?: boolean
+	isFilterShowColumn?: boolean
+	isNeedPager?: boolean
+	pagerInfo?: PageInfo
+}
 
-const props = defineProps({
+const props = withDefaults(defineProps<PengTableAttribute>(), {
 	// 表格数据
-	data: {
-		type: Array,
-		required: true,
-		default: () => [],
-	},
+	data: () => [],
 	// columns 列表
-	columns: {
-		type: Array<ColumnItem>,
-		required: true,
-		default: () => [],
-	},
-	border: {
-		type: Boolean,
-		default: false,
-	},
-	loading: {
-		type: Boolean,
-		default: false,
-	},
+	columns: () => [],
+
+	border: false,
+
+	// 是否有复选
+	isSelection: false,
+
+	checkBoxIsEnableCallBack: () => true,
+
+	loading: false,
+
 	// 是否展示过滤表格
-	isFilterShowColumn: {
-		type: Boolean,
-		default: false,
-	},
+	isFilterShowColumn: false,
+
 	// 是否需要分页
-	isNeedPager: {
-		type: Boolean,
-		default: true,
-	},
+	isNeedPager: true,
+
 	// 分页器信息
-	pagerInfo: {
-		type: Object as PropType<PageInfo>,
-		default: () => {},
-	},
+	pagerInfo: () => ({ page: 1, pageSize: 10, total: 0 }),
 })
 
 const emits = defineEmits(['columnSort', 'pageChange', 'pageSizeChange', 'pageNumOrSizeChange'])

@@ -6,17 +6,19 @@
     >
       <!-- 顶部操作 -->
       <div class="system-user-search mb15 flex-sb-c">
-        <el-button
-          size="default"
-          type="success"
-          class="ml10"
-          @click="onOpenAddUser('add')"
-        >
-          <el-icon>
-            <ele-FolderAdd />
-          </el-icon>
-          新增用户
-        </el-button>
+        <div>
+          <el-button
+            size="default"
+            type="success"
+            class="ml10"
+            @click="onOpenAddUser('add')"
+          >
+            <el-icon>
+              <ele-FolderAdd />
+            </el-icon>
+            新增用户
+          </el-button>
+        </div>
 
         <Peng-Search
           placeholder="请输入用户名"
@@ -27,11 +29,13 @@
       </div>
       <!-- 用户表格 -->
       <PengTable
-        :loading="tableState.loading"
-        :data="tableState.data"
+        :isSelection="true"
         :isFilterShowColumn="true"
+        :data="tableState.data"
+        :loading="tableState.loading"
         :pagerInfo="tableState.pagerInfo"
         :columns="tableState.tableColumns"
+        :checkBoxIsEnableCallBack="handleCheckboxIsEnable"
         @pageNumOrSizeChange="handlePageInfoChange"
         @columnSort="handleColumnChange"
       >
@@ -122,6 +126,10 @@ const tableState = reactive({
 		total: 0,
 	},
 })
+
+// 根据条件来判断复选框是否可选
+const handleCheckboxIsEnable = (row: any) => (row.id === 1 ? false : true)
+
 // 获取用户表格数据
 const getUserTableData = async () => {
 	try {

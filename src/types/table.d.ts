@@ -1,3 +1,14 @@
+declare interface PengTableAttribute {
+  data: any[]
+  columns: ColumnItem[]
+  border?: boolean
+  isSelection?: boolean
+  checkBoxIsEnableCallBack?: function
+  loading?: boolean
+  isFilterShowColumn?: boolean
+  isNeedPager?: boolean
+  pagerInfo?: PageInfo
+}
 // 表格column 可选项
 declare interface ColumnItem {
   label: string
