@@ -28,7 +28,7 @@
         />
       </div>
       <!-- 用户表格 -->
-      <PengTable
+      <Peng-Table
         :isSelection="true"
         :isFilterShowColumn="true"
         :data="tableState.data"
@@ -84,13 +84,21 @@
             :disabled="row.id === 1"
           />
         </template>
-      </PengTable>
+      </Peng-Table>
 
     </el-card>
     <UserDialog
       ref="userDialogRef"
       @refresh="getTableData()"
     />
+    <el-button @click="editDrawerStatus = !editDrawerStatus">{{ editDrawerStatus }}</el-button>
+    <!-- :size="400" -->
+    <Peng-Drawer
+      :title="'修改用户信息'"
+      v-model="editDrawerStatus"
+    >
+      <template #main>1213123</template>
+    </Peng-Drawer>
   </div>
 </template>
 
@@ -126,6 +134,8 @@ const tableState = reactive({
 		total: 0,
 	},
 })
+
+const editDrawerStatus = ref<boolean>(true)
 
 // 根据条件来判断复选框是否可选
 const handleCheckboxIsEnable = (row: any) => (row.id === 1 ? false : true)
