@@ -12,7 +12,7 @@
     <el-table-column
       v-if="props.isSelection"
       type="selection"
-      width="30"
+      width="35"
       :selectable="checkBoxIsEnableCallBack"
     />
     <!-- :selectable="handleCheckboxIsEnable" -->
@@ -30,7 +30,7 @@
         :sortable="sort"
         :min-width="minWidth"
         :show-overflow-tooltip="tooltip"
-        :fixed="fixed"
+        :fixed="deviceClientType === 'pc' ? fixed : (fixed === 'left' ? false : fixed)"
         :align="align || 'left'"
       >
         <template #default="scope">
@@ -93,7 +93,7 @@
         :sortable="sort"
         :min-width="minWidth || ''"
         :show-overflow-tooltip="tooltip"
-        :fixed="fixed"
+        :fixed="deviceClientType === 'pc' ? fixed : false"
         :align="align || 'left'"
       />
     </template>
@@ -134,7 +134,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, onMounted, PropType, defineEmits } from 'vue'
+import { ref, reactive, watch, onMounted, PropType, defineEmits, inject } from 'vue'
+
+const deviceClientType = inject('deviceClientType')
+
 interface PengTableAttribute {
 	data: any[]
 	columns: ColumnItem[]
@@ -158,6 +161,7 @@ const props = withDefaults(defineProps<PengTableAttribute>(), {
 	// 是否有复选
 	isSelection: false,
 
+	// 表格项复选框 启用条件函数
 	checkBoxIsEnableCallBack: () => true,
 
 	loading: false,

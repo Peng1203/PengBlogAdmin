@@ -1,26 +1,28 @@
 <template>
-  <el-drawer
-    :size="size"
-    :title="title"
-    :modal="modal"
-    :direction="direction"
-    :before-close="handleClose"
-    :with-header="hasHeader"
-    :modal-class="mdClass"
-    v-model="drawerStatus"
-  >
-    <!-- 自定义header -->
-    <template #header>
-      <slot name="header" />
-    </template>
+  <div class="peng-drawer">
+    <el-drawer
+      :size="size"
+      :title="title"
+      :modal="modal"
+      :direction="direction"
+      :before-close="handleClose"
+      :with-header="hasHeader"
+      :modal-class="mdClass"
+      v-model="drawerStatus"
+    >
+      <!-- 自定义header -->
+      <template #header>
+        <slot name="header" />
+      </template>
 
-    <slot name="main" />
+      <slot name="main" />
 
-    <!-- 自定义底部 -->
-    <template #footer>
-      <slot name="footer" />
-    </template>
-  </el-drawer>
+      <!-- 自定义底部 -->
+      <template #footer>
+        <slot name="footer" />
+      </template>
+    </el-drawer>
+  </div>
 </template>
 
 <script lang="ts">
@@ -95,4 +97,9 @@ export default defineComponent({
 </script>
 
 <style lang='scss' scoped>
+.peng-drawer {
+	:deep(.el-drawer__body) {
+		padding: 10px 20px;
+	}
+}
 </style>

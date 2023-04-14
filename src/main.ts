@@ -7,8 +7,9 @@ import other from '@/utils/other';
 
 import ElementPlus from 'element-plus';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+// import locale from 'element-plus/lib/locale/lang/zh-cn'
 import ComponentHashMap from '@/utils/registerGlobalComponent'
-import 'element-plus/dist/index.css';
+import 'element-plus/dist/index.css'
 import '@/theme/index.scss';
 import '@/assets/global.css'
 
@@ -26,6 +27,7 @@ directive(app);
 other.elSvg(app);
 
 app.use(pinia)
+  // .use(ElementPlus, { locale })
   .use(router)
   .use(ElementPlus)
   .mount('#app');

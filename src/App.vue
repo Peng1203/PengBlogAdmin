@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts" name="app">
-import { defineAsyncComponent, computed, ref, onBeforeMount, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { defineAsyncComponent, computed, ref, onBeforeMount, onMounted, onUnmounted, nextTick, watch, provide } from 'vue'
 import { useRoute } from 'vue-router'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { storeToRefs } from 'pinia'
@@ -26,7 +26,8 @@ import { Local, Session } from '@/utils/storage'
 import mittBus from '@/utils/mitt'
 import setIntroduction from '@/utils/setIconfont'
 import handlePromiseError from '@/utils/handlePromiseError'
-import axios from 'axios'
+// import axios from 'axios'
+import getClientType from './utils/getClientType'
 
 // 引入组件
 const LockScreen = defineAsyncComponent(() => import('@/layout/lockScreen/index.vue'))
@@ -52,6 +53,11 @@ const setLockScreen = computed(() => {
 const getGlobalComponentSize = computed(() => {
 	return other.globalComponentSize()
 })
+
+// 使用 ref 创建响应式的设备类型对象
+const deviceClientType = ref<string>(getClientType())
+// 提供依赖注入
+provide('deviceClientType', deviceClientType)
 
 // 设置初始化，防止刷新时恢复默认
 onBeforeMount(() => {
@@ -81,13 +87,17 @@ onBeforeMount(() => {
 	// window.onbeforeunload = function () {
 	// 	beginTime = new Date().getTime()
 	// }
+	// 客户端设备类型
+	// 添加全局属性 返回设备类类型
+	window.clientType = getClientType()
+	window.addEventListener('resize', () => {
+		deviceClientType.value = getClientType()
+	})
 
 	window.addEventListener('unload', async function () {
-		console.log('onunload 执行-----')
 		differTime = new Date().getTime() - beginTime
 		if (differTime <= 5) {
 			// 刷新时有概率执行
-			console.log('浏览器关闭')
 			// axios.get('http://127.0.0.1:3000/index?info=关闭')
 			if (Session.get('token')) {
 				Session.clear()
