@@ -1,5 +1,6 @@
 <template>
   <div class="system-user-container layout-padding">
+    {{ deviceClientType }}
     <el-card
       shadow="hover"
       class="layout-padding-auto"
@@ -91,25 +92,57 @@
       ref="userDialogRef"
       @refresh="getTableData()"
     />
-    <el-button @click="editDrawerStatus = !editDrawerStatus">{{ editDrawerStatus }}</el-button>
     <!-- :size="400" -->
     <Peng-Drawer
       :title="'修改用户信息'"
+      :direction="deviceClientType === 'pc' ? 'rtl' : 'btt'"
+      :size="deviceClientType === 'pc' ? '400px' : '50%'"
       v-model="editDrawerStatus"
     >
-      <template #main>1213123</template>
+      <template #main>
+        <!-- :inline="true" -->
+        <!-- size="large" -->
+        <Peng-Form
+          ref="editFormRef"
+          :labelW="50"
+          :formData="editFormState.data"
+          :formItemList="editFormState.formItemList"
+        />
+        <el-button @click="test">1221</el-button>
+        <!-- :disabled="true" -->
+      </template>
     </Peng-Drawer>
+
+    <el-button @click="editDrawerStatus = !editDrawerStatus"></el-button>
   </div>
 </template>
 
 <script setup lang="ts" name="systemUser">
-import { defineAsyncComponent, reactive, onMounted, ref } from 'vue'
+import { defineAsyncComponent, reactive, onMounted, ref, watch, inject } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
+// import PengFrom from '@/components/Form/Index.vue'
 import { useUserApi } from '@/api/user'
 
 const { getUserList } = useUserApi()
+const deviceClientType = inject('deviceClientType')
 
+const form = reactive({
+	name: '',
+	region: '',
+	date1: '',
+	date2: '',
+	delivery: false,
+	type: [],
+	resource: '',
+	desc: '',
+})
+
+const editFormRef = ref<any>(null)
+function test() {
+	console.log(' -----', editFormRef.value.getRef())
+}
+// 表格参数
 const tableState = reactive({
 	loading: false,
 	data: [],
@@ -134,6 +167,57 @@ const tableState = reactive({
 		total: 0,
 	},
 })
+
+// 编辑
+const editFormState = reactive({
+	data: {
+		name: 'zs',
+		age: 18,
+		class: 1,
+		likes: ref<string[]>(['c']),
+	},
+	formItemList: ref<FormItem[]>([
+		{ type: 'input', label: '姓名', prop: 'name' },
+		{ type: 'input', label: '年龄', prop: 'age' },
+		{
+			type: 'select',
+			label: '班级',
+			prop: 'class',
+			options: [
+				{ label: '一年级', value: 1 },
+				{ label: '二年级', value: 2 },
+				{ label: '三年级', value: 3 },
+				{ label: '四年级', value: 4 },
+				{ label: '五年级', value: 5 },
+				{ label: '六年级', value: 6 },
+			],
+		},
+		{
+			type: 'select',
+			label: '爱好',
+			prop: 'likes',
+			multiple: true,
+			options: [
+				{ label: '唱', value: 'c' },
+				{ label: '跳', value: 't' },
+				{ label: 'rap', value: 'r' },
+				{ label: '蓝球', value: 'l' },
+				{ label: 'music', value: 'm' },
+			],
+		},
+	]),
+})
+
+watch(
+	() => editFormState.data,
+	(val) => {
+		console.log('editFormState表单变化 -----', val)
+	},
+	{
+		deep: true,
+		// immediate: true,
+	}
+)
 
 const editDrawerStatus = ref<boolean>(true)
 
