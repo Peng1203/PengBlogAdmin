@@ -43,8 +43,10 @@ service.interceptors.response.use(
 		return response
 	},
 	error => {
-		console.log('error -----', error)
-		const { data, status } = error.response
+		// console.log('error -----', error)
+		const { code, message, response } = error
+		if (code === 'ERR_NETWORK' || message === 'Network Error') return ElMessage.error('服务器连接错误!')
+		const { data, status } = response
 		switch (status) {
 			case 400:
 				ElMessage.error(data.message)
