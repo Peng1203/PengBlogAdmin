@@ -1,15 +1,18 @@
 <template>
+  <!-- :inline="inline" -->
   <el-form
     ref="formRef"
     :size="size"
-    :inline="inline"
     :model="formData"
     :disabled="disabled"
     :label-width="labelW"
     :label-position="labelP"
   >
-    <template
-      v-for="({
+    <el-row :gutter="30">
+      <!--  -->
+
+      <template
+        v-for="({
       type,
       label,
       prop, 
@@ -37,121 +40,169 @@
       fIcon,
       tBgColor,
       fBgColor,
-      isInline
+      isInline,
+      clearable
     }, i) in formItemList"
-      :key="i"
-    >
-      <!-- 自定义插槽 -->
-      <el-form-item
-        v-if="type === 'slot'"
-        :prop="prop"
-        :label="label"
-        v-show="(isShow === undefined ? true : isShow)"
-      >
-        <slot :name="slotName" />
-      </el-form-item>
-
-      <!-- 输入框 -->
-      <el-form-item
-        v-else-if="type === 'input'"
-        :size="size"
-        :prop="prop"
-        :label="label"
-        :rules="rules"
-        :required="required"
-        v-show="(isShow === undefined ? true : isShow)"
+        :key="i"
       >
         <el-col
-          :span="span || 24"
-          :offset="offset || 0"
-          :xs="xs || 24"
-          :sm="sm || 24"
-          :md="md || 24"
-          :lg="lg || 24"
-          :xl="xl || 24"
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="i +1 ===  formItemList.length ?'' : 'mb20'"
+          v-if="type === 'slot'"
         >
-
-          <el-input
-            :size="size"
-            :placeholder="placeholder"
-            :disabled="disabled || false"
-            v-model="formData[prop]"
-          />
-        </el-col>
-      </el-form-item>
-
-      <!-- 下拉选择框 -->
-      <el-form-item
-        v-else-if="type === 'select'"
-        :size="size"
-        :prop="prop"
-        :label="label"
-        :rules="rules"
-        :required="required"
-        v-show="(isShow === undefined ? true : isShow)"
-      >
-        <el-col
-          :span="span || 24"
-          :offset="offset || 0"
-          :xs="xs || 24"
-          :sm="sm || 24"
-          :md="md || 24"
-          :lg="lg || 24"
-          :xl="xl || 24"
-        >
-          <el-select
-            :multiple="multiple"
-            :placeholder="placeholder"
-            :disabled="disabled || false"
-            v-model="formData[prop]"
+          <!-- 自定义插槽 -->
+          <el-form-item
+            :prop="prop"
+            :label="label"
+            v-show="(isShow === undefined ? true : isShow)"
           >
-            <el-option
-              v-for="item in options"
-              :size="size"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+            <slot :name="slotName" />
+          </el-form-item>
         </el-col>
-      </el-form-item>
 
-      <!-- switch 选择器 -->
-      <el-form-item
-        v-else-if="type === 'switch'"
-        :size="size"
-        :prop="prop"
-        :label="label"
-        :rules="rules"
-        :required="required"
-        v-show="(isShow === undefined ? true : isShow)"
-      >
+        <!-- 输入框 -->
         <el-col
-          :span="span || 24"
-          :offset="offset || 0"
-          :xs="xs || 24"
-          :sm="sm || 24"
-          :md="md || 24"
-          :lg="lg || 24"
-          :xl="xl || 24"
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="i +1 ===  formItemList.length ?'' : 'mb20'"
+          v-else-if="type === 'input'"
         >
-          <el-switch
+          <el-form-item
             :size="size"
-            :placeholder="placeholder"
-            :active-text="tText"
-            :active-value="tValue"
-            :active-icon="tIcon"
-            :inactive-text="fText"
-            :inactive-value="fValue"
-            :inactive-icon="fIcon"
-            :inline-prompt="(isInline === undefined ? false : isInline)"
-            :style="`--el-switch-on-color: ${tBgColor || '#13ce66'} ; --el-switch-off-color: ${fBgColor || '#ff4949'} `"
-            @change="handleSwitchChange($event, prop, i)"
-            v-model="formData[prop]"
-          />
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="(isShow === undefined ? true : isShow)"
+          >
+            <el-input
+              :size="size"
+              :placeholder="placeholder"
+              :disabled="disabled || false"
+              :clearable="clearable || true"
+              v-model="formData[prop]"
+            />
+          </el-form-item>
         </el-col>
-      </el-form-item>
-    </template>
+
+        <!-- 密码框框 -->
+        <el-col
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="i +1 ===  formItemList.length ? '' : 'mb20'"
+          v-else-if="type === 'pwd'"
+        >
+          <el-form-item
+            :size="size"
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="(isShow === undefined ? true : isShow)"
+          >
+            <el-input
+              type="password"
+              show-password
+              :size="size"
+              :placeholder="placeholder"
+              :disabled="disabled || false"
+              :clearable="clearable || true"
+              v-model="formData[prop]"
+            />
+          </el-form-item>
+        </el-col>
+
+        <!-- 下拉选择框 -->
+        <el-col
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="i +1 ===  formItemList.length ? '' : 'mb20'"
+          v-else-if="type === 'select'"
+        >
+          <el-form-item
+            :size="size"
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="(isShow === undefined ? true : isShow)"
+          >
+            <el-select
+              :multiple="multiple"
+              :placeholder="placeholder"
+              :disabled="disabled || false"
+              v-model="formData[prop]"
+            >
+              <el-option
+                v-for="item in options"
+                :size="size"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+
+        <!-- switch 选择器 -->
+        <el-col
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="i + 1 ===  formItemList.length ? '' : 'mb20'"
+          v-else-if="type === 'switch'"
+        >
+          <el-form-item
+            :size="size"
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="(isShow === undefined ? true : isShow)"
+          >
+            <el-switch
+              :size="size"
+              :placeholder="placeholder"
+              :active-text="tText"
+              :active-value="tValue"
+              :active-icon="tIcon"
+              :inactive-text="fText"
+              :inactive-value="fValue"
+              :inactive-icon="fIcon"
+              :inline-prompt="(isInline === undefined ? false : isInline)"
+              :style="`--el-switch-on-color: ${tBgColor || '#13ce66'} ; --el-switch-off-color: ${fBgColor || '#ff4949'} `"
+              @change="handleSwitchChange($event, prop, i)"
+              v-model="formData[prop]"
+            />
+          </el-form-item>
+        </el-col>
+      </template>
+    </el-row>
   </el-form>
 </template>
 
