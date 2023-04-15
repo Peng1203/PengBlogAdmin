@@ -1,6 +1,5 @@
 <template>
   <div class="system-user-container layout-padding">
-    {{ deviceClientType }}
     <el-card
       shadow="hover"
       class="layout-padding-auto"
@@ -12,8 +11,9 @@
             size="default"
             type="success"
             class="ml10"
-            @click="onOpenAddUser('add')"
+            @click="()=> addDialogRef.addUserDialogStatus = true"
           >
+            <!-- @click="handleShowAddDialog" -->
             <el-icon>
               <ele-FolderAdd />
             </el-icon>
@@ -51,19 +51,13 @@
             effect="dark"
             type="success"
             v-if="row[prop] === 1"
-          >正常</el-tag>
-          <el-tag
-            size="small"
-            effect="dark"
-            type="warning"
-            v-else-if="row[prop] === 2"
-          >锁定</el-tag>
+          >启用</el-tag>
           <el-tag
             size="small"
             effect="dark"
             type="danger"
-            v-else-if="row[prop] === 3"
-          >封禁</el-tag>
+            v-else
+          >锁定</el-tag>
         </template>
 
         <!-- 操作 -->
@@ -75,6 +69,7 @@
             type="primary"
             :icon="Edit"
             :disabled="row.id === 1"
+            @click="handleEditUserInfo(row)"
           />
           <el-button
             circle
@@ -83,65 +78,36 @@
             type="danger"
             :icon="Delete"
             :disabled="row.id === 1"
+            @click="handleDelUser(row)"
           />
         </template>
       </Peng-Table>
 
     </el-card>
-    <UserDialog
-      ref="userDialogRef"
-      @refresh="getTableData()"
+    <!-- 添加用户对话框 -->
+    <AddUserDialog
+      ref="addDialogRef"
+      @updateList="getUserTableData"
     />
-    <!-- :size="400" -->
-    <Peng-Drawer
-      :title="'修改用户信息'"
-      :direction="deviceClientType === 'pc' ? 'rtl' : 'btt'"
-      :size="deviceClientType === 'pc' ? '400px' : '50%'"
-      v-model="editDrawerStatus"
-    >
-      <template #main>
-        <!-- :inline="true" -->
-        <!-- size="large" -->
-        <Peng-Form
-          ref="editFormRef"
-          :labelW="50"
-          :formData="editFormState.data"
-          :formItemList="editFormState.formItemList"
-        />
-        <el-button @click="test">1221</el-button>
-        <!-- :disabled="true" -->
-      </template>
-    </Peng-Drawer>
 
-    <el-button @click="editDrawerStatus = !editDrawerStatus"></el-button>
+    <!-- 编辑用户信息抽屉 -->
+    <EditUserDrawer
+      :editRow="editRow"
+      ref="editDrawerRef"
+      @updateList="getUserTableData"
+    />
   </div>
 </template>
 
 <script setup lang="ts" name="systemUser">
-import { defineAsyncComponent, reactive, onMounted, ref, watch, inject } from 'vue'
+import { defineAsyncComponent, reactive, onMounted, ref, watch, inject, watchEffect } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 // import PengFrom from '@/components/Form/Index.vue'
 import { useUserApi } from '@/api/user'
 
-const { getUserList } = useUserApi()
-const deviceClientType = inject('deviceClientType')
+const { getUserList, deleteUserById } = useUserApi()
 
-const form = reactive({
-	name: '',
-	region: '',
-	date1: '',
-	date2: '',
-	delivery: false,
-	type: [],
-	resource: '',
-	desc: '',
-})
-
-const editFormRef = ref<any>(null)
-function test() {
-	console.log(' -----', editFormRef.value.getRef())
-}
 // 表格参数
 const tableState = reactive({
 	loading: false,
@@ -168,61 +134,35 @@ const tableState = reactive({
 	},
 })
 
-// 编辑
-const editFormState = reactive({
-	data: {
-		name: 'zs',
-		age: 18,
-		class: 1,
-		likes: ref<string[]>(['c']),
-	},
-	formItemList: ref<FormItem[]>([
-		{ type: 'input', label: '姓名', prop: 'name' },
-		{ type: 'input', label: '年龄', prop: 'age' },
-		{
-			type: 'select',
-			label: '班级',
-			prop: 'class',
-			options: [
-				{ label: '一年级', value: 1 },
-				{ label: '二年级', value: 2 },
-				{ label: '三年级', value: 3 },
-				{ label: '四年级', value: 4 },
-				{ label: '五年级', value: 5 },
-				{ label: '六年级', value: 6 },
-			],
-		},
-		{
-			type: 'select',
-			label: '爱好',
-			prop: 'likes',
-			multiple: true,
-			options: [
-				{ label: '唱', value: 'c' },
-				{ label: '跳', value: 't' },
-				{ label: 'rap', value: 'r' },
-				{ label: '蓝球', value: 'l' },
-				{ label: 'music', value: 'm' },
-			],
-		},
-	]),
-})
-
-watch(
-	() => editFormState.data,
-	(val) => {
-		console.log('editFormState表单变化 -----', val)
-	},
-	{
-		deep: true,
-		// immediate: true,
-	}
-)
-
-const editDrawerStatus = ref<boolean>(true)
-
 // 根据条件来判断复选框是否可选
 const handleCheckboxIsEnable = (row: any) => (row.id === 1 ? false : true)
+
+// 搜索
+const handleSearch = () => {
+	tableState.pagerInfo.page = 1
+	getUserTableData()
+}
+
+// 分页器修改时触发
+const handlePageInfoChange = (pageInfo: any) => {
+	const { page, pageSize } = pageInfo
+	tableState.pagerInfo.page = page
+	tableState.pagerInfo.pageSize = pageSize
+	getUserTableData()
+}
+
+// 表格排序
+const handleColumnChange = ({ column, order }: any) => {
+	tableState.column = column
+	tableState.order = order
+	getUserTableData()
+}
+
+// 文字搜索高亮
+const queryStrStyle = (str: string) => {
+	const regex = new RegExp(tableState.queryStr, 'ig')
+	return str.replace(regex, `<font color="red">$&</font>`)
+}
 
 // 获取用户表格数据
 const getUserTableData = async () => {
@@ -246,102 +186,48 @@ const getUserTableData = async () => {
 		tableState.loading = false
 	}
 }
-// 引入组件
-const UserDialog = defineAsyncComponent(() => import('@/views/system/user/dialog.vue'))
 
-// 定义变量内容
-const userDialogRef = ref()
-const state = reactive<SysUserState>({
-	tableData: {
-		data: [],
-		total: 0,
-		loading: false,
-		param: {
-			pageNum: 1,
-			pageSize: 10,
-		},
-	},
-})
-
-// 初始化表格数据
-const getTableData = () => {
-	state.tableData.loading = true
-	const data = []
-	for (let i = 0; i < 2; i++) {
-		data.push({
-			userName: i === 0 ? 'admin' : 'test',
-			userNickname: i === 0 ? '我是管理员' : '我是普通用户',
-			roleSign: i === 0 ? 'admin' : 'common',
-			department: i === 0 ? ['vueNextAdmin', 'IT外包服务'] : ['vueNextAdmin', '资本控股'],
-			phone: '12345678910',
-			email: 'vueNextAdmin@123.com',
-			sex: '女',
-			password: '123456',
-			overdueTime: new Date(),
-			status: true,
-			describe: i === 0 ? '不可删除' : '测试用户',
-			createTime: new Date().toLocaleString(),
-		})
-	}
-	state.tableData.data = data
-	state.tableData.total = state.tableData.data.length
-	setTimeout(() => {
-		state.tableData.loading = false
-	}, 500)
-}
-// 打开新增用户弹窗
-const onOpenAddUser = (type: string) => {
-	userDialogRef.value.openDialog(type)
-}
-// 打开修改用户弹窗
-const onOpenEditUser = (type: string, row: RowUserType) => {
-	userDialogRef.value.openDialog(type, row)
-}
-// 删除用户
-const onRowDel = (row: RowUserType) => {
-	ElMessageBox.confirm(`此操作将永久删除账户名称：“${row.userName}”，是否继续?`, '提示', {
+// 打开删除用户
+const handleDelUser = (row: any) => {
+	ElMessageBox.confirm(`此操作将永久删除用户：“${row.userName}”，是否继续?`, '提示', {
 		confirmButtonText: '确认',
 		cancelButtonText: '取消',
 		type: 'warning',
 	})
-		.then(() => {
-			getTableData()
-			ElMessage.success('删除成功')
+		.then(async () => {
+			await deleteUser(row.id)
+			getUserTableData()
 		})
 		.catch(() => {})
 }
-
-// 搜索
-const handleSearch = () => {
-	tableState.pagerInfo.page = 1
-	getUserTableData()
+// 删除用户
+const deleteUser = async (id: number) => {
+	try {
+		const { data: res } = await deleteUserById(id)
+		const { code, data, message } = res
+		if (code !== 200 || message !== 'Success') return ElMessage.error(data)
+		ElMessage.success(data)
+	} catch (e) {
+		console.log(e)
+	}
 }
 
-// 分页器修改时触发
-const handlePageInfoChange = (pageInfo: any) => {
-	const { page, pageSize } = pageInfo
-	tableState.pagerInfo.page = page
-	tableState.pagerInfo.pageSize = pageSize
-	getUserTableData()
+// 引入编辑用户抽屉组件
+const EditUserDrawer = defineAsyncComponent(() => import('./components/EditUser.vue'))
+const editDrawerRef = ref<any>(null)
+const editRow = ref<object>()
+// 打开编辑用户信息抽屉
+const handleEditUserInfo = (row: object) => {
+	editRow.value = row
+	editDrawerRef.value.editDrawerStatus = true
 }
 
-const handleColumnChange = ({ column, order }: any) => {
-	tableState.column = column
-	tableState.order = order
-	getUserTableData()
-}
-// 文字搜索高亮
-const queryStrStyle = (str: string) => {
-	// const result = str.indexOf(tableState.queryStr)
-	// if (result === -1) return str
-	// return str.replaceAll(tableState.queryStr, `<font color="red">${tableState.queryStr}</font>`)
-	const regex = new RegExp(tableState.queryStr, 'ig')
-	return str.replace(regex, `<font color="red">$&</font>`)
-}
+// 引入添加用户对话框组件
+const AddUserDialog = defineAsyncComponent(() => import('./components/AddUser.vue'))
+const addDialogRef = ref<any>(null)
 
 // 页面加载时
 onMounted(() => {
-	// getTableData()
 	getUserTableData()
 })
 </script>
