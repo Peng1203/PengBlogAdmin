@@ -5,7 +5,7 @@
       class="layout-padding-auto"
     >
       <!-- 顶部操作 -->
-      <div class="system-user-search mb15 flex-sb-c">
+      <div class="mb15 flex-sb-c">
         <div>
           <el-button
             size="default"
@@ -28,6 +28,7 @@
           @search="handleSearch"
         />
       </div>
+
       <!-- 用户表格 -->
       <Peng-Table
         :isSelection="true"
@@ -37,8 +38,8 @@
         :pagerInfo="tableState.pagerInfo"
         :columns="tableState.tableColumns"
         :checkBoxIsEnableCallBack="handleCheckboxIsEnable"
-        @pageNumOrSizeChange="handlePageInfoChange"
         @columnSort="handleColumnChange"
+        @pageNumOrSizeChange="handlePageInfoChange"
       >
         <!-- 用户名 -->
         <template #uName="{ row, prop }">

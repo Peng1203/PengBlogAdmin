@@ -9,8 +9,8 @@ declare interface PengTableAttribute {
   isNeedPager?: boolean
   pagerInfo?: PageInfo
 }
-// 表格column 可选项
-declare interface ColumnItem {
+// 表格column 可选属性
+declare interface ColumnItem<T = any> {
   label: string
   prop: string
   width?: number | string | 'auto'
@@ -21,6 +21,8 @@ declare interface ColumnItem {
   slotName?: string
   align?: 'left' | 'center' | 'right'
   childrenColumns?: ColumnItem[]
+  [key: string]: T
+
 }
 
 declare interface PageInfo {

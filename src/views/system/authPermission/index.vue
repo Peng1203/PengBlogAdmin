@@ -25,8 +25,46 @@
         />
       </div>
 
-      <Peng-Table>
+      <Peng-Table
+        :isFilterShowColumn="true"
+        :data="tableState.data"
+        :loading="tableState.loading"
+        :pagerInfo="tableState.pagerInfo"
+        :columns="tableState.tableColumns"
+        @columnSort="handleColumnChange"
+        @pageNumOrSizeChange="handlePageInfoChange"
+      >
+        <!-- 权限标识名称 -->
+        <template #authName="{ row, prop }">
+          <span v-html="queryStrStyle(row[prop])" />
+        </template>
 
+        <!-- 权限标识代码 -->
+        <template #authCode="{ row, prop }">
+          <span v-html="queryStrStyle(row[prop])" />
+        </template>
+
+        <!-- 操作 -->
+        <template #operation="{ row }">
+          <!-- :disabled="row.id === 1" -->
+          <el-button
+            circle
+            title="修改信息"
+            size="small"
+            type="primary"
+            :icon="Edit"
+          />
+          <!-- @click="handleEditUserInfo(row)" -->
+          <el-button
+            circle
+            title="删除"
+            size="small"
+            type="danger"
+            :icon="Delete"
+          />
+          <!-- :disabled="row.id === 1" -->
+          <!-- @click="handleDelUser(row)" -->
+        </template>
       </Peng-Table>
     </el-card>
   </div>
@@ -34,25 +72,83 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useAuthPermissionApi } from '@/api/authPermission/index'
+import { Delete, Edit } from '@element-plus/icons-vue'
 
+const { getAuthPermissionList } = useAuthPermissionApi()
 // 表格参数
 const tableState = reactive({
 	loading: false,
 	queryStr: '',
+	column: '',
+	order: '',
 	data: [],
 	tableColumns: ref<ColumnItem[]>([
-		{ label: '', prop: '', minWidth: '', tooltip: true },
-		{ label: '', prop: '', minWidth: '', tooltip: true },
-		{ label: '', prop: '', minWidth: '', tooltip: true },
-		{ label: '', prop: '', minWidth: '', tooltip: true },
+		{ label: '标识名称', prop: 'permissionName', minWidth: 100, tooltip: true, slotName: 'authName' },
+		{ label: '标识CODE', prop: 'permissionCode', minWidth: 130, tooltip: true, slotName: 'authCode' },
+		{ label: '描述', prop: 'desc', tooltip: true },
+		{ label: '更新时间', prop: 'updateTime', width: 200, sort: true },
+		{ label: '创建时间', prop: 'createdTime', width: 200, sort: true },
+		{ label: '操作', prop: '', width: 95, slotName: 'operation', fixed: 'right' },
 	]),
+
+	// 分页器信息
+	pagerInfo: {
+		page: 1,
+		pageSize: 10,
+		total: 0,
+	},
 })
 
 // 获取权限标识数据
-const getAuthPermissionTableData = () => {}
+const getAuthPermissionTableData = async (): Promise<void> => {
+	try {
+		tableState.loading = true
+		const params = {
+			page: tableState.pagerInfo.page,
+			pageSize: tableState.pagerInfo.pageSize,
+			queryStr: tableState.queryStr,
+			column: tableState.column,
+			order: tableState.order,
+		}
+		const { data: res } = await getAuthPermissionList(params)
+		const { code, message, data, total } = res
+		if (code !== 200 || message !== 'Success') return
+		tableState.data = data
+		tableState.pagerInfo.total = total
+	} catch (e) {
+		console.log(e)
+	} finally {
+		tableState.loading = false
+	}
+}
+
+// 表格排序
+const handleColumnChange = ({ column, order }: any) => {
+	tableState.column = column
+	tableState.order = order
+	getAuthPermissionTableData()
+}
+
+// 分页器修改时触发
+const handlePageInfoChange = (pageInfo: any) => {
+	const { page, pageSize } = pageInfo
+	tableState.pagerInfo.page = page
+	tableState.pagerInfo.pageSize = pageSize
+	getAuthPermissionTableData()
+}
+
+// 文字搜索高亮
+const queryStrStyle = (str: string) => {
+	const regex = new RegExp(tableState.queryStr, 'ig')
+	return str.replace(regex, `<font color="red">$&</font>`)
+}
 
 // 搜索
-const handleSearch = () => {}
+const handleSearch = () => {
+	tableState.pagerInfo.page = 1
+	getAuthPermissionTableData()
+}
 
 onMounted(() => {
 	getAuthPermissionTableData()

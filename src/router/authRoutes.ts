@@ -167,6 +167,21 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: '/authPermission',
+        name: 'systemAuthPermission',
+        component: () => import('@/views/system/authPermission/index.vue'),
+        meta: {
+          title: '权限标识',
+          isLink: '',
+          isHide: false,
+          isKeepAlive: true,
+          isAffix: false,
+          isIframe: false,
+          roles: ['admin'],
+          icon: 'iconfont icon-permissions-o',
+        },
+      },
+      {
         path: '/user',
         name: 'systemUser',
         component: () => import('@/views/system/user/index.vue'),

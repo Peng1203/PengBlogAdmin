@@ -11,3 +11,12 @@ declare module 'axios' {
 		[key: string]: T;
 	}
 }
+
+declare type listParams = {
+	page: number
+	pageSize: number
+	queryStr: string
+	column: string
+	order: string
+	[key: string]: T
+}
