@@ -1,0 +1,147 @@
+@font-face {
+  font-family: "iconfont"; /* Project id 3925744 */
+  src: url('iconfont.woff2?t=1681577938561') format('woff2'),
+       url('iconfont.woff?t=1681577938561') format('woff'),
+       url('iconfont.ttf?t=1681577938561') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-permissions-o:before {
+  content: "\e738";
+}
+
+.icon-auth:before {
+  content: "\e635";
+}
+
+.icon-git:before {
+  content: "\e79d";
+}
+
+.icon-gitee:before {
+  content: "\e60c";
+}
+
+.icon-GitHub:before {
+  content: "\ea0a";
+}
+
+.icon-css:before {
+  content: "\e61e";
+}
+
+.icon-html:before {
+  content: "\e632";
+}
+
+.icon-steam:before {
+  content: "\e610";
+}
+
+.icon-windows-copy:before {
+  content: "\ed14";
+}
+
+.icon-mysql:before {
+  content: "\ec6d";
+}
+
+.icon-redis:before {
+  content: "\e669";
+}
+
+.icon-chrome:before {
+  content: "\ea09";
+}
+
+.icon-sequelize:before {
+  content: "\e69d";
+}
+
+.icon-babel:before {
+  content: "\eb4a";
+}
+
+.icon-electron:before {
+  content: "\eb86";
+}
+
+.icon-windows:before {
+  content: "\ed13";
+}
+
+.icon-doujiyan-huaji:before {
+  content: "\e60b";
+}
+
+.icon-huaji:before {
+  content: "\e60f";
+}
+
+.icon-shounvehuaji:before {
+  content: "\e618";
+}
+
+.icon-COShuaji:before {
+  content: "\e620";
+}
+
+.icon-JavaScript:before {
+  content: "\e704";
+}
+
+.icon-xianqia:before {
+  content: "\e628";
+}
+
+.icon-Angular:before {
+  content: "\e798";
+}
+
+.icon-webpack:before {
+  content: "\e799";
+}
+
+.icon-Vue:before {
+  content: "\e79a";
+}
+
+.icon-React:before {
+  content: "\e79b";
+}
+
+.icon-Nodejs:before {
+  content: "\e79c";
+}
+
+.icon-Nodejs1:before {
+  content: "\e7a4";
+}
+
+.icon-npm:before {
+  content: "\e71a";
+}
+
+.icon-nuxt:before {
+  content: "\e686";
+}
+
+.icon-svelte:before {
+  content: "\e698";
+}
+
+.icon-typescript:before {
+  content: "\e6a3";
+}
+
+.icon-yarn:before {
+  content: "\ec31";
+}
+
