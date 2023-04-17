@@ -53,7 +53,7 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i +1 ===  formItemList.length ?'' : 'mb20'"
+          :class="i + 1 ===  formItemList.length ? '' : 'mb20'"
           v-if="type === 'slot'"
         >
           <!-- 自定义插槽 -->
@@ -75,7 +75,7 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i +1 ===  formItemList.length ?'' : 'mb20'"
+          :class="i + 1 ===  formItemList.length ? '' : 'mb20'"
           v-else-if="type === 'input'"
         >
           <el-form-item
@@ -105,7 +105,7 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i +1 ===  formItemList.length ? '' : 'mb20'"
+          :class="i + 1 ===  formItemList.length ? '' : 'mb20'"
           v-else-if="type === 'pwd'"
         >
           <el-form-item
@@ -137,7 +137,7 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i +1 ===  formItemList.length ? '' : 'mb20'"
+          :class="i + 1 ===  formItemList.length ? '' : 'mb20'"
           v-else-if="type === 'select'"
         >
           <el-form-item
@@ -197,6 +197,37 @@
               :inline-prompt="(isInline === undefined ? false : isInline)"
               :style="`--el-switch-on-color: ${tBgColor || '#13ce66'} ; --el-switch-off-color: ${fBgColor || '#ff4949'} `"
               @change="handleSwitchChange($event, prop, i)"
+              v-model="formData[prop]"
+            />
+          </el-form-item>
+        </el-col>
+
+        <!-- 富文本输入框 -->
+        <el-col
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="i + 1 ===  formItemList.length ? '' : 'mb20'"
+          v-else-if="type === 'textarea'"
+        >
+          <el-form-item
+            :size="size"
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="(isShow === undefined ? true : isShow)"
+          >
+            <el-input
+              type="textarea"
+              :size="size"
+              :placeholder="placeholder"
+              :disabled="disabled || false"
+              :clearable="clearable || true"
               v-model="formData[prop]"
             />
           </el-form-item>
