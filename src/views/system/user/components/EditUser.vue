@@ -15,8 +15,7 @@
         :labelW="80"
         :formData="editFormState.data"
         :formItemList="editFormState.formItemList"
-      >
-      </Peng-Form>
+      />
 
       <div class="mt20 flex-e-c">
         <el-button

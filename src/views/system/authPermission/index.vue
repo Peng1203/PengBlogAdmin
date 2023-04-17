@@ -10,9 +10,8 @@
           size="default"
           type="success"
           class="ml10"
+          @click="addAuthDialogRef.addAuthPermissonDialogStatus = true"
         >
-          <!-- @click="()=> addDialogRef.addUserDialogStatus = true" -->
-          <!-- @click="handleShowAddDialog" -->
           <i class="iconfont icon-permissions-o" />
           添加权限标识
         </el-button>
@@ -34,13 +33,8 @@
         @columnSort="handleColumnChange"
         @pageNumOrSizeChange="handlePageInfoChange"
       >
-        <!-- 权限标识名称 -->
-        <template #authName="{ row, prop }">
-          <span v-html="queryStrStyle(row[prop])" />
-        </template>
-
-        <!-- 权限标识代码 -->
-        <template #authCode="{ row, prop }">
+        <!-- 权限标识名称 权限标识代码 查询高亮 -->
+        <template #queryHighlight="{ row, prop }">
           <span v-html="queryStrStyle(row[prop])" />
         </template>
 
@@ -53,6 +47,7 @@
             size="small"
             type="primary"
             :icon="Edit"
+            @click="handleEditAuthPermission(row)"
           />
           <!-- @click="handleEditUserInfo(row)" -->
           <el-button
@@ -61,21 +56,35 @@
             size="small"
             type="danger"
             :icon="Delete"
+            @click="handleDeleteAuthPermission(row)"
           />
           <!-- :disabled="row.id === 1" -->
           <!-- @click="handleDelUser(row)" -->
         </template>
       </Peng-Table>
     </el-card>
+    <!-- 修改权限标识信息 -->
+    <EditAuthPermissonDrawer
+      ref="editAuthDrawerRef"
+      :editRow="editAuthRowInfo"
+      @updateList="getAuthPermissionTableData"
+    />
+
+    <!-- 添加权限标识 -->
+    <AddAuthPermissonDialog
+      ref="addAuthDialogRef"
+      @updateList="getAuthPermissionTableData"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, defineAsyncComponent } from 'vue'
 import { useAuthPermissionApi } from '@/api/authPermission/index'
 import { Delete, Edit } from '@element-plus/icons-vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
-const { getAuthPermissionList } = useAuthPermissionApi()
+const { getAuthPermissionList, delAuthPermission } = useAuthPermissionApi()
 // 表格参数
 const tableState = reactive({
 	loading: false,
@@ -84,8 +93,8 @@ const tableState = reactive({
 	order: '',
 	data: [],
 	tableColumns: ref<ColumnItem[]>([
-		{ label: '标识名称', prop: 'permissionName', minWidth: 100, tooltip: true, slotName: 'authName' },
-		{ label: '标识CODE', prop: 'permissionCode', minWidth: 130, tooltip: true, slotName: 'authCode' },
+		{ label: '标识名称', prop: 'permissionName', minWidth: 100, tooltip: true, slotName: 'queryHighlight' },
+		{ label: '标识CODE', prop: 'permissionCode', minWidth: 130, tooltip: true, slotName: 'queryHighlight' },
 		{ label: '描述', prop: 'desc', tooltip: true },
 		{ label: '更新时间', prop: 'updateTime', width: 200, sort: true },
 		{ label: '创建时间', prop: 'createdTime', width: 200, sort: true },
@@ -149,6 +158,49 @@ const handleSearch = () => {
 	tableState.pagerInfo.page = 1
 	getAuthPermissionTableData()
 }
+
+// 处理删除权限标识
+const handleDeleteAuthPermission = async (row: any) => {
+	const confirmRes = await ElMessageBox.confirm(`此操作将永久删除操作权限标识：“${row.permissionName}”，是否继续?`, '提示', {
+		confirmButtonText: '确认',
+		cancelButtonText: '取消',
+		type: 'warning',
+	}).catch(() => false)
+	if (!confirmRes) return
+	const delRes = await delAuthPermissionById(row.id)
+	if (delRes) getAuthPermissionTableData()
+}
+// 通过ID删除权限标识
+const delAuthPermissionById = async (id: number): Promise<boolean> => {
+	try {
+		const { data: res } = await delAuthPermission(id)
+		const { code, data, message } = res
+		if (code !== 200 || message !== 'Success') {
+			ElMessage.error(data)
+			return false
+		}
+		ElMessage.success(data)
+		return true
+	} catch (e) {
+		console.log(e)
+		return false
+	}
+}
+
+// 编辑权限标识
+const EditAuthPermissonDrawer = defineAsyncComponent(() => import('./components/EditAuthPermisson.vue'))
+
+const editAuthDrawerRef = ref<any>(null)
+const editAuthRowInfo = ref()
+// 编辑权限标识
+const handleEditAuthPermission = (row: any) => {
+	editAuthRowInfo.value = JSON.parse(JSON.stringify(row))
+	editAuthDrawerRef.value.editDrawerStatus = true
+}
+
+// 添加权限标识
+const AddAuthPermissonDialog = defineAsyncComponent(() => import('./components/AddAuthPermisson.vue'))
+const addAuthDialogRef = ref<any>(null)
 
 onMounted(() => {
 	getAuthPermissionTableData()
