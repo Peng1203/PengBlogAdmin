@@ -11,7 +11,7 @@
             size="default"
             type="success"
             class="ml10"
-            @click="()=> addDialogRef.addUserDialogStatus = true"
+            @click="() => addDialogRef.addUserDialogStatus = true"
           >
             <!-- @click="handleShowAddDialog" -->
             <el-icon>
