@@ -26,7 +26,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: true,
           isKeepAlive: true,
           roles: ['admin', 'common'],
-          icon: 'iconfont icon-shouye',
+          icon: 'ele-HomeFilled',
         },
       },
       // {
@@ -148,7 +148,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin'],
-          icon: 'iconfont icon-caidan',
+          icon: 'ele-Menu',
         },
       },
       {
@@ -193,7 +193,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin'],
-          icon: 'iconfont icon-icon-',
+          icon: 'ele-User',
         },
       },
       {
@@ -208,7 +208,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin', 'common'],
-          icon: 'iconfont icon-gerenzhongxin',
+          icon: 'ele-UserFilled',
         },
       },
     ]
