@@ -1,6 +1,34 @@
 import { nextTick } from 'vue';
 import * as svg from '@element-plus/icons-vue';
 
+// 获取自定义导入项目的图标
+const getMyIcon = () => {
+	return new Promise((resolve, reject) => {
+		nextTick(() => {
+			const styles: any = document.styleSheets;
+			let sheetsList = [];
+			let sheetsIconList = [];
+			for (let i = 0; i < styles.length; i++) {
+				if (styles[i]?.rules[1]?.selectorText === '.iconfont' && styles[i].href === null) {
+					sheetsList.push(styles[i]);
+				}
+
+			}
+			for (let i = 0; i < sheetsList.length; i++) {
+				for (let j = 0; j < sheetsList[i].cssRules.length; j++) {
+					if (sheetsList[i].cssRules[j].selectorText && sheetsList[i].cssRules[j].selectorText.indexOf('.icon-') > -1) {
+						sheetsIconList.push(
+							`${sheetsList[i].cssRules[j].selectorText.substring(1, sheetsList[i].cssRules[j].selectorText.length).replace(/\:\:before/gi, '')}`
+						);
+					}
+				}
+			}
+			if (sheetsIconList.length > 0) resolve(sheetsIconList);
+			else reject('未获取到值，请刷新重试');
+		});
+	});
+}
+
 // 获取阿里字体图标
 const getAlicdnIconfont = () => {
 	return new Promise((resolve, reject) => {
@@ -84,17 +112,13 @@ const getAwesomeIconfont = () => {
  */
 const initIconfont = {
 	// iconfont
-	ali: () => {
-		return getAlicdnIconfont();
-	},
+	myIcon: () => getMyIcon(),
+	// iconfont
+	ali: () => getAlicdnIconfont(),
 	// element plus
-	ele: () => {
-		return getElementPlusIconfont();
-	},
+	ele: () => getElementPlusIconfont(),
 	// fontawesome
-	awe: () => {
-		return getAwesomeIconfont();
-	},
+	awe: () => getAwesomeIconfont(),
 };
 
 // 导出方法

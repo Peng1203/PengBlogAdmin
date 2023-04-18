@@ -1,8 +1,9 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 3925744 */
-  src: url('iconfont.woff2?t=1681577938561') format('woff2'),
-       url('iconfont.woff?t=1681577938561') format('woff'),
-       url('iconfont.ttf?t=1681577938561') format('truetype');
+  font-family: "iconfont";
+  /* Project id 3925744 */
+  src: url('iconfont.woff2?t=1681827195140') format('woff2'),
+    url('iconfont.woff?t=1681827195140') format('woff'),
+    url('iconfont.ttf?t=1681827195140') format('truetype');
 }
 
 .iconfont {
@@ -144,4 +145,3 @@
 .icon-yarn:before {
   content: "\ec31";
 }
-

@@ -42,6 +42,18 @@
           >
             <el-tab-pane
               lazy
+              label="my"
+              name="my"
+            >
+              <IconList
+                :list="fontIconSheetsFilterList"
+                :empty="emptyDescription"
+                :prefix="state.fontIconPrefix"
+                @get-icon="onColClick"
+              />
+            </el-tab-pane>
+            <!-- <el-tab-pane
+              lazy
               label="ali"
               name="ali"
             >
@@ -51,7 +63,7 @@
                 :prefix="state.fontIconPrefix"
                 @get-icon="onColClick"
               />
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane
               lazy
               label="ele"
@@ -145,11 +157,12 @@ const state = reactive({
 	fontIconWidth: 0,
 	fontIconSearch: '',
 	fontIconPlaceholder: '',
-	fontIconTabActive: 'ali',
+	fontIconTabActive: 'my',
 	fontIconList: {
 		ali: [],
 		ele: [],
 		awe: [],
+		my: [],
 	},
 })
 
@@ -179,9 +192,11 @@ const fontIconSheetsFilterList = computed(() => {
 // 根据 tab name 类型设置图标
 const fontIconTabNameList = () => {
 	let iconList: any = []
-	if (state.fontIconTabActive === 'ali') iconList = state.fontIconList.ali
+	if (state.fontIconTabActive === 'my') iconList = state.fontIconList.my
+	// if (state.fontIconTabActive === 'ali') iconList = state.fontIconList.ali
 	else if (state.fontIconTabActive === 'ele') iconList = state.fontIconList.ele
 	else if (state.fontIconTabActive === 'awe') iconList = state.fontIconList.awe
+	else if (state.fontIconTabActive === 'my') iconList = state.fontIconList.my
 	return iconList
 }
 // 处理 icon 双向绑定数值回显
@@ -192,12 +207,13 @@ const initModeValueEcho = () => {
 }
 // 处理 icon 类型，用于回显时，tab 高亮与初始化数据
 const initFontIconName = () => {
-	let name = 'ali'
-	if (props.modelValue!.indexOf('iconfont') > -1) name = 'ali'
+	let name = 'my'
+	if (props.modelValue!.indexOf('iconfont') > -1) name = 'my'
+	// else if (props.modelValue!.indexOf('iconfont') > -1) name = 'ali'
 	else if (props.modelValue!.indexOf('ele-') > -1) name = 'ele'
 	else if (props.modelValue!.indexOf('fa') > -1) name = 'awe'
 	// 初始化 tab 高亮回显
-	state.fontIconTabActive = name
+	else state.fontIconTabActive = name
 	return name
 }
 // 初始化数据
@@ -219,6 +235,12 @@ const initFontIconData = async (name: string) => {
 		if (state.fontIconList.awe.length > 0) return
 		await initIconfont.awe().then((res: any) => {
 			state.fontIconList.awe = res.map((i: string) => `fa ${i}`)
+		})
+	} else if (name === 'my') {
+		// 自定义引入
+		if (state.fontIconList.my.length > 0) return
+		await initIconfont.myIcon().then((res: any) => {
+			state.fontIconList.my = res.map((i: string) => `iconfont ${i}`)
 		})
 	}
 	// 初始化 input 的 placeholder

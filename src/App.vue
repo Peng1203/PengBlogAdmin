@@ -152,9 +152,9 @@ onBeforeMount(() => {
 	// 全局捕获Promise错误
 	window.addEventListener('unhandledrejection', handlePromiseError)
 	// 设置批量第三方 icon 图标
-	setIntroduction.cssCdn()
+	// setIntroduction.cssCdn()
 	// 设置批量第三方 js
-	setIntroduction.jsCdn()
+	// setIntroduction.jsCdn()
 	// throw new Error('主动抛出的错误')
 })
 // 页面加载时
