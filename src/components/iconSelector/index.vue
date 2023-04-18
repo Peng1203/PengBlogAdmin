@@ -294,4 +294,18 @@ watch(
 		initFontIconName()
 	}
 )
+
+/** 
+        <iconSelector
+          style="width: 300px !important;"
+          @get="onGetIcon"
+          @clear="onClearIcon"
+          v-model="modelIcon"
+        />
+	// 获取当前点击的 icon 图标
+	const onGetIcon = (icon: string) => console.log(icon)
+
+	// 清空当前点击的 icon 图标
+	const onClearIcon = (icon: string) => console.log(icon)
+ */
 </script>
