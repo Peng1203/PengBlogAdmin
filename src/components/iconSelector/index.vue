@@ -25,13 +25,13 @@
       </template>
     </el-input>
     <el-popover
+      virtual-triggering
+      trigger="click"
       placement="bottom"
-      :width="state.fontIconWidth"
       transition="el-zoom-in-top"
       popper-class="icon-selector-popper"
-      trigger="click"
+      :width="state.fontIconWidth"
       :virtual-ref="inputWidthRef"
-      virtual-triggering
     >
       <template #default>
         <div class="icon-selector-warp">
@@ -214,6 +214,7 @@ const initFontIconName = () => {
 	else if (props.modelValue!.indexOf('fa') > -1) name = 'awe'
 	// 初始化 tab 高亮回显
 	else state.fontIconTabActive = name
+	console.log('name -----', name)
 	return name
 }
 // 初始化数据
@@ -290,8 +291,14 @@ onMounted(() => {
 watch(
 	() => props.modelValue,
 	() => {
+		state.fontIconPrefix = ''
 		initModeValueEcho()
-		initFontIconName()
+		state.fontIconTabActive = initFontIconName()
+		initFontIconData(state.fontIconTabActive)
+	},
+	{
+		immediate: true,
+		deep: true,
 	}
 )
 
