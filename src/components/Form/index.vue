@@ -152,6 +152,7 @@
               :placeholder="placeholder"
               :disabled="disabled || false"
               v-model="formData[prop]"
+              @change="handleSelectChange($event, prop, i)"
             >
               <el-option
                 v-for="item in options"
@@ -248,7 +249,7 @@ interface PengFormAttribute {
 	inline?: boolean
 }
 
-const emit = defineEmits(['switchChange'])
+const emit = defineEmits(['switchChange', 'selectChange'])
 
 const props = withDefaults(defineProps<PengFormAttribute>(), {
 	formData: () => ({}),
@@ -268,6 +269,12 @@ const getRef = () => formRef.value
 const handleSwitchChange = (newVal: any, prop: string, index: number) => {
 	// console.log('switch切换 -----', newVal, prop, index)
 	emit('switchChange', { newVal, prop, index })
+}
+
+// 下拉框 切换
+const handleSelectChange = (newVal: any, prop: string, index: number) => {
+	// console.log('switch切换 -----', newVal, prop, index)
+	emit('selectChange', { newVal, prop, index })
 }
 
 // 暴露出 可被父组件调用的变量或方法

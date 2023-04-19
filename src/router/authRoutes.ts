@@ -6,6 +6,8 @@ import { RouteRecordRaw } from 'vue-router';
  * @date 2023-03-18
  */
 
+// name 属性为菜单的唯一标识
+
 export const allAuthRoutes: Array<RouteRecordRaw> = [
   {
     path: '/index',
@@ -16,19 +18,6 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       isKeepAlive: true,
     },
     children: [
-      {
-        path: '/home',
-        name: 'Home',
-        component: () => import('@/views/home/index.vue'),
-        meta: {
-          title: '首页',
-          isHide: false,
-          isAffix: true,
-          isKeepAlive: true,
-          roles: ['admin', 'common'],
-          icon: 'ele-HomeFilled',
-        },
-      },
       // {
       //   path: '/role',
       //   name: 'Role',
@@ -137,8 +126,21 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       //   // ],
       // },
       {
+        path: '/home',
+        name: 'Home',
+        component: () => import('@/views/home/index.vue'),
+        meta: {
+          title: '首页',
+          isHide: false,
+          isAffix: true,
+          isKeepAlive: true,
+          roles: ['admin', 'common'],
+          icon: 'ele-HomeFilled',
+        },
+      },
+      {
         path: '/menu',
-        name: 'systemMenu',
+        name: 'SystemMenu',
         component: () => import('@/views/system/menu/index.vue'),
         meta: {
           title: '菜单管理',
@@ -153,7 +155,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: '/role',
-        name: 'systemRole',
+        name: 'SystemRole',
         component: () => import('@/views/system/role/index.vue'),
         meta: {
           title: '角色管理',
@@ -168,7 +170,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: '/authPermission',
-        name: 'systemAuthPermission',
+        name: 'SystemAuthPermission',
         component: () => import('@/views/system/authPermission/index.vue'),
         meta: {
           title: '权限标识',
@@ -183,7 +185,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: '/user',
-        name: 'systemUser',
+        name: 'SystemUser',
         component: () => import('@/views/system/user/index.vue'),
         meta: {
           title: '用户管理',
@@ -198,7 +200,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       },
       {
         path: '/personal',
-        name: 'personal',
+        name: 'Personal',
         component: () => import('/@/views/personal/index.vue'),
         meta: {
           title: '个人中心',

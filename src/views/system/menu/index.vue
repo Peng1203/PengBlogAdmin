@@ -5,11 +5,13 @@
       class="layout-padding-auto"
     >
       <!-- 顶部 -->
+      <!-- <IconSelector v-model="test" /> -->
       <div class="mb15 flex-sb-c">
         <el-button
           size="default"
           type="success"
           class="ml10"
+          @click="addDialogRef.addMenuDialogStatus = true"
         >
           <!-- @click="addAuthDialogRef.addAuthPermissonDialogStatus = true" -->
           <el-icon>
@@ -40,6 +42,21 @@
           <span v-html="queryStrHighlight(row[prop], tableState.queryStr)" />
         </template>
 
+        <!-- 菜单图标 -->
+        <template #menuIcon="{ row, prop }">
+          <!-- type="class" -->
+          <Peng-Icon
+            v-if="row[prop]"
+            :name="row[prop]"
+            size="30"
+          />
+          <span
+            style="color: red"
+            v-else
+          >{{ '未设置图标' }}</span>
+          <!-- <i v-if="row[prop].indexOf('iconfont') !== -1"></i> -->
+        </template>
+
         <!-- 操作 -->
         <template #operation="{ row }">
           <!-- :disabled="row.id === 1" -->
@@ -49,6 +66,7 @@
             size="small"
             type="primary"
             :icon="Edit"
+            @click="handleEditMenu(row)"
           />
           <!-- @click="handleEditAuthPermission(row)" -->
           <el-button
@@ -64,6 +82,19 @@
         </template>
       </Peng-Table>
     </el-card>
+
+    <!-- 编辑菜单抽屉 -->
+    <EditMenuDrawer
+      :editRow="editRow"
+      ref="editDrawerRef"
+      @updateList="getMenuTableData"
+    />
+
+    <!-- 添加菜单对话框 -->
+    <AddMenuDialog
+      ref="addDialogRef"
+      :URIs="tableState.URIs"
+    />
   </div>
 </template>
 
@@ -80,18 +111,17 @@ import { useMenuApi } from '@/api/menu/index'
 
 const { getMenuList, deleteMenu } = useMenuApi()
 
-// 定义变量内容
-const stores = useRoutesList()
-
 // 表格参数
 const tableState = reactive({
 	loading: false,
 	data: [],
+	// 已添加菜单的全部URI标识
+	URIs: ref<string[]>(),
 	tableColumns: [
 		{ label: '菜单名', prop: 'menuName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'queryHighNight' },
 		{ label: '菜单唯一标识', prop: 'menuURI', minWidth: 150, sort: true },
 		{ label: '菜单路径', prop: 'menuPath', minWidth: 120 },
-		{ label: '菜单图标', prop: 'menuIcon', minWidth: 200, tooltip: true },
+		{ label: '菜单图标', prop: 'menuIcon', minWidth: 200, tooltip: true, slotName: 'menuIcon', align: 'center' },
 		{ label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
 		{ label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
 		{ label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
@@ -122,10 +152,12 @@ const getMenuTableData = async () => {
 			pageSize: pagerInfo.pageSize,
 		}
 		const { data: res } = await getMenuList(params)
-		const { code, message, data, total } = res
+		const { code, message, data, total, URIs } = res
 		if (code !== 200 || message !== 'Success') return
 		tableState.data = data
 		tableState.pagerInfo.total = total
+		tableState.URIs = URIs
+		console.log('tableState -----', tableState.URIs)
 	} catch (e) {
 		console.log(e)
 	} finally {
@@ -182,6 +214,19 @@ const deleteMenuById = async (id: number): Promise<boolean> => {
 		return false
 	}
 }
+
+// 处理编辑菜单
+const editRow = ref()
+const EditMenuDrawer = defineAsyncComponent(() => import('./components/EditMenu.vue'))
+const editDrawerRef = ref<any>(null)
+const handleEditMenu = (row: any) => {
+	editRow.value = JSON.parse(JSON.stringify(row))
+	editDrawerRef.value.editDrawerStatus = true
+}
+
+// 处理添加菜单
+const AddMenuDialog = defineAsyncComponent(() => import('./components/AddMenu.vue'))
+const addDialogRef = ref<any>(null)
 
 // 页面加载时
 onMounted(() => {
