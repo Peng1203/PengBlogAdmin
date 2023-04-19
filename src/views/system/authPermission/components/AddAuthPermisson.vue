@@ -6,7 +6,7 @@
   >
     <template #main>
       <Peng-Form
-        ref="addAuthFormRes"
+        ref="addAuthFormRef"
         size="default"
         :labelW="'90px'"
         :formData="addAuthState.data"
@@ -41,7 +41,7 @@ const addAuthPermissonDialogStatus = ref<boolean>(false)
 
 watch(addAuthPermissonDialogStatus, (val) => {
 	if (!val) {
-		addAuthFormRes.value.getRef().resetFields()
+		addAuthFormRef.value.getRef().resetFields()
 
 		addAuthState.data = {
 			permissionName: '',
@@ -87,10 +87,10 @@ const addAuthState = reactive({
 	]),
 })
 
-const addAuthFormRes = ref<any>(null)
+const addAuthFormRef = ref<any>(null)
 // 处理添加操作
 const handleAdd = async () => {
-	const validRes = await addAuthFormRes.value
+	const validRes = await addAuthFormRef.value
 		.getRef()
 		.validate()
 		.catch(() => false)
