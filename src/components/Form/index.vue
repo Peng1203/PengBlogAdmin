@@ -10,7 +10,6 @@
   >
     <el-row :gutter="30">
       <!--  -->
-
       <template
         v-for="({
       type,
@@ -249,6 +248,8 @@ interface PengFormAttribute {
 	inline?: boolean
 }
 
+const emit = defineEmits(['switchChange'])
+
 const props = withDefaults(defineProps<PengFormAttribute>(), {
 	formData: () => ({}),
 	formItemList: () => [],
@@ -265,7 +266,8 @@ const getRef = () => formRef.value
 
 // switch 切换
 const handleSwitchChange = (newVal: any, prop: string, index: number) => {
-	console.log('switch切换 -----', newVal, prop, index)
+	// console.log('switch切换 -----', newVal, prop, index)
+	emit('switchChange', { newVal, prop, index })
 }
 
 // 暴露出 可被父组件调用的变量或方法
