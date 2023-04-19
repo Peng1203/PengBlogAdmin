@@ -45,7 +45,7 @@
           <!-- :disabled="row.id === 1" -->
           <el-button
             circle
-            title="修改信息"
+            title="修改菜单信息"
             size="small"
             type="primary"
             :icon="Edit"
@@ -57,6 +57,7 @@
             size="small"
             type="danger"
             :icon="Delete"
+            @click="handleDelMenu(row)"
           />
           <!-- @click="handleDeleteAuthPermission(row)" -->
           <!-- :disabled="row.id === 1" -->
@@ -77,18 +78,10 @@ import { Delete, Edit } from '@element-plus/icons-vue'
 import { queryStrHighlight } from '@/utils/queryStrHighlight'
 import { useMenuApi } from '@/api/menu/index'
 
-const { getMenuList } = useMenuApi()
+const { getMenuList, deleteMenu } = useMenuApi()
 
 // 定义变量内容
 const stores = useRoutesList()
-const { routesList } = storeToRefs(stores)
-const menuDialogRef = ref()
-const state = reactive({
-	tableData: {
-		data: [] as RouteRecordRaw[],
-		loading: true,
-	},
-})
 
 // 表格参数
 const tableState = reactive({
@@ -161,19 +154,35 @@ const handleColumnChange = ({ column, order }: any) => {
 	getMenuTableData()
 }
 
-// 删除当前行
-const onTabelRowDel = (row: RouteRecordRaw) => {
-	ElMessageBox.confirm(`此操作将永久删除路由：${row.path}, 是否继续?`, '提示', {
-		confirmButtonText: '删除',
+// 处理删除菜单
+const handleDelMenu = async (row: any) => {
+	const confirmRes = await ElMessageBox.confirm(`此操作将永久删除菜单：“${row.menuName}”，是否继续?`, '提示', {
+		confirmButtonText: '确认',
 		cancelButtonText: '取消',
 		type: 'warning',
-	})
-		.then(() => {
-			ElMessage.success('删除成功')
-			//await setBackEndControlRefreshRoutes() // 刷新菜单，未进行后端接口测试
-		})
-		.catch(() => {})
+	}).catch(() => false)
+	if (!confirmRes) return
+	const delRes = await deleteMenuById(row.id)
+	if (delRes) getMenuTableData()
 }
+
+// 删除菜单
+const deleteMenuById = async (id: number): Promise<boolean> => {
+	try {
+		const { data: res } = await deleteMenu(id)
+		const { code, data, message } = res
+		if (code !== 200 || message !== 'Success') {
+			ElMessage.error(data)
+			return false
+		}
+		ElMessage.success(data)
+		return true
+	} catch (e) {
+		console.log(e)
+		return false
+	}
+}
+
 // 页面加载时
 onMounted(() => {
 	getMenuTableData()
