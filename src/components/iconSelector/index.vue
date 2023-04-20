@@ -214,7 +214,6 @@ const initFontIconName = () => {
 	else if (props.modelValue!.indexOf('fa') > -1) name = 'awe'
 	// 初始化 tab 高亮回显
 	else state.fontIconTabActive = name
-	console.log('name -----', name)
 	return name
 }
 // 初始化数据

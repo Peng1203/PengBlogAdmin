@@ -85,7 +85,7 @@ const editFormState = reactive({
 	formItemList: ref<FormItem[]>([
 		{
 			type: 'input',
-			label: '菜单名称',
+			label: '菜单名',
 			prop: 'menuName',
 			placeholder: '请输入菜单名称',
 			rules: [{ required: true, trigger: 'blur' }],
@@ -102,7 +102,7 @@ const editFormState = reactive({
 		},
 		{
 			type: 'input',
-			label: '菜单唯一标识',
+			label: '唯一URI',
 			prop: 'menuURI',
 			placeholder: '请输入菜单唯一标识',
 			rules: [
@@ -118,7 +118,7 @@ const editFormState = reactive({
 		},
 		{
 			type: 'switch',
-			label: '是否是一级菜单',
+			label: '是否父级菜单',
 			prop: 'isParentMenu',
 			tValue: true,
 			fValue: false,
@@ -135,6 +135,7 @@ const editFormState = reactive({
 			options: [],
 			isShow: false,
 		},
+		// 非父级菜单 设置重定向地址 {}
 		{
 			type: 'select',
 			label: '拥有该菜单的角色',

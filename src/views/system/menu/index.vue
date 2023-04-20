@@ -39,7 +39,17 @@
       >
         <!-- 权限标识名称 权限标识代码 查询高亮 -->
         <template #queryHighNight="{ row, prop }">
-          <span v-html="queryStrHighlight(row[prop], tableState.queryStr)" />
+          <div class="flex-s-c">
+            <Peng-Icon
+              v-if="row.menuIcon"
+              :name="row.menuIcon"
+            />
+            <!-- style="margin-left: 10px;" -->
+            <span
+              class="ml5"
+              v-html="queryStrHighlight(row[prop], tableState.queryStr)"
+            />
+          </div>
         </template>
 
         <!-- 菜单图标 -->
@@ -94,6 +104,7 @@
     <AddMenuDialog
       ref="addDialogRef"
       :URIs="tableState.URIs"
+      @updateList="getMenuTableData"
     />
   </div>
 </template>
@@ -119,9 +130,9 @@ const tableState = reactive({
 	URIs: ref<string[]>(),
 	tableColumns: [
 		{ label: '菜单名', prop: 'menuName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'queryHighNight' },
-		{ label: '菜单唯一标识', prop: 'menuURI', minWidth: 150, sort: true },
-		{ label: '菜单路径', prop: 'menuPath', minWidth: 120 },
-		{ label: '菜单图标', prop: 'menuIcon', minWidth: 200, tooltip: true, slotName: 'menuIcon', align: 'center' },
+		{ label: '唯一URI', prop: 'menuURI', minWidth: 150, sort: false, tooltip: true },
+		{ label: '菜单路径', prop: 'menuPath', minWidth: 170, tooltip: true },
+		{ label: '菜单图标', prop: 'menuIcon', minWidth: 100, tooltip: true, slotName: 'menuIcon', align: 'center' },
 		{ label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
 		{ label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
 		{ label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
@@ -157,7 +168,6 @@ const getMenuTableData = async () => {
 		tableState.data = data
 		tableState.pagerInfo.total = total
 		tableState.URIs = URIs
-		console.log('tableState -----', tableState.URIs)
 	} catch (e) {
 		console.log(e)
 	} finally {
