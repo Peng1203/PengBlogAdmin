@@ -1,5 +1,6 @@
-import type { App } from 'vue';
-
+import type { App } from 'vue'
+import ClipboardJS from 'clipboard'
+import { ElMessage } from 'element-plus'
 /**
  * 按钮波浪指令
  * @directive 默认方式：v-waves，如 `<div v-waves></div>`
@@ -175,4 +176,38 @@ export function dragDirective(app: App) {
 			};
 		},
 	});
+}
+
+/**
+ * 一键复制指令
+ * @author Peng
+ * @date 2023-04-21
+ * @param {any} app:App
+ * @returns {any}
+ * v-copy="copyValue"
+ */
+export function oneClickCopy(app: App) {
+	app.directive('copy', {
+		// 定义实例变量 用于不同钩子之间调用
+		// clipboard: '',
+		created(el, binding, vnode: any) {
+			// 初始化创建 复制对象实例
+			vnode.dirs[0].dir.clipboard = new ClipboardJS(el, {
+				text: () => binding.value
+			})
+
+			vnode.dirs[0].dir.clipboard.on('success', () => ElMessage.success('复制成功'))
+			vnode.dirs[0].dir.clipboard.on('error', () => ElMessage.error('复制失败!'))
+		},
+		updated(el, binding, vnode: any) {
+			const clipboard = vnode.dirs[0].dir.clipboard
+			// 更新绑的的复制值
+			clipboard.text = () => binding.value
+		},
+		unmounted(el, binding, vnode: any, prevVnode) {
+			const clipboard = vnode.dirs[0].dir.clipboard
+			// 组件卸载时 删除
+			clipboard.destroy()
+		}
+	})
 }
