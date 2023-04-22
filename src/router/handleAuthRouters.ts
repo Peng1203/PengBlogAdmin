@@ -34,15 +34,32 @@ export async function handleUserAuthRouters(): Promise<any> {
     // 将全部权限路由添加到路由规则中
     await allAuthRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
     // 设置
-    await storesRoutesList.setRoutesList(allAuthRoutes[0].children as any);
+    console.log(`%c allAuthRoutes[0].children ----`, 'color: #fff;background-color: black;font-size: 18px', allAuthRoutes[0].children)
+    await storesRoutesList.setRoutesList(allAuthRoutes[0].children as any)
     await storesTagsView.setTagsViewRoutes((allAuthRoutes[0].children as any))
     // 返回第一个跳转后第一个展示的菜单展示
     NextLoading.done();
     return (allAuthRoutes[0].children as any)[0].name
   } else {
-    console.log('router -----', router)
-    console.log('其他用户 -----',)
+    if (window.nextLoading === undefined) NextLoading.start();
+    const { menus } = userInfo
+    if (!menus.length) return ''
+    const handleAfterMenus: any = allAuthRoutes[0].children?.filter(menu => menus.find((item: any) => item.menuURI === menu.name))
+
+    handleAfterMenus.forEach((item: any) => {
+      item.meta.icon = menus.find((menu: any) => menu.menuURI === item.name).menuIcon || item.meta.icon
+    })
+
+    const newRule: any = allAuthRoutes
+    newRule[0].children = handleAfterMenus
+    await newRule.forEach((route: RouteRecordRaw) => router.addRoute(route))
+    // console.log(`%c 处理后的菜单 ----`, 'color: #fff;background-color: black;font-size: 18px', handleAfterMenus)
+    // console.log('allAuthRoutes -----', userInfo, allAuthRoutes)
+    // 设置
+    await storesRoutesList.setRoutesList(newRule[0].children)
+    await storesTagsView.setTagsViewRoutes(newRule[0].children)
+    // 返回第一个跳转后第一个展示的菜单展示
     NextLoading.done();
-    return ''
+    return (newRule[0].children as any)[0].name
   }
 }
