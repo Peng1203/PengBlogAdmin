@@ -5,7 +5,7 @@
     class="layout-navbars-breadcrumb"
   >
     <SvgIcon
-      class="layout-navbars-breadcrumb-icon"
+      class="layout-navbars-breadcrumb-icon flex-c-c"
       :name="themeConfig.isCollapse ? 'ele-Expand' : 'ele-Fold'"
       :size="16"
       @click="onThemeConfigChange"
