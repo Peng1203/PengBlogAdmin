@@ -109,8 +109,12 @@ const loginState = reactive({
 	isShowPassword: false,
 	// 登录表单
 	loginForm: {
-		userName: 'admin',
-		password: '123456',
+		userName: '',
+		password: '',
+		// userName: 'Peng',
+		// password: '123mzp',
+		// userName: 'admin',
+		// password: '123456',
 		captcha: '',
 	},
 	// 登录表单校验规则
@@ -210,18 +214,24 @@ const handleUserLogin = async () => {
 		const { userInfo, token } = await getLoginUserInfo()
 		if (!userInfo) return (loginState.loading.signIn = false)
 		// 存储 token 到浏览器缓存
-		Session.set('token', token)
 		Session.set('userInfo', { ...userInfo, token })
 		Session.set('userName', loginState.loginForm.userName)
 		useUserInfoStores.setUserInfos(userInfo)
 		// 处理登录用户角色的路由表
 		const showPageName = await handleUserAuthRouters()
+		if (showPageName === '') {
+			ElMessage.warning(`当前用户角色没有任何菜单, 请联系管理员!`)
+			loginState.loading.signIn = false
+			return
+		}
+		Session.set('token', token)
 		router.push({ name: showPageName })
 		const signInText = '欢迎回来！'
 		ElNotification.success({
 			title: loginState.loginForm.userName,
 			message: `${currentTime.value}，${signInText}`,
 		})
+		NextLoading.start()
 		loginState.loading.signIn = false
 	} catch (e) {
 		loginState.loading.signIn = false

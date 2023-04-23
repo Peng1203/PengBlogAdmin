@@ -90,3 +90,16 @@ declare interface ThemeConfigState {
 		globalComponentSize: string;
 	};
 }
+
+// 角色权限相关列表
+
+declare interface UserAuthState<T = any> {
+	allParams: T
+	allRoleList: T[]
+	allMenuList: T[]
+	allAuthPermissionList: T[]
+	allRoleOptions: OperationItem[]
+	allMenuOptions: OperationItem[]
+	allAuthPermissionOptions: OperationItem[]
+	[key: string]: T
+}

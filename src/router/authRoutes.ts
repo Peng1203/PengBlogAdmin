@@ -165,7 +165,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin'],
-          icon: 'ele-ColdDrink',
+          icon: 'iconfont icon-jiaoseguanli1',
         },
       },
       {
@@ -195,7 +195,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin'],
-          icon: 'ele-User',
+          icon: 'iconfont icon-yonghuguanli',
         },
       },
       {

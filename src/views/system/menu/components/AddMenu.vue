@@ -58,41 +58,7 @@ const props = defineProps({
 	},
 })
 
-// 可添加菜单详情数组
-const unAddMenus = ref()
-
-// 根据本地全部的菜单数组 以及数据库中以存在的菜单 过滤出 可选添加的新菜单
-const menuOptions = computed(() => {
-	// console.log('props -----', props.URIs)
-	// console.log('allAuthRoutes -----', allAuthRoutes)
-	// 过滤出所以菜单规则 不包括 重定向规则
-	const menuRules = formatFlatteningRoutes(allAuthRoutes).filter((rule: any) => !rule.redirect && rule)
-	// console.log('menuRules -----', menuRules)
-	// 过滤出可选菜单
-	unAddMenus.value = menuRules.filter((rule: any) => !props.URIs?.includes(rule.name))
-	return unAddMenus.value.map((item: any) => ({ label: item.meta.title, value: item.name }))
-})
-
 const addMenuDialogStatus = ref<boolean>(false)
-
-// 弹框关闭时清除表单信息
-watch(addMenuDialogStatus, (val) => {
-	if (!val) {
-		addFormRef.value.getRef().resetFields()
-
-		addMenuState.data = {
-			menuName: '',
-			menuPath: '',
-			menuURI: '',
-			menuIcon: '',
-			parentId: 0,
-			roles: [],
-			isParentMenu: true,
-			updateTime: '',
-			createdTime: '',
-		}
-	}
-})
 
 const addMenuState = reactive({
 	data: {
@@ -101,7 +67,7 @@ const addMenuState = reactive({
 		menuURI: '',
 		menuIcon: '',
 		parentId: 0,
-		roles: ref<number[]>([]),
+		roles: ref<number[]>([1]),
 		// 不需要提交的属性
 		isParentMenu: true,
 		updateTime: '',
@@ -114,7 +80,8 @@ const addMenuState = reactive({
 			type: 'select',
 			label: '选择添加菜单',
 			prop: 'menuURI',
-			options: menuOptions.value,
+			options: [],
+			rules: [{ required: true, message: '请选择菜单', trigger: 'change' }],
 		},
 		{
 			xs: 24,
@@ -254,6 +221,45 @@ const handleSwitchChange = ({ newVal, prop, index }: FormItemChangeType) => {
 		}
 	}
 }
+
+// 可添加菜单详情数组 用于查找
+const unAddMenus = ref()
+// 下拉筛选数据
+const menuOptions = ref([])
+watch(
+	() => props.URIs,
+	(val) => {
+		// 根据本地全部的菜单数组 以及数据库中以存在的菜单 对比过滤出 可选添加的新菜单
+		const menuRules = formatFlatteningRoutes(allAuthRoutes).filter((rule: any) => !rule.redirect && rule)
+		// 过滤出可选菜单
+		unAddMenus.value = menuRules.filter((rule: any) => !val?.includes(rule.name))
+		menuOptions.value = unAddMenus.value.map((item: any) => ({ label: item.meta.title, value: item.name }))
+		addMenuState.formItemList[0].options = menuOptions.value
+	},
+	{
+		deep: true,
+		immediate: true,
+	}
+)
+
+// 弹框关闭时清除表单信息
+watch(addMenuDialogStatus, (val) => {
+	if (!val) {
+		addFormRef.value.getRef().resetFields()
+
+		addMenuState.data = {
+			menuName: '',
+			menuPath: '',
+			menuURI: '',
+			menuIcon: '',
+			parentId: 0,
+			roles: [],
+			isParentMenu: true,
+			updateTime: '',
+			createdTime: '',
+		}
+	}
+})
 
 defineExpose({ addMenuDialogStatus })
 </script>

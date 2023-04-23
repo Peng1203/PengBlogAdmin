@@ -6,6 +6,34 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5055858",
+      "name": "角色管理",
+      "font_class": "jiaoseguanli",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "8197805",
+      "name": "用户管理",
+      "font_class": "yonghuguanli",
+      "unicode": "e662",
+      "unicode_decimal": 58978
+    },
+    {
+      "icon_id": "11882433",
+      "name": "角色管理",
+      "font_class": "jiaoseguanli1",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "5650936",
+      "name": "文件夹打开",
+      "font_class": "wenjianjiadakai",
+      "unicode": "e63f",
+      "unicode_decimal": 58943
+    },
+    {
       "icon_id": "25555576",
       "name": "权限",
       "font_class": "permissions-o",
