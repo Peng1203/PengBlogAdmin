@@ -45,7 +45,7 @@
                 <el-col
                   :span="24"
                   class="personal-title mb18"
-                >{{ currentTime }}，admin，生活变的再糟糕，也不妨碍我变得更好！ </el-col>
+                >{{ currentTime }}，{{ userInfoStores.userInfos.userName }}，生活变的再糟糕，也不妨碍我变得更好！ </el-col>
                 <el-col :span="24">
                   <el-row>
                     <el-col
@@ -54,7 +54,7 @@
                       class="personal-item mb6"
                     >
                       <div class="personal-item-label">昵称：</div>
-                      <div class="personal-item-value">小柒</div>
+                      <div class="personal-item-value">{{ userInfoStores.userInfos.userName }}</div>
                     </el-col>
                     <el-col
                       :xs="24"
@@ -62,7 +62,7 @@
                       class="personal-item mb6"
                     >
                       <div class="personal-item-label">身份：</div>
-                      <div class="personal-item-value">超级管理</div>
+                      <div class="personal-item-value">{{  userInfoStores.userInfos.roleDesc }}</div>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -82,7 +82,7 @@
                       class="personal-item mb6"
                     >
                       <div class="personal-item-label">登录时间：</div>
-                      <div class="personal-item-value">2021-02-05 18:47:26</div>
+                      <div class="personal-item-value">{{ getNowDate }}</div>
                     </el-col>
                   </el-row>
                 </el-col>
@@ -374,53 +374,71 @@
 </template>
 
 <script setup lang="ts" name="personal">
-import axios from '@/utils/request'
-
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue';
 import { formatAxis } from '@/utils/formatTime'
 import { newsInfoList, recommendList } from './mock'
 import { Plus } from '@element-plus/icons-vue'
-import type { UploadProps } from 'element-plus'
+import { ElMessage, UploadProps } from 'element-plus'
 import { useUserApi } from '@/api/user'
+import { useUserInfo } from '@/stores/userInfo'
+import moment from 'moment'
+import { Session } from '/@/utils/storage';
 
 const { uploadUserAvatar } = useUserApi()
 
+const userInfoStores = useUserInfo()
+
+// console.log('userInfoStores -----', userInfoStores.userInfos.userName)
+
 // 定义变量内容
 const state = reactive<PersonalState>({
-	newsInfoList,
-	recommendList,
-	personalForm: {
-		name: '',
-		email: '',
-		autograph: '',
-		occupation: '',
-		phone: '',
-		sex: '',
-	},
+  newsInfoList,
+  recommendList,
+  personalForm: {
+    name: '',
+    email: '',
+    autograph: '',
+    occupation: '',
+    phone: '',
+    sex: '',
+  },
 })
 
 const imageUrl = ref('')
 // 上传用户头像
 const handleUploadUserAvatar = async (fileInfo: any) => {
-	try {
-		const file = new FormData()
-		file.append('file', fileInfo.file)
-		const { data: res } = await uploadUserAvatar(1, file)
-		console.log('res -----', res)
-	} catch (e) {
-		throw e
-	}
+  try {
+    const file = new FormData()
+    file.append('file', fileInfo.file)
+    const { data: res } = await uploadUserAvatar(userInfoStores.userInfos.id, file)
+    const { code, data, message, img } = res
+    if (code !== 200 || message !== 'Success') return ElMessage.error(data)
+    ElMessage.success(data)
+    userInfoStores.userInfos.avatar = img
+    Session.set('userInfo', JSON.parse(JSON.stringify(userInfoStores.userInfos)))
+  } catch (e) {
+    throw e
+  }
 }
 // 限制 上传文件
-const beforeAvatarUpload = () => {}
+const beforeAvatarUpload = () => { }
 const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
-	imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+  imageUrl.value = URL.createObjectURL(uploadFile.raw!)
 }
 // 当前时间提示语
 const currentTime = computed(() => {
-	return formatAxis(new Date())
+  return formatAxis(new Date())
+})
+
+// 返回当前时间
+const getNowDate = computed<string>(() => moment().format('YYYY-MM-DD HH:mm:ss'))
+
+onMounted(() => {
+  imageUrl.value = userInfoStores.userInfos.avatar || ''
+  const user = Session.get('userInfo')
 })
 </script>
+
 
 <style scoped lang="scss">
 @import '../../theme/mixins/index.scss';
