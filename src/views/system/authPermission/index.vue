@@ -7,6 +7,7 @@
       <!-- 顶部 -->
       <div class="mb15 flex-sb-c">
         <el-button
+          v-auth="'ADD'"
           size="default"
           type="success"
           class="ml10"
@@ -43,6 +44,7 @@
           <!-- :disabled="row.id === 1" -->
           <el-button
             circle
+            v-auth="'EDIT'"
             title="修改信息"
             size="small"
             type="primary"
@@ -52,6 +54,7 @@
           <!-- @click="handleEditUserInfo(row)" -->
           <el-button
             circle
+            v-auth="'DELETE'"
             title="删除"
             size="small"
             type="danger"
@@ -87,104 +90,104 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const { getAuthPermissionList, delAuthPermission } = useAuthPermissionApi()
 // 表格参数
 const tableState = reactive({
-	loading: false,
-	queryStr: '',
-	column: '',
-	order: '',
-	data: [],
-	tableColumns: ref<ColumnItem[]>([
-		{ label: '标识名称', prop: 'permissionName', minWidth: 100, tooltip: true, slotName: 'queryHighlight' },
-		{ label: '标识CODE', prop: 'permissionCode', minWidth: 130, tooltip: true, slotName: 'queryHighlight' },
-		{ label: '描述', prop: 'desc', tooltip: true },
-		{ label: '更新时间', prop: 'updateTime', width: 200, sort: true },
-		{ label: '创建时间', prop: 'createdTime', width: 200, sort: true },
-		{ label: '操作', prop: '', width: 95, slotName: 'operation', fixed: 'right' },
-	]),
+  loading: false,
+  queryStr: '',
+  column: '',
+  order: '',
+  data: [],
+  tableColumns: ref<ColumnItem[]>([
+    { label: '标识名称', prop: 'permissionName', minWidth: 100, tooltip: true, slotName: 'queryHighlight' },
+    { label: '标识CODE', prop: 'permissionCode', minWidth: 130, tooltip: true, slotName: 'queryHighlight' },
+    { label: '描述', prop: 'desc', tooltip: true },
+    { label: '更新时间', prop: 'updateTime', width: 200, sort: true },
+    { label: '创建时间', prop: 'createdTime', width: 200, sort: true },
+    { label: '操作', prop: '', width: 95, slotName: 'operation', fixed: 'right' },
+  ]),
 
-	// 分页器信息
-	pagerInfo: {
-		page: 1,
-		pageSize: 10,
-		total: 0,
-	},
+  // 分页器信息
+  pagerInfo: {
+    page: 1,
+    pageSize: 10,
+    total: 0,
+  },
 })
 
 // 获取权限标识数据
 const getAuthPermissionTableData = async (): Promise<void> => {
-	try {
-		tableState.loading = true
-		const params = {
-			page: tableState.pagerInfo.page,
-			pageSize: tableState.pagerInfo.pageSize,
-			queryStr: tableState.queryStr,
-			column: tableState.column,
-			order: tableState.order,
-		}
-		const { data: res } = await getAuthPermissionList(params)
-		const { code, message, data, total } = res
-		if (code !== 200 || message !== 'Success') return
-		tableState.data = data
-		tableState.pagerInfo.total = total
-	} catch (e) {
-		console.log(e)
-	} finally {
-		tableState.loading = false
-	}
+  try {
+    tableState.loading = true
+    const params = {
+      page: tableState.pagerInfo.page,
+      pageSize: tableState.pagerInfo.pageSize,
+      queryStr: tableState.queryStr,
+      column: tableState.column,
+      order: tableState.order,
+    }
+    const { data: res } = await getAuthPermissionList(params)
+    const { code, message, data, total } = res
+    if (code !== 200 || message !== 'Success') return
+    tableState.data = data
+    tableState.pagerInfo.total = total
+  } catch (e) {
+    console.log(e)
+  } finally {
+    tableState.loading = false
+  }
 }
 
 // 表格排序
 const handleColumnChange = ({ column, order }: any) => {
-	tableState.column = column
-	tableState.order = order
-	getAuthPermissionTableData()
+  tableState.column = column
+  tableState.order = order
+  getAuthPermissionTableData()
 }
 
 // 分页器修改时触发
 const handlePageInfoChange = (pageInfo: any) => {
-	const { page, pageSize } = pageInfo
-	tableState.pagerInfo.page = page
-	tableState.pagerInfo.pageSize = pageSize
-	getAuthPermissionTableData()
+  const { page, pageSize } = pageInfo
+  tableState.pagerInfo.page = page
+  tableState.pagerInfo.pageSize = pageSize
+  getAuthPermissionTableData()
 }
 
 // 文字搜索高亮
 const queryStrStyle = (str: string) => {
-	const regex = new RegExp(tableState.queryStr, 'ig')
-	return str.replace(regex, `<font color="red">$&</font>`)
+  const regex = new RegExp(tableState.queryStr, 'ig')
+  return str.replace(regex, `<font color="red">$&</font>`)
 }
 
 // 搜索
 const handleSearch = () => {
-	tableState.pagerInfo.page = 1
-	getAuthPermissionTableData()
+  tableState.pagerInfo.page = 1
+  getAuthPermissionTableData()
 }
 
 // 处理删除权限标识
 const handleDeleteAuthPermission = async (row: any) => {
-	const confirmRes = await ElMessageBox.confirm(`此操作将永久删除操作权限标识：“${row.permissionName}”，是否继续?`, '提示', {
-		confirmButtonText: '确认',
-		cancelButtonText: '取消',
-		type: 'warning',
-	}).catch(() => false)
-	if (!confirmRes) return
-	const delRes = await delAuthPermissionById(row.id)
-	if (delRes) getAuthPermissionTableData()
+  const confirmRes = await ElMessageBox.confirm(`此操作将永久删除操作权限标识：“${row.permissionName}”，是否继续?`, '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmRes) return
+  const delRes = await delAuthPermissionById(row.id)
+  if (delRes) getAuthPermissionTableData()
 }
 // 通过ID删除权限标识
 const delAuthPermissionById = async (id: number): Promise<boolean> => {
-	try {
-		const { data: res } = await delAuthPermission(id)
-		const { code, data, message } = res
-		if (code !== 200 || message !== 'Success') {
-			ElMessage.error(data)
-			return false
-		}
-		ElMessage.success(data)
-		return true
-	} catch (e) {
-		console.log(e)
-		return false
-	}
+  try {
+    const { data: res } = await delAuthPermission(id)
+    const { code, data, message } = res
+    if (code !== 200 || message !== 'Success') {
+      ElMessage.error(data)
+      return false
+    }
+    ElMessage.success(data)
+    return true
+  } catch (e) {
+    console.log(e)
+    return false
+  }
 }
 
 // 编辑权限标识
@@ -194,8 +197,8 @@ const editAuthDrawerRef = ref<any>(null)
 const editAuthRowInfo = ref()
 // 编辑权限标识
 const handleEditAuthPermission = (row: any) => {
-	editAuthRowInfo.value = JSON.parse(JSON.stringify(row))
-	editAuthDrawerRef.value.editDrawerStatus = true
+  editAuthRowInfo.value = JSON.parse(JSON.stringify(row))
+  editAuthDrawerRef.value.editDrawerStatus = true
 }
 
 // 添加权限标识
@@ -203,7 +206,7 @@ const AddAuthPermissonDialog = defineAsyncComponent(() => import('./components/A
 const addAuthDialogRef = ref<any>(null)
 
 onMounted(() => {
-	getAuthPermissionTableData()
+  getAuthPermissionTableData()
 })
 </script>
 

@@ -34,7 +34,6 @@ export async function handleUserAuthRouters(): Promise<any> {
     // 将全部权限路由添加到路由规则中
     await allAuthRoutes.forEach((route: RouteRecordRaw) => router.addRoute(route))
     // 设置
-    console.log(`%c allAuthRoutes[0].children ----`, 'color: #fff;background-color: black;font-size: 18px', allAuthRoutes[0].children)
     await storesRoutesList.setRoutesList(allAuthRoutes[0].children as any)
     await storesTagsView.setTagsViewRoutes((allAuthRoutes[0].children as any))
     // 返回第一个跳转后第一个展示的菜单展示

@@ -87,7 +87,7 @@
     >
       <span class="layout-navbars-breadcrumb-user-link">
         <img
-          :src="userInfos.photo"
+          :src="userInfos.avatar || ''"
           class="layout-navbars-breadcrumb-user-link-photo mr5"
         />
         {{ userInfos.userName === '' ? 'common' : userInfos.userName }}
@@ -98,6 +98,7 @@
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item command="/home">首页</el-dropdown-item>
+          <!-- @click="stores.userLogout" -->
           <el-dropdown-item
             divided
             command="logOut"
@@ -132,94 +133,94 @@ const { userInfos } = storeToRefs(stores)
 const { themeConfig } = storeToRefs(storesThemeConfig)
 const searchRef = ref()
 const state = reactive({
-	isScreenfull: false,
-	disabledSize: 'large',
+  isScreenfull: false,
+  disabledSize: 'large',
 })
 
 // 设置分割样式
 const layoutUserFlexNum = computed(() => {
-	let num: string | number = ''
-	const { layout, isClassicSplitMenu } = themeConfig.value
-	const layoutArr: string[] = ['defaults', 'columns']
-	if (layoutArr.includes(layout) || (layout === 'classic' && !isClassicSplitMenu)) num = '1'
-	else num = ''
-	return num
+  let num: string | number = ''
+  const { layout, isClassicSplitMenu } = themeConfig.value
+  const layoutArr: string[] = ['defaults', 'columns']
+  if (layoutArr.includes(layout) || (layout === 'classic' && !isClassicSplitMenu)) num = '1'
+  else num = ''
+  return num
 })
 // 全屏点击时
 const onScreenfullClick = () => {
-	if (!screenfull.isEnabled) {
-		ElMessage.warning('暂不不支持全屏')
-		return false
-	}
-	screenfull.toggle()
-	screenfull.on('change', () => {
-		if (screenfull.isFullscreen) state.isScreenfull = true
-		else state.isScreenfull = false
-	})
+  if (!screenfull.isEnabled) {
+    ElMessage.warning('暂不不支持全屏')
+    return false
+  }
+  screenfull.toggle()
+  screenfull.on('change', () => {
+    if (screenfull.isFullscreen) state.isScreenfull = true
+    else state.isScreenfull = false
+  })
 }
 // 布局配置 icon 点击时
 const onLayoutSetingClick = () => {
-	mittBus.emit('openSetingsDrawer')
+  mittBus.emit('openSetingsDrawer')
 }
 // 下拉菜单点击时
 const onHandleCommandClick = (path: string) => {
-	if (path === 'logOut') {
-		ElMessageBox({
-			closeOnClickModal: false,
-			closeOnPressEscape: false,
-			title: '提示',
-			message: '此操作将退出登录, 是否继续?',
-			showCancelButton: true,
-			confirmButtonText: '确定',
-			cancelButtonText: '取消',
-			buttonSize: 'default',
-			beforeClose: (action, instance, done) => {
-				if (action === 'confirm') {
-					instance.confirmButtonLoading = true
-					instance.confirmButtonText = '退出中'
-					done()
-					setTimeout(() => {
-						instance.confirmButtonLoading = false
-					}, 300)
-				} else {
-					done()
-				}
-			},
-		})
-			.then(async () => {
-				// 清除缓存/token等
-				await stores.userLogout()
+  if (path === 'logOut') {
+    ElMessageBox({
+      closeOnClickModal: false,
+      closeOnPressEscape: false,
+      title: '提示',
+      message: '此操作将退出登录, 是否继续?',
+      showCancelButton: true,
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      buttonSize: 'default',
+      beforeClose: (action, instance, done) => {
+        if (action === 'confirm') {
+          instance.confirmButtonLoading = true
+          instance.confirmButtonText = '退出中'
+          done()
+          setTimeout(() => {
+            instance.confirmButtonLoading = false
+          }, 300)
+        } else {
+          done()
+        }
+      },
+    })
+      .then(async () => {
+        // 清除缓存/token等
+        await stores.userLogout()
 
-				// Session.clear()
-				// // 使用 reload 时，不需要调用 resetRoute() 重置路由
-				// window.location.reload()
-			})
-			.catch(() => {})
-	} else {
-		router.push(path)
-	}
+        // Session.clear()
+        // // 使用 reload 时，不需要调用 resetRoute() 重置路由
+        // window.location.reload()
+      })
+      .catch(() => { })
+  } else {
+    router.push(path)
+  }
 }
 // 菜单搜索点击
 const onSearchClick = () => {
-	searchRef.value.openSearch()
+  searchRef.value.openSearch()
 }
 // 组件大小改变
 const onComponentSizeChange = (size: string) => {
-	Local.remove('themeConfig')
-	themeConfig.value.globalComponentSize = size
-	Local.set('themeConfig', themeConfig.value)
-	initI18nOrSize('globalComponentSize', 'disabledSize')
-	window.location.reload()
+  Local.remove('themeConfig')
+  themeConfig.value.globalComponentSize = size
+  Local.set('themeConfig', themeConfig.value)
+  initI18nOrSize('globalComponentSize', 'disabledSize')
+  window.location.reload()
 }
-// 初始化组件大小/i18n
+// 初始化组件大小/i18n 
 const initI18nOrSize = (value: string, attr: string) => {
-	state[attr] = Local.get('themeConfig')[value]
+  state[attr] = Local.get('themeConfig')[value]
 }
 // 页面加载时
 onMounted(() => {
-	if (Local.get('themeConfig')) {
-		initI18nOrSize('globalComponentSize', 'disabledSize')
-	}
+  if (Local.get('themeConfig')) {
+    initI18nOrSize('globalComponentSize', 'disabledSize')
+  }
 })
 </script>
 

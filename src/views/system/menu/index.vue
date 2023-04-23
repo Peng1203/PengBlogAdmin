@@ -8,6 +8,7 @@
       <!-- <IconSelector v-model="test" /> -->
       <div class="mb15 flex-sb-c">
         <el-button
+          v-auth="'ADD'"
           size="default"
           type="success"
           class="ml10"
@@ -72,6 +73,7 @@
           <!-- :disabled="row.id === 1" -->
           <el-button
             circle
+            v-auth="'EDIT'"
             title="修改菜单信息"
             size="small"
             type="primary"
@@ -81,6 +83,7 @@
           <!-- @click="handleEditAuthPermission(row)" -->
           <el-button
             circle
+            v-auth="'DELETE'"
             title="删除"
             size="small"
             type="danger"
@@ -124,105 +127,105 @@ const { getMenuList, deleteMenu } = useMenuApi()
 
 // 表格参数
 const tableState = reactive({
-	loading: false,
-	data: [],
-	// 已添加菜单的全部URI标识
-	URIs: ref<string[]>(),
-	tableColumns: [
-		{ label: '菜单名', prop: 'menuName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'queryHighNight' },
-		{ label: '唯一URI', prop: 'menuURI', minWidth: 150, sort: false, tooltip: true },
-		{ label: '菜单路径', prop: 'menuPath', minWidth: 170, tooltip: true },
-		{ label: '菜单图标', prop: 'menuIcon', minWidth: 100, tooltip: true, slotName: 'menuIcon', align: 'center' },
-		{ label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
-		{ label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
-		{ label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
-		{ label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
-	],
-	column: '',
-	order: '',
-	queryStr: '',
+  loading: false,
+  data: [],
+  // 已添加菜单的全部URI标识
+  URIs: ref<string[]>(),
+  tableColumns: [
+    { label: '菜单名', prop: 'menuName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'queryHighNight' },
+    { label: '唯一URI', prop: 'menuURI', minWidth: 150, sort: false, tooltip: true },
+    { label: '菜单路径', prop: 'menuPath', minWidth: 170, tooltip: true },
+    { label: '菜单图标', prop: 'menuIcon', minWidth: 100, tooltip: true, slotName: 'menuIcon', align: 'center' },
+    { label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
+    { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
+    { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
+    { label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
+  ],
+  column: '',
+  order: '',
+  queryStr: '',
 
-	// 分页器信息
-	pagerInfo: {
-		page: 1,
-		pageSize: 10,
-		total: 0,
-	},
+  // 分页器信息
+  pagerInfo: {
+    page: 1,
+    pageSize: 10,
+    total: 0,
+  },
 })
 
 // 获取菜单表格数据
 const getMenuTableData = async () => {
-	try {
-		tableState.loading = true
-		const { pagerInfo, column, order, queryStr } = tableState
-		const params = {
-			queryStr,
-			column,
-			order,
-			page: pagerInfo.page,
-			pageSize: pagerInfo.pageSize,
-		}
-		const { data: res } = await getMenuList(params)
-		const { code, message, data, total, URIs } = res
-		if (code !== 200 || message !== 'Success') return
-		tableState.data = data
-		tableState.pagerInfo.total = total
-		tableState.URIs = URIs
-	} catch (e) {
-		console.log(e)
-	} finally {
-		tableState.loading = false
-	}
+  try {
+    tableState.loading = true
+    const { pagerInfo, column, order, queryStr } = tableState
+    const params = {
+      queryStr,
+      column,
+      order,
+      page: pagerInfo.page,
+      pageSize: pagerInfo.pageSize,
+    }
+    const { data: res } = await getMenuList(params)
+    const { code, message, data, total, URIs } = res
+    if (code !== 200 || message !== 'Success') return
+    tableState.data = data
+    tableState.pagerInfo.total = total
+    tableState.URIs = URIs
+  } catch (e) {
+    console.log(e)
+  } finally {
+    tableState.loading = false
+  }
 }
 
 // 分页器修改时触发
 const handlePageInfoChange = (pageInfo: any) => {
-	const { page, pageSize } = pageInfo
-	tableState.pagerInfo.page = page
-	tableState.pagerInfo.pageSize = pageSize
-	getMenuTableData()
+  const { page, pageSize } = pageInfo
+  tableState.pagerInfo.page = page
+  tableState.pagerInfo.pageSize = pageSize
+  getMenuTableData()
 }
 
 // 搜索
 const handleSearch = () => {
-	tableState.pagerInfo.page = 1
-	getMenuTableData()
+  tableState.pagerInfo.page = 1
+  getMenuTableData()
 }
 
 // 表格排序
 const handleColumnChange = ({ column, order }: any) => {
-	tableState.column = column
-	tableState.order = order
-	getMenuTableData()
+  tableState.column = column
+  tableState.order = order
+  getMenuTableData()
 }
 
 // 处理删除菜单
 const handleDelMenu = async (row: any) => {
-	const confirmRes = await ElMessageBox.confirm(`此操作将永久删除菜单：“${row.menuName}”，是否继续?`, '提示', {
-		confirmButtonText: '确认',
-		cancelButtonText: '取消',
-		type: 'warning',
-	}).catch(() => false)
-	if (!confirmRes) return
-	const delRes = await deleteMenuById(row.id)
-	if (delRes) getMenuTableData()
+  const confirmRes = await ElMessageBox.confirm(`此操作将永久删除菜单：“${row.menuName}”，是否继续?`, '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmRes) return
+  const delRes = await deleteMenuById(row.id)
+  if (delRes) getMenuTableData()
 }
 
 // 删除菜单
 const deleteMenuById = async (id: number): Promise<boolean> => {
-	try {
-		const { data: res } = await deleteMenu(id)
-		const { code, data, message } = res
-		if (code !== 200 || message !== 'Success') {
-			ElMessage.error(data)
-			return false
-		}
-		ElMessage.success(data)
-		return true
-	} catch (e) {
-		console.log(e)
-		return false
-	}
+  try {
+    const { data: res } = await deleteMenu(id)
+    const { code, data, message } = res
+    if (code !== 200 || message !== 'Success') {
+      ElMessage.error(data)
+      return false
+    }
+    ElMessage.success(data)
+    return true
+  } catch (e) {
+    console.log(e)
+    return false
+  }
 }
 
 // 处理编辑菜单
@@ -230,8 +233,8 @@ const editRow = ref()
 const EditMenuDrawer = defineAsyncComponent(() => import('./components/EditMenu.vue'))
 const editDrawerRef = ref<any>(null)
 const handleEditMenu = (row: any) => {
-	editRow.value = JSON.parse(JSON.stringify(row))
-	editDrawerRef.value.editDrawerStatus = true
+  editRow.value = JSON.parse(JSON.stringify(row))
+  editDrawerRef.value.editDrawerStatus = true
 }
 
 // 处理添加菜单
@@ -240,7 +243,7 @@ const addDialogRef = ref<any>(null)
 
 // 页面加载时
 onMounted(() => {
-	getMenuTableData()
+  getMenuTableData()
 })
 </script>
 

@@ -51,6 +51,11 @@
 import { ref, reactive, inject, PropType, watch, defineAsyncComponent, computed } from 'vue'
 import { useMenuApi } from '@/api/menu/index'
 import { ElMessage } from 'element-plus'
+import { useUserAuthList } from '@/stores/userAuthList'
+import { storeToRefs } from 'pinia'
+
+const userAuthListStore = useUserAuthList()
+const userAuthList = storeToRefs(userAuthListStore)
 
 const IconSelector = defineAsyncComponent(() => import('@/components/iconSelector/index.vue'))
 const { updataMenu } = useMenuApi()
@@ -58,10 +63,10 @@ const { updataMenu } = useMenuApi()
 const deviceClientType = inject('deviceClientType')
 
 const props = defineProps({
-	editRow: {
-		type: Object as PropType<object>,
-		require: true,
-	},
+  editRow: {
+    type: Object as PropType<object>,
+    require: true,
+  },
 })
 const emits = defineEmits(['updateList'])
 
@@ -69,160 +74,163 @@ const emits = defineEmits(['updateList'])
 const editDrawerStatus = ref<boolean>(false)
 
 const editFormState = reactive({
-	data: {
-		id: 0,
-		menuName: '',
-		menuPath: '',
-		menuURI: '',
-		menuIcon: '',
-		parentId: 0,
-		roles: [],
-		// 不需要提交的属性
-		isParentMenu: false,
-		updateTime: '',
-		createdTime: '',
-	},
-	formItemList: ref<FormItem[]>([
-		{
-			type: 'input',
-			label: '菜单名',
-			prop: 'menuName',
-			placeholder: '请输入菜单名称',
-			rules: [{ required: true, trigger: 'blur' }],
-		},
-		{
-			type: 'input',
-			label: '菜单路径',
-			prop: 'menuPath',
-			placeholder: '请输入菜单路径 例: /xxx',
-			rules: [
-				{ required: true, trigger: 'blur' },
-				{ min: 2, trigger: 'blur' },
-			],
-		},
-		{
-			type: 'input',
-			label: '唯一URI',
-			prop: 'menuURI',
-			placeholder: '请输入菜单唯一标识',
-			rules: [
-				{ required: true, trigger: 'blur' },
-				{ min: 2, trigger: 'blur' },
-			],
-		},
-		{
-			type: 'slot',
-			label: '菜单图标',
-			prop: 'menuIcon',
-			slotName: 'menuIcon',
-		},
-		{
-			type: 'switch',
-			label: '是否父级菜单',
-			prop: 'isParentMenu',
-			tValue: true,
-			fValue: false,
-			tText: '是',
-			fText: '否',
-			isInline: true,
-		},
-		{
-			// 父级菜单 parentId 传0
-			type: 'select',
-			label: '选择父级菜单',
-			prop: 'parentId',
-			// 使用级联选择器处理选择菜单位置信息
-			options: [],
-			isShow: false,
-		},
-		// 非父级菜单 设置重定向地址 {}
-		{
-			type: 'select',
-			label: '拥有该菜单的角色',
-			multiple: true,
-			prop: 'roles',
-			options: [{ label: 'admin', value: 1 }],
-			rules: [{ type: 'array', required: true, trigger: 'change' }],
-		},
-	]),
+  data: {
+    id: 0,
+    menuName: '',
+    menuPath: '',
+    menuURI: '',
+    menuIcon: '',
+    parentId: 0,
+    roles: [],
+    // 不需要提交的属性
+    isParentMenu: false,
+    updateTime: '',
+    createdTime: '',
+  },
+  formItemList: ref<FormItem[]>([
+    {
+      type: 'input',
+      label: '菜单名',
+      prop: 'menuName',
+      placeholder: '请输入菜单名称',
+      rules: [{ required: true, trigger: 'blur' }],
+    },
+    {
+      type: 'input',
+      label: '菜单路径',
+      prop: 'menuPath',
+      placeholder: '请输入菜单路径 例: /xxx',
+      rules: [
+        { required: true, trigger: 'blur' },
+        { min: 2, trigger: 'blur' },
+      ],
+    },
+    {
+      type: 'input',
+      label: '唯一URI',
+      prop: 'menuURI',
+      placeholder: '请输入菜单唯一标识',
+      rules: [
+        { required: true, trigger: 'blur' },
+        { min: 2, trigger: 'blur' },
+      ],
+    },
+    {
+      type: 'slot',
+      label: '菜单图标',
+      prop: 'menuIcon',
+      slotName: 'menuIcon',
+    },
+    {
+      type: 'switch',
+      label: '是否父级菜单',
+      prop: 'isParentMenu',
+      tValue: true,
+      fValue: false,
+      tText: '是',
+      fText: '否',
+      isInline: true,
+    },
+    {
+      // 父级菜单 parentId 传0
+      type: 'select',
+      label: '选择父级菜单',
+      prop: 'parentId',
+      // 使用级联选择器处理选择菜单位置信息
+      options: [],
+      isShow: false,
+    },
+    // 非父级菜单 设置重定向地址 {}
+    {
+      type: 'select',
+      label: '拥有该菜单的角色',
+      multiple: true,
+      prop: 'roles',
+      options: [{ label: 'admin', value: 1 }],
+      rules: [{ type: 'array', required: true, trigger: 'change' }],
+    },
+  ]),
 })
 
 // 图标选择器前置图标
 const preIcon = computed<string>(() => {
-	if (editFormState.data.menuIcon) return editFormState.data.menuIcon
-	else return 'ele-Pointer'
+  if (editFormState.data.menuIcon) return editFormState.data.menuIcon
+  else return 'ele-Pointer'
 })
 
 const editFormRef = ref<any>(null)
 // 处理保存修改
 const handleSaveEdit = async () => {
-	const valdateRes = await editFormRef.value
-		.getRef()
-		.validate()
-		.catch(() => false)
-	if (!valdateRes) return
-	const editRes = await saveEditMenu()
-	if (!editRes) return
-	editDrawerStatus.value = false
-	emits('updateList')
+  const valdateRes = await editFormRef.value
+    .getRef()
+    .validate()
+    .catch(() => false)
+  if (!valdateRes) return
+  const editRes = await saveEditMenu()
+  if (!editRes) return
+  editDrawerStatus.value = false
+  emits('updateList')
 }
 
 // 保存修改数据
 const saveEditMenu = async (): Promise<boolean> => {
-	try {
-		const { id, menuName, menuPath, menuURI, menuIcon, parentId, roles } = editFormState.data
-		const params = {
-			menuName,
-			menuPath,
-			menuURI,
-			menuIcon,
-			parentId,
-			roles,
-		}
-		const { data: res } = await updataMenu(id, params)
-		const { code, data, message } = res
-		if (code !== 200 || message !== 'Success') {
-			ElMessage.error(data)
-			return false
-		}
-		ElMessage.success(data)
-		return true
-	} catch (e) {
-		console.log(e)
-		return false
-	}
+  try {
+    const { id, menuName, menuPath, menuURI, menuIcon, parentId, roles } = editFormState.data
+    const params = {
+      menuName,
+      menuPath,
+      menuURI,
+      menuIcon,
+      parentId,
+      roles,
+    }
+    const { data: res } = await updataMenu(id, params)
+    const { code, data, message } = res
+    if (code !== 200 || message !== 'Success') {
+      ElMessage.error(data)
+      return false
+    }
+    ElMessage.success(data)
+    return true
+  } catch (e) {
+    console.log(e)
+    return false
+  }
 }
 
 // switch 组件切换
 const handleSwitchChange = ({ newVal, prop, index }: FormItemChangeType) => {
-	if (newVal) {
-		editFormState.formItemList[5].isShow = false
-		editFormState.data.parentId = 0
-	} else {
-		editFormState.formItemList[5].isShow = true
-	}
+  if (newVal) {
+    editFormState.formItemList[5].isShow = false
+    editFormState.data.parentId = 0
+  } else {
+    editFormState.formItemList[5].isShow = true
+  }
 }
 
 // 获取当前点击的 icon 图标
 const handleGetIcon = (icon: string) => (editFormState.data.menuIcon = icon)
 
 watch(
-	() => props.editRow,
-	(val: any) => {
-		editFormState.data = JSON.parse(JSON.stringify(val))
-		editFormState.data.isParentMenu = !val.parentId
-	},
-	{
-		deep: true,
-	}
+  () => props.editRow,
+  (val: any) => {
+    editFormState.data = JSON.parse(JSON.stringify(val))
+    editFormState.data.isParentMenu = !val.parentId
+  },
+  {
+    deep: true,
+  }
 )
 
 // 当窗口关闭时 重置表单校验 重置图标
-watch(editDrawerStatus, (val) => {
-	if (val) return
-	console.log('val -----', val)
-	editFormRef.value.getRef().resetFields()
-	editFormState.data.menuIcon = ''
+watch(editDrawerStatus, async (val) => {
+  if (val) {
+    await userAuthListStore.getAllRoleList()
+    editFormState.formItemList[editFormState.formItemList.length - 1].options = userAuthList.allRoleOptions.value
+  } else {
+    editFormRef.value.getRef().resetFields()
+    editFormState.data.menuIcon = ''
+  }
 })
 
 defineExpose({ editDrawerStatus })

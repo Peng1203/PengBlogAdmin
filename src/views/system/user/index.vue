@@ -6,20 +6,19 @@
     >
       <!-- 顶部操作 -->
       <div class="mb15 flex-sb-c">
-        <div>
-          <el-button
-            size="default"
-            type="success"
-            class="ml10"
-            @click="() => addDialogRef.addUserDialogStatus = true"
-          >
-            <!-- @click="handleShowAddDialog" -->
-            <el-icon>
-              <ele-FolderAdd />
-            </el-icon>
-            新增用户
-          </el-button>
-        </div>
+        <el-button
+          v-auth="'ADD'"
+          size="default"
+          type="success"
+          class="ml10"
+          @click="() => addDialogRef.addUserDialogStatus = true"
+        >
+          <!-- @click="handleShowAddDialog" -->
+          <el-icon>
+            <ele-FolderAdd />
+          </el-icon>
+          新增用户
+        </el-button>
 
         <Peng-Search
           placeholder="请输入用户名"
@@ -65,6 +64,7 @@
         <template #operation="{ row }">
           <el-button
             circle
+            v-auth="'EDIT'"
             title="修改信息"
             size="small"
             type="primary"
@@ -74,6 +74,7 @@
           />
           <el-button
             circle
+            v-auth="'DELETE'"
             title="删除"
             size="small"
             type="danger"
@@ -111,28 +112,28 @@ const { getUserList, deleteUserById } = useUserApi()
 
 // 表格参数
 const tableState = reactive({
-	loading: false,
-	data: [],
-	tableColumns: [
-		{ label: '用户名', prop: 'userName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'uName' },
-		{ label: '角色', prop: 'roleId' },
-		{ label: '用户状态', prop: 'state', slotName: 'state', minWidth: 120, sort: true },
-		{ label: '邮箱', prop: 'email', minWidth: 200, tooltip: true },
-		{ label: '解禁时间', prop: 'unsealTime', minWidth: 200, sort: true },
-		{ label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
-		{ label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
-		{ label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
-	],
-	column: '',
-	order: '',
-	queryStr: '',
+  loading: false,
+  data: [],
+  tableColumns: [
+    { label: '用户名', prop: 'userName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'uName' },
+    { label: '角色', prop: 'roleId' },
+    { label: '用户状态', prop: 'state', slotName: 'state', minWidth: 120, sort: true },
+    { label: '邮箱', prop: 'email', minWidth: 200, tooltip: true },
+    { label: '解禁时间', prop: 'unsealTime', minWidth: 200, sort: true },
+    { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
+    { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
+    { label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
+  ],
+  column: '',
+  order: '',
+  queryStr: '',
 
-	// 分页器信息
-	pagerInfo: {
-		page: 1,
-		pageSize: 10,
-		total: 0,
-	},
+  // 分页器信息
+  pagerInfo: {
+    page: 1,
+    pageSize: 10,
+    total: 0,
+  },
 })
 
 // 根据条件来判断复选框是否可选
@@ -140,77 +141,77 @@ const handleCheckboxIsEnable = (row: any) => (row.id === 1 ? false : true)
 
 // 搜索
 const handleSearch = () => {
-	tableState.pagerInfo.page = 1
-	getUserTableData()
+  tableState.pagerInfo.page = 1
+  getUserTableData()
 }
 
 // 分页器修改时触发
 const handlePageInfoChange = (pageInfo: any) => {
-	const { page, pageSize } = pageInfo
-	tableState.pagerInfo.page = page
-	tableState.pagerInfo.pageSize = pageSize
-	getUserTableData()
+  const { page, pageSize } = pageInfo
+  tableState.pagerInfo.page = page
+  tableState.pagerInfo.pageSize = pageSize
+  getUserTableData()
 }
 
 // 表格排序
 const handleColumnChange = ({ column, order }: any) => {
-	tableState.column = column
-	tableState.order = order
-	getUserTableData()
+  tableState.column = column
+  tableState.order = order
+  getUserTableData()
 }
 
 // 文字搜索高亮
 const queryStrStyle = (str: string) => {
-	const regex = new RegExp(tableState.queryStr, 'ig')
-	return str.replace(regex, `<font color="red">$&</font>`)
+  const regex = new RegExp(tableState.queryStr, 'ig')
+  return str.replace(regex, `<font color="red">$&</font>`)
 }
 
 // 获取用户表格数据
 const getUserTableData = async () => {
-	try {
-		tableState.loading = true
-		const params = {
-			page: tableState.pagerInfo.page,
-			pageSize: tableState.pagerInfo.pageSize,
-			queryStr: tableState.queryStr,
-			column: tableState.column,
-			order: tableState.order,
-		}
-		const { data: res } = await getUserList(params)
-		const { code, message, data, total } = res
-		if (code !== 200 || message !== 'Success') return
-		tableState.data = data
-		tableState.pagerInfo.total = total
-	} catch (e) {
-		throw e
-	} finally {
-		tableState.loading = false
-	}
+  try {
+    tableState.loading = true
+    const params = {
+      page: tableState.pagerInfo.page,
+      pageSize: tableState.pagerInfo.pageSize,
+      queryStr: tableState.queryStr,
+      column: tableState.column,
+      order: tableState.order,
+    }
+    const { data: res } = await getUserList(params)
+    const { code, message, data, total } = res
+    if (code !== 200 || message !== 'Success') return
+    tableState.data = data
+    tableState.pagerInfo.total = total
+  } catch (e) {
+    throw e
+  } finally {
+    tableState.loading = false
+  }
 }
 
 // 打开删除用户
 const handleDelUser = (row: any) => {
-	ElMessageBox.confirm(`此操作将永久删除用户：“${row.userName}”，是否继续?`, '提示', {
-		confirmButtonText: '确认',
-		cancelButtonText: '取消',
-		type: 'warning',
-	})
-		.then(async () => {
-			await deleteUser(row.id)
-			getUserTableData()
-		})
-		.catch(() => {})
+  ElMessageBox.confirm(`此操作将永久删除用户：“${row.userName}”，是否继续?`, '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(async () => {
+      await deleteUser(row.id)
+      getUserTableData()
+    })
+    .catch(() => { })
 }
 // 删除用户
 const deleteUser = async (id: number) => {
-	try {
-		const { data: res } = await deleteUserById(id)
-		const { code, data, message } = res
-		if (code !== 200 || message !== 'Success') return ElMessage.error(data)
-		ElMessage.success(data)
-	} catch (e) {
-		console.log(e)
-	}
+  try {
+    const { data: res } = await deleteUserById(id)
+    const { code, data, message } = res
+    if (code !== 200 || message !== 'Success') return ElMessage.error(data)
+    ElMessage.success(data)
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 // 引入编辑用户抽屉组件
@@ -219,8 +220,8 @@ const editDrawerRef = ref<any>(null)
 const editRow = ref<object>()
 // 打开编辑用户信息抽屉
 const handleEditUserInfo = (row: object) => {
-	editRow.value = row
-	editDrawerRef.value.editDrawerStatus = true
+  editRow.value = row
+  editDrawerRef.value.editDrawerStatus = true
 }
 
 // 引入添加用户对话框组件
@@ -229,7 +230,7 @@ const addDialogRef = ref<any>(null)
 
 // 页面加载时
 onMounted(() => {
-	getUserTableData()
+  getUserTableData()
 })
 </script>
 
