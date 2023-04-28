@@ -65,7 +65,7 @@
       @click="onScreenfullClick"
     >
       <Peng-Icon
-        :title="state.isScreenfull ? '关全屏' : '开全屏'"
+        :title="state.isScreenfull ? '退出全屏' : '全屏'"
         :name="
           !state.isScreenfull ? 'icon-quanping_o' : 'icon-quxiaoquanping_o'
         "

@@ -1,15 +1,17 @@
 <template>
-  <!-- element 图标 -->
-  <span v-if="iconClass.indexOf('ele') !== -1">
-    <component :is="iconClass" />
+  <span :title="title">
+    <!-- element 图标 -->
+    <span v-if="iconClass.indexOf('ele') !== -1">
+      <component :is="iconClass" />
+    </span>
+    <!-- svg 带彩色 阿里图标 -->
+    <svg v-else-if="type === 'svg'" aria-hidden="true">
+      <use :xlink:href="`#${iconClass}`"></use>
+    </svg>
+    <!-- 无颜色 类名图标 -->
+    <i v-else :class="['iconfont', iconClass]" />
+    <!-- <span>{{ iconClass }}</span> -->
   </span>
-  <!-- svg 带彩色 阿里图标 -->
-  <svg v-else-if="type === 'svg'" aria-hidden="true">
-    <use :xlink:href="`#${iconClass}`"></use>
-  </svg>
-  <!-- 无颜色 类名图标 -->
-  <i v-else :class="['iconfont', iconClass]" />
-  <!-- <span>{{ iconClass }}</span> -->
 </template>
 
 <script lang="ts" setup>
@@ -29,6 +31,10 @@ const props = defineProps({
   },
   color: {
     // 当类型为 class 时传入图标颜色
+    type: String as PropType<string>,
+    default: '',
+  },
+  title: {
     type: String as PropType<string>,
     default: '',
   },
