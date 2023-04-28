@@ -210,7 +210,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin'],
-          icon: 'iconfont icon-yonghuguanli',
+          icon: 'iconfont icon-tags',
         },
       },
       {

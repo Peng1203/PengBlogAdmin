@@ -10,7 +10,7 @@
       @command="onComponentSizeChange"
     >
       <div class="layout-navbars-breadcrumb-user-icon">
-        <i class="iconfont icon-ziti" title="组件大小"></i>
+        <Peng-Icon name="icon-zitidaxiao" title="字体大小" />
       </div>
       <template #dropdown>
         <el-dropdown-menu>

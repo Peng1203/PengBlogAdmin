@@ -12,9 +12,8 @@
           @click="addDialogRef.addTagDialogStatus = true"
         >
           <!-- @click="addAuthDialogRef.addAuthPermissonDialogStatus = true" -->
-          <el-icon>
-            <Menu />
-          </el-icon>
+
+          <Peng-Icon name="icon-tags" class="mr5" />
           添加标签
         </el-button>
 
