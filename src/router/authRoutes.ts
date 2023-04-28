@@ -21,7 +21,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       // {
       //   path: '/role',
       //   name: 'Role',
-      //   component: () => import('@/views/system/role/index.vue'),
+      //   component: () => import('@/views/user/role/index.vue'),
       //   meta: {
       //     title: '角色管理',
       //     isLink: '',
@@ -51,7 +51,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       //   //   {
       //   //     path: '/system/menu',
       //   //     name: 'systemMenu',
-      //   //     component: () => import('@/views/system/menu/index.vue'),
+      //   //     component: () => import('@/views/user/menu/index.vue'),
       //   //     meta: {
       //   //       title: '菜单管理',
       //   //       isLink: '',
@@ -66,7 +66,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       //   //   {
       //   //     path: '/system/role',
       //   //     name: 'systemRole',
-      //   //     component: () => import('@/views/system/role/index.vue'),
+      //   //     component: () => import('@/views/user/role/index.vue'),
       //   //     meta: {
       //   //       title: '角色管理',
       //   //       isLink: '',
@@ -81,7 +81,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       //   //   {
       //   //     path: '/system/user',
       //   //     name: 'systemUser',
-      //   //     component: () => import('@/views/system/user/index.vue'),
+      //   //     component: () => import('@/views/user/user/index.vue'),
       //   //     meta: {
       //   //       title: '用户管理',
       //   //       isLink: '',
@@ -96,7 +96,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       //   //   {
       //   //     path: '/system/dept',
       //   //     name: 'systemDept',
-      //   //     component: () => import('@/views/system/dept/index.vue'),
+      //   //     component: () => import('@/views/user/dept/index.vue'),
       //   //     meta: {
       //   //       title: '部门管理',
       //   //       isLink: '',
@@ -111,7 +111,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       //   //   {
       //   //     path: '/system/dic',
       //   //     name: 'systemDic',
-      //   //     component: () => import('@/views/system/dic/index.vue'),
+      //   //     component: () => import('@/views/user/dic/index.vue'),
       //   //     meta: {
       //   //       title: '字典管理',
       //   //       isLink: '',
@@ -141,7 +141,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       {
         path: '/menu',
         name: 'SystemMenu',
-        component: () => import('@/views/system/menu/index.vue'),
+        component: () => import('@/views/user/menu/index.vue'),
         meta: {
           title: '菜单管理',
           isLink: '',
@@ -156,7 +156,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       {
         path: '/role',
         name: 'SystemRole',
-        component: () => import('@/views/system/role/index.vue'),
+        component: () => import('@/views/user/role/index.vue'),
         meta: {
           title: '角色管理',
           isLink: '',
@@ -171,7 +171,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       {
         path: '/authPermission',
         name: 'SystemAuthPermission',
-        component: () => import('@/views/system/authPermission/index.vue'),
+        component: () => import('@/views/user/authPermission/index.vue'),
         meta: {
           title: '权限标识',
           isLink: '',
@@ -186,7 +186,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
       {
         path: '/user',
         name: 'SystemUser',
-        component: () => import('@/views/system/user/index.vue'),
+        component: () => import('@/views/user/user/index.vue'),
         meta: {
           title: '用户管理',
           isLink: '',

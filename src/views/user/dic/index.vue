@@ -120,79 +120,79 @@
 </template>
 
 <script setup lang="ts" name="systemDic">
-import { defineAsyncComponent, reactive, onMounted, ref } from 'vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { defineAsyncComponent,reactive,onMounted,ref } from 'vue'
+import { ElMessageBox,ElMessage } from 'element-plus'
 
 // 引入组件
-const DicDialog = defineAsyncComponent(() => import('@/views/system/dic/dialog.vue'))
+const DicDialog=defineAsyncComponent(() => import('@/views/user/dic/dialog.vue'))
 
 // 定义变量内容
-const dicDialogRef = ref()
-const state = reactive<SysDicState>({
-	tableData: {
-		data: [],
-		total: 0,
-		loading: false,
-		param: {
-			pageNum: 1,
-			pageSize: 10,
-		},
-	},
+const dicDialogRef=ref()
+const state=reactive<SysDicState>({
+  tableData: {
+    data: [],
+    total: 0,
+    loading: false,
+    param: {
+      pageNum: 1,
+      pageSize: 10,
+    },
+  },
 })
 
 // 初始化表格数据
-const getTableData = () => {
-	state.tableData.loading = true
-	const data = []
-	for (let i = 0; i < 2; i++) {
-		data.push({
-			dicName: i === 0 ? '角色标识' : '用户性别',
-			fieldName: i === 0 ? 'SYS_ROLE' : 'SYS_UERINFO',
-			describe: i === 0 ? '这是角色字典' : '这是用户性别字典',
-			status: true,
-			createTime: new Date().toLocaleString(),
-			list: [],
-		})
-	}
-	state.tableData.data = data
-	state.tableData.total = state.tableData.data.length
-	setTimeout(() => {
-		state.tableData.loading = false
-	}, 500)
+const getTableData=() => {
+  state.tableData.loading=true
+  const data=[]
+  for(let i=0;i<2;i++) {
+    data.push({
+      dicName: i===0? '角色标识':'用户性别',
+      fieldName: i===0? 'SYS_ROLE':'SYS_UERINFO',
+      describe: i===0? '这是角色字典':'这是用户性别字典',
+      status: true,
+      createTime: new Date().toLocaleString(),
+      list: [],
+    })
+  }
+  state.tableData.data=data
+  state.tableData.total=state.tableData.data.length
+  setTimeout(() => {
+    state.tableData.loading=false
+  },500)
 }
 // 打开新增字典弹窗
-const onOpenAddDic = (type: string) => {
-	dicDialogRef.value.openDialog(type)
+const onOpenAddDic=(type: string) => {
+  dicDialogRef.value.openDialog(type)
 }
 // 打开修改字典弹窗
-const onOpenEditDic = (type: string, row: RowDicType) => {
-	dicDialogRef.value.openDialog(type, row)
+const onOpenEditDic=(type: string,row: RowDicType) => {
+  dicDialogRef.value.openDialog(type,row)
 }
 // 删除字典
-const onRowDel = (row: RowDicType) => {
-	ElMessageBox.confirm(`此操作将永久删除字典名称：“${row.dicName}”，是否继续?`, '提示', {
-		confirmButtonText: '确认',
-		cancelButtonText: '取消',
-		type: 'warning',
-	})
-		.then(() => {
-			getTableData()
-			ElMessage.success('删除成功')
-		})
-		.catch(() => {})
+const onRowDel=(row: RowDicType) => {
+  ElMessageBox.confirm(`此操作将永久删除字典名称：“${row.dicName}”，是否继续?`,'提示',{
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      getTableData()
+      ElMessage.success('删除成功')
+    })
+    .catch(() => { })
 }
 // 分页改变
-const onHandleSizeChange = (val: number) => {
-	state.tableData.param.pageSize = val
-	getTableData()
+const onHandleSizeChange=(val: number) => {
+  state.tableData.param.pageSize=val
+  getTableData()
 }
 // 分页改变
-const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNum = val
-	getTableData()
+const onHandleCurrentChange=(val: number) => {
+  state.tableData.param.pageNum=val
+  getTableData()
 }
 // 页面加载时
 onMounted(() => {
-	getTableData()
+  getTableData()
 })
 </script>

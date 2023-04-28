@@ -116,84 +116,84 @@
 </template>
 
 <script setup lang="ts" name="systemDept">
-import { defineAsyncComponent, ref, reactive, onMounted } from 'vue'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { defineAsyncComponent,ref,reactive,onMounted } from 'vue'
+import { ElMessageBox,ElMessage } from 'element-plus'
 
 // 引入组件
-const DeptDialog = defineAsyncComponent(() => import('@/views/system/dept/dialog.vue'))
+const DeptDialog=defineAsyncComponent(() => import('@/views/user/dept/dialog.vue'))
 
 // 定义变量内容
-const deptDialogRef = ref()
-const state = reactive<SysDeptState>({
-	tableData: {
-		data: [],
-		total: 0,
-		loading: false,
-		param: {
-			pageNum: 1,
-			pageSize: 10,
-		},
-	},
+const deptDialogRef=ref()
+const state=reactive<SysDeptState>({
+  tableData: {
+    data: [],
+    total: 0,
+    loading: false,
+    param: {
+      pageNum: 1,
+      pageSize: 10,
+    },
+  },
 })
 
 // 初始化表格数据
-const getTableData = () => {
-	state.tableData.loading = true
-	state.tableData.data = []
-	state.tableData.data.push({
-		deptName: 'vueNextAdmin',
-		createTime: new Date().toLocaleString(),
-		status: true,
-		sort: Math.random(),
-		describe: '顶级部门',
-		id: Math.random(),
-		children: [
-			{
-				deptName: 'IT外包服务',
-				createTime: new Date().toLocaleString(),
-				status: true,
-				sort: Math.random(),
-				describe: '总部',
-				id: Math.random(),
-			},
-			{
-				deptName: '资本控股',
-				createTime: new Date().toLocaleString(),
-				status: true,
-				sort: Math.random(),
-				describe: '分部',
-				id: Math.random(),
-			},
-		],
-	})
-	state.tableData.total = state.tableData.data.length
-	setTimeout(() => {
-		state.tableData.loading = false
-	}, 500)
+const getTableData=() => {
+  state.tableData.loading=true
+  state.tableData.data=[]
+  state.tableData.data.push({
+    deptName: 'vueNextAdmin',
+    createTime: new Date().toLocaleString(),
+    status: true,
+    sort: Math.random(),
+    describe: '顶级部门',
+    id: Math.random(),
+    children: [
+      {
+        deptName: 'IT外包服务',
+        createTime: new Date().toLocaleString(),
+        status: true,
+        sort: Math.random(),
+        describe: '总部',
+        id: Math.random(),
+      },
+      {
+        deptName: '资本控股',
+        createTime: new Date().toLocaleString(),
+        status: true,
+        sort: Math.random(),
+        describe: '分部',
+        id: Math.random(),
+      },
+    ],
+  })
+  state.tableData.total=state.tableData.data.length
+  setTimeout(() => {
+    state.tableData.loading=false
+  },500)
 }
 // 打开新增菜单弹窗
-const onOpenAddDept = (type: string) => {
-	deptDialogRef.value.openDialog(type)
+const onOpenAddDept=(type: string) => {
+  deptDialogRef.value.openDialog(type)
 }
 // 打开编辑菜单弹窗
-const onOpenEditDept = (type: string, row: DeptTreeType) => {
-	deptDialogRef.value.openDialog(type, row)
+const onOpenEditDept=(type: string,row: DeptTreeType) => {
+  deptDialogRef.value.openDialog(type,row)
 }
 // 删除当前行
-const onTabelRowDel = (row: DeptTreeType) => {
-	ElMessageBox.confirm(`此操作将永久删除部门：${row.deptName}, 是否继续?`, '提示', {
-		confirmButtonText: '删除',
-		cancelButtonText: '取消',
-		type: 'warning',
-	})
-		.then(() => {
-			getTableData()
-			ElMessage.success('删除成功')
-		})
-		.catch(() => {})
+const onTabelRowDel=(row: DeptTreeType) => {
+  ElMessageBox.confirm(`此操作将永久删除部门：${row.deptName}, 是否继续?`,'提示',{
+    confirmButtonText: '删除',
+    cancelButtonText: '取消',
+    type: 'warning',
+  })
+    .then(() => {
+      getTableData()
+      ElMessage.success('删除成功')
+    })
+    .catch(() => { })
 }
 // 页面加载时
 onMounted(() => {
-	getTableData()
+  getTableData()
 })
 </script>
