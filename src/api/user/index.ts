@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request from '@/utils/request'
 
 export function useUserApi() {
   return {
@@ -13,7 +13,7 @@ export function useUserApi() {
       return request({
         url: '/user/getUserList',
         method: 'get',
-        params
+        params,
       })
     },
     /**
@@ -27,7 +27,7 @@ export function useUserApi() {
       return request({
         url: '/user/addUser',
         method: 'post',
-        data: params
+        data: params,
       })
     },
     /**
@@ -42,7 +42,7 @@ export function useUserApi() {
       return request({
         url: `/user/updateUserInfoById/${userId}`,
         method: 'put',
-        data: params
+        data: params,
       })
     },
     /**
@@ -72,9 +72,9 @@ export function useUserApi() {
         method: 'patch',
         data: file,
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
-    }
+    },
   }
 }

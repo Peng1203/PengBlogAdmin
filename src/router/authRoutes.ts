@@ -214,6 +214,21 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: '/category',
+        name: 'Category',
+        component: () => import('@/views/article/category/index.vue'),
+        meta: {
+          title: '分类管理',
+          isLink: '',
+          isHide: false,
+          isKeepAlive: true,
+          isAffix: false,
+          isIframe: false,
+          roles: ['admin'],
+          icon: 'iconfont icon-fenlei',
+        },
+      },
+      {
         path: '/personal',
         name: 'Personal',
         component: () => import('/@/views/personal/index.vue'),
