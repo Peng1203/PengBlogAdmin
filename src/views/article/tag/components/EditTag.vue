@@ -22,7 +22,7 @@
           <IconSelector
             :prepend="preIcon"
             v-model="editFormState.data.tagIcon"
-            @get="handleGetIcon"
+            @get="(icon: string) => (editFormState.data.tagIcon = icon)"
           />
         </template>
       </Peng-Form>
@@ -51,11 +51,6 @@ import {
 } from 'vue'
 import { useTagApi } from '@/api/tag/index'
 import { ElMessage } from 'element-plus'
-import { useUserAuthList } from '@/stores/userAuthList'
-import { storeToRefs } from 'pinia'
-
-const userAuthListStore = useUserAuthList()
-const userAuthList = storeToRefs(userAuthListStore)
 
 const IconSelector = defineAsyncComponent(
   () => import('@/components/iconSelector/index.vue')
@@ -158,13 +153,14 @@ const saveEditTag = async (): Promise<boolean> => {
   }
 }
 
-// 获取当前点击的 icon 图标
-const handleGetIcon = (icon: string) => (editFormState.data.tagIcon = icon)
+// // 获取当前点击的 icon 图标
+// const handleGetIcon = (icon: string) => (editFormState.data.tagIcon = icon)
 
 watch(
   () => props.editRow,
   (val: any) => {
     editFormState.data = JSON.parse(JSON.stringify(val))
+    if (editFormState.data.tagIcon === null) editFormState.data.tagIcon = ''
   },
   {
     deep: true,

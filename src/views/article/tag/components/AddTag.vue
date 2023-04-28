@@ -31,23 +31,9 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  ref,
-  reactive,
-  watch,
-  PropType,
-  computed,
-  defineAsyncComponent,
-} from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, reactive, watch, computed, defineAsyncComponent } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useTagApi } from '@/api/tag/index'
-import { allAuthRoutes } from '@/router/authRoutes'
-import { formatFlatteningRoutes } from '@/router/index'
-import { useUserAuthList } from '@/stores/userAuthList'
-
-const userAuthListStore = useUserAuthList()
-const userAuthList = storeToRefs(userAuthListStore)
 
 const IconSelector = defineAsyncComponent(
   () => import('@/components/iconSelector/index.vue')
