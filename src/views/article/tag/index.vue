@@ -93,11 +93,7 @@
     />
 
     <!-- 添加标签对话框 -->
-    <AddTagDialog
-      ref="addDialogRef"
-      :URIs="tableState.URIs"
-      @updateList="getTagTableData"
-    />
+    <AddTagDialog ref="addDialogRef" @updateList="getTagTableData" />
   </div>
 </template>
 
@@ -118,8 +114,6 @@ const { getTagList, deleteTagById } = useTagApi()
 const tableState = reactive({
   loading: false,
   data: [],
-  // 已添加标签的全部URI标识
-  URIs: ref<string[]>(),
   tableColumns: [
     {
       label: '标签名',
@@ -173,11 +167,10 @@ const getTagTableData = async () => {
       pageSize: pagerInfo.pageSize,
     }
     const { data: res } = await getTagList(params)
-    const { code, message, data, total, URIs } = res
+    const { code, message, data, total } = res
     if (code !== 200 || message !== 'Success') return
     tableState.data = data
     tableState.pagerInfo.total = total
-    tableState.URIs = URIs
   } catch (e) {
     console.log(e)
   } finally {

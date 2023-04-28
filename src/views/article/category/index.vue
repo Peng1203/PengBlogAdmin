@@ -93,11 +93,7 @@
     />
 
     <!-- 添加分类对话框 -->
-    <AddCategoryDialog
-      ref="addDialogRef"
-      :URIs="tableState.URIs"
-      @updateList="getCategoryTableData"
-    />
+    <AddCategoryDialog ref="addDialogRef" @updateList="getCategoryTableData" />
   </div>
 </template>
 
@@ -118,8 +114,6 @@ const { getCategoryList, deleteCategoryById } = useCategoryApi()
 const tableState = reactive({
   loading: false,
   data: [],
-  // 已添加分类的全部URI标识
-  URIs: ref<string[]>(),
   tableColumns: [
     {
       label: '分类名称',
@@ -165,11 +159,10 @@ const getCategoryTableData = async () => {
       pageSize: pagerInfo.pageSize,
     }
     const { data: res } = await getCategoryList(params)
-    const { code, message, data, total, URIs } = res
+    const { code, message, data, total } = res
     if (code !== 200 || message !== 'Success') return
     tableState.data = data
     tableState.pagerInfo.total = total
-    tableState.URIs = URIs
   } catch (e) {
     console.log(e)
   } finally {
