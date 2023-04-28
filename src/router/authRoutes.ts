@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router';
+import { RouteRecordRaw } from 'vue-router'
 
 /**
  * 需要权限的路由表
@@ -199,6 +199,21 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
         },
       },
       {
+        path: '/tag',
+        name: 'Tag',
+        component: () => import('@/views/article/tag/index.vue'),
+        meta: {
+          title: '标签管理',
+          isLink: '',
+          isHide: false,
+          isKeepAlive: true,
+          isAffix: false,
+          isIframe: false,
+          roles: ['admin'],
+          icon: 'iconfont icon-yonghuguanli',
+        },
+      },
+      {
         path: '/personal',
         name: 'Personal',
         component: () => import('/@/views/personal/index.vue'),
@@ -213,6 +228,6 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           icon: 'ele-UserFilled',
         },
       },
-    ]
-  }
+    ],
+  },
 ]
