@@ -10,44 +10,37 @@
       @command="onComponentSizeChange"
     >
       <div class="layout-navbars-breadcrumb-user-icon">
-        <i
-          class="iconfont icon-ziti"
-          title="组件大小"
-        ></i>
+        <i class="iconfont icon-ziti" title="组件大小"></i>
       </div>
       <template #dropdown>
         <el-dropdown-menu>
           <el-dropdown-item
             command="large"
             :disabled="state.disabledSize === 'large'"
-          >大型</el-dropdown-item>
+            >大型</el-dropdown-item
+          >
           <el-dropdown-item
             command="default"
             :disabled="state.disabledSize === 'default'"
-          >默认</el-dropdown-item>
+            >默认</el-dropdown-item
+          >
           <el-dropdown-item
             command="small"
             :disabled="state.disabledSize === 'small'"
-          >小型</el-dropdown-item>
+            >小型</el-dropdown-item
+          >
         </el-dropdown-menu>
       </template>
     </el-dropdown>
-    <div
-      class="layout-navbars-breadcrumb-user-icon"
-      @click="onSearchClick"
-    >
-      <el-icon title="菜单搜索">
-        <ele-Search />
-      </el-icon>
+    <div class="layout-navbars-breadcrumb-user-icon" @click="onSearchClick">
+      <Peng-Icon name="ele-Search" />
     </div>
     <div
       class="layout-navbars-breadcrumb-user-icon"
       @click="onLayoutSetingClick"
     >
-      <i
-        class="icon-skin iconfont"
-        title="布局配置"
-      ></i>
+      <Peng-Icon name="ele-Setting" />
+      <i class="icon-skin iconfont" title="布局配置"></i>
     </div>
     <div class="layout-navbars-breadcrumb-user-icon">
       <el-popover
@@ -59,9 +52,7 @@
       >
         <template #reference>
           <el-badge :is-dot="true">
-            <el-icon title="消息">
-              <ele-Bell />
-            </el-icon>
+            <Peng-Icon title="消息" name="ele-Bell" />
           </el-badge>
         </template>
         <template #default>
@@ -73,11 +64,14 @@
       class="layout-navbars-breadcrumb-user-icon mr10"
       @click="onScreenfullClick"
     >
-      <i
-        class="iconfont"
+      <Peng-Icon
         :title="state.isScreenfull ? '关全屏' : '开全屏'"
-        :class="!state.isScreenfull ? 'icon-fullscreen' : 'icon-tuichuquanping'"
-      ></i>
+        :name="
+          !state.isScreenfull ? 'icon-quanping_o' : 'icon-quxiaoquanping_o'
+        "
+      />
+
+      <i class="iconfont"></i>
     </div>
     <el-dropdown
       trigger="click"
@@ -99,10 +93,7 @@
         <el-dropdown-menu>
           <el-dropdown-item command="/home">首页</el-dropdown-item>
           <!-- @click="stores.userLogout" -->
-          <el-dropdown-item
-            divided
-            command="logOut"
-          >退出登录</el-dropdown-item>
+          <el-dropdown-item divided command="logOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -122,8 +113,12 @@ import mittBus from '@/utils/mitt'
 import { Local } from '@/utils/storage'
 
 // 引入组件
-const UserNews = defineAsyncComponent(() => import('@/layout/navBars/breadcrumb/userNews.vue'))
-const Search = defineAsyncComponent(() => import('@/layout/navBars/breadcrumb/search.vue'))
+const UserNews = defineAsyncComponent(
+  () => import('@/layout/navBars/breadcrumb/userNews.vue')
+)
+const Search = defineAsyncComponent(
+  () => import('@/layout/navBars/breadcrumb/search.vue')
+)
 
 // 定义变量内容
 const router = useRouter()
@@ -132,7 +127,7 @@ const storesThemeConfig = useThemeConfig()
 const { userInfos } = storeToRefs(stores)
 const { themeConfig } = storeToRefs(storesThemeConfig)
 const searchRef = ref()
-const state = reactive({
+const state: any = reactive({
   isScreenfull: false,
   disabledSize: 'large',
 })
@@ -142,7 +137,11 @@ const layoutUserFlexNum = computed(() => {
   let num: string | number = ''
   const { layout, isClassicSplitMenu } = themeConfig.value
   const layoutArr: string[] = ['defaults', 'columns']
-  if (layoutArr.includes(layout) || (layout === 'classic' && !isClassicSplitMenu)) num = '1'
+  if (
+    layoutArr.includes(layout) ||
+    (layout === 'classic' && !isClassicSplitMenu)
+  )
+    num = '1'
   else num = ''
   return num
 })
@@ -195,7 +194,7 @@ const onHandleCommandClick = (path: string) => {
         // // 使用 reload 时，不需要调用 resetRoute() 重置路由
         // window.location.reload()
       })
-      .catch(() => { })
+      .catch(() => {})
   } else {
     router.push(path)
   }
@@ -212,7 +211,7 @@ const onComponentSizeChange = (size: string) => {
   initI18nOrSize('globalComponentSize', 'disabledSize')
   window.location.reload()
 }
-// 初始化组件大小/i18n 
+// 初始化组件大小/i18n
 const initI18nOrSize = (value: string, attr: string) => {
   state[attr] = Local.get('themeConfig')[value]
 }
@@ -226,47 +225,47 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .layout-navbars-breadcrumb-user {
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-	&-link {
-		height: 100%;
-		display: flex;
-		align-items: center;
-		white-space: nowrap;
-		&-photo {
-			width: 25px;
-			height: 25px;
-			border-radius: 100%;
-		}
-	}
-	&-icon {
-		padding: 0 10px;
-		cursor: pointer;
-		color: var(--next-bg-topBarColor);
-		height: 50px;
-		line-height: 50px;
-		display: flex;
-		align-items: center;
-		&:hover {
-			background: var(--next-color-user-hover);
-			i {
-				display: inline-block;
-				animation: logoAnimation 0.3s ease-in-out;
-			}
-		}
-	}
-	:deep(.el-dropdown) {
-		color: var(--next-bg-topBarColor);
-	}
-	:deep(.el-badge) {
-		height: 40px;
-		line-height: 40px;
-		display: flex;
-		align-items: center;
-	}
-	:deep(.el-badge__content.is-fixed) {
-		top: 12px;
-	}
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  &-link {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    &-photo {
+      width: 25px;
+      height: 25px;
+      border-radius: 100%;
+    }
+  }
+  &-icon {
+    padding: 0 10px;
+    cursor: pointer;
+    color: var(--next-bg-topBarColor);
+    height: 50px;
+    line-height: 50px;
+    display: flex;
+    align-items: center;
+    &:hover {
+      background: var(--next-color-user-hover);
+      i {
+        display: inline-block;
+        animation: logoAnimation 0.3s ease-in-out;
+      }
+    }
+  }
+  :deep(.el-dropdown) {
+    color: var(--next-bg-topBarColor);
+  }
+  :deep(.el-badge) {
+    height: 40px;
+    line-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+  :deep(.el-badge__content.is-fixed) {
+    top: 12px;
+  }
 }
 </style>
