@@ -1,5 +1,5 @@
 declare interface OperationItem {
-  label: string,
+  label: string
   value: string | number | boolean
   [key: string]: T
 }

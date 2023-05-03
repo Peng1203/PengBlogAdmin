@@ -1,9 +1,6 @@
 <template>
   <div class="system-user-container layout-padding">
-    <el-card
-      shadow="hover"
-      class="layout-padding-auto"
-    >
+    <el-card shadow="hover" class="layout-padding-auto">
       <!-- 顶部操作 -->
       <div class="mb15 flex-sb-c">
         <el-button
@@ -11,7 +8,7 @@
           size="default"
           type="success"
           class="ml10"
-          @click="() => addDialogRef.addUserDialogStatus = true"
+          @click="() => (addDialogRef.addUserDialogStatus = true)"
         >
           <!-- @click="handleShowAddDialog" -->
           <el-icon>
@@ -51,13 +48,9 @@
             effect="dark"
             type="success"
             v-if="row[prop] === 1"
-          >启用</el-tag>
-          <el-tag
-            size="small"
-            effect="dark"
-            type="danger"
-            v-else
-          >锁定</el-tag>
+            >启用</el-tag
+          >
+          <el-tag size="small" effect="dark" type="danger" v-else>锁定</el-tag>
         </template>
 
         <!-- 操作 -->
@@ -84,13 +77,9 @@
           />
         </template>
       </Peng-Table>
-
     </el-card>
     <!-- 添加用户对话框 -->
-    <AddUserDialog
-      ref="addDialogRef"
-      @updateList="getUserTableData"
-    />
+    <AddUserDialog ref="addDialogRef" @updateList="getUserTableData" />
 
     <!-- 编辑用户信息抽屉 -->
     <EditUserDrawer
@@ -102,7 +91,15 @@
 </template>
 
 <script setup lang="ts" name="systemUser">
-import { defineAsyncComponent, reactive, onMounted, ref, watch, inject, watchEffect } from 'vue'
+import {
+  defineAsyncComponent,
+  reactive,
+  onMounted,
+  ref,
+  watch,
+  inject,
+  watchEffect,
+} from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 // import PengFrom from '@/components/Form/Index.vue'
@@ -115,9 +112,22 @@ const tableState = reactive({
   loading: false,
   data: [],
   tableColumns: [
-    { label: '用户名', prop: 'userName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'uName' },
+    {
+      label: '用户名',
+      prop: 'userName',
+      minWidth: 130,
+      tooltip: true,
+      fixed: 'left',
+      slotName: 'uName',
+    },
     { label: '角色', prop: 'roleId' },
-    { label: '用户状态', prop: 'state', slotName: 'state', minWidth: 120, sort: true },
+    {
+      label: '用户状态',
+      prop: 'state',
+      slotName: 'state',
+      minWidth: 120,
+      sort: true,
+    },
     { label: '邮箱', prop: 'email', minWidth: 200, tooltip: true },
     { label: '解禁时间', prop: 'unsealTime', minWidth: 200, sort: true },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
@@ -191,16 +201,20 @@ const getUserTableData = async () => {
 
 // 打开删除用户
 const handleDelUser = (row: any) => {
-  ElMessageBox.confirm(`此操作将永久删除用户：“${row.userName}”，是否继续?`, '提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  })
+  ElMessageBox.confirm(
+    `此操作将永久删除用户：“${row.userName}”，是否继续?`,
+    '提示',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  )
     .then(async () => {
       await deleteUser(row.id)
       getUserTableData()
     })
-    .catch(() => { })
+    .catch(() => {})
 }
 // 删除用户
 const deleteUser = async (id: number) => {
@@ -215,7 +229,9 @@ const deleteUser = async (id: number) => {
 }
 
 // 引入编辑用户抽屉组件
-const EditUserDrawer = defineAsyncComponent(() => import('./components/EditUser.vue'))
+const EditUserDrawer = defineAsyncComponent(
+  () => import('./components/EditUser.vue')
+)
 const editDrawerRef = ref<any>(null)
 const editRow = ref<object>()
 // 打开编辑用户信息抽屉
@@ -225,7 +241,9 @@ const handleEditUserInfo = (row: object) => {
 }
 
 // 引入添加用户对话框组件
-const AddUserDialog = defineAsyncComponent(() => import('./components/AddUser.vue'))
+const AddUserDialog = defineAsyncComponent(
+  () => import('./components/AddUser.vue')
+)
 const addDialogRef = ref<any>(null)
 
 // 页面加载时
@@ -236,14 +254,14 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .system-user-container {
-	:deep(.el-card__body) {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		overflow: auto;
-		.el-table {
-			flex: 1;
-		}
-	}
+  :deep(.el-card__body) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    .el-table {
+      flex: 1;
+    }
+  }
 }
 </style>
