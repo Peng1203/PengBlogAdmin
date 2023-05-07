@@ -88,5 +88,20 @@ export function useUserApi() {
         method: 'get',
       })
     },
+    /**
+     * 修改用户密码
+     * @author Peng
+     * @date 2023-05-07
+     * @param {any} userId:number
+     * @param {any} params:object
+     * @returns {any}
+     */
+    changeUserPwd(userId: number, params: object) {
+      return request({
+        url: `/user/changePasswordById/${userId}`,
+        method: 'post',
+        data: params,
+      })
+    },
   }
 }

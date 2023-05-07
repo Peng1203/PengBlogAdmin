@@ -8,7 +8,7 @@
     :label-width="labelW"
     :label-position="labelP"
   >
-    <el-row :gutter="30">
+    <el-row :gutter="gutter">
       <!--  -->
       <template
         v-for="(
@@ -264,6 +264,7 @@ interface PengFormAttribute {
   size?: string
   disabled?: boolean
   inline?: boolean
+  gutter?: number
 }
 
 const emit = defineEmits(['switchChange', 'selectChange'])
@@ -276,6 +277,7 @@ const props = withDefaults(defineProps<PengFormAttribute>(), {
   size: 'large', // large default small
   disabled: false,
   inline: false,
+  gutter: 30,
 })
 
 const formRef = ref<any>(null)

@@ -6,10 +6,7 @@
     :model="loginState.loginForm"
     :rules="loginState.loginFormRules"
   >
-    <el-form-item
-      prop="userName"
-      class="login-animation1"
-    >
+    <el-form-item prop="userName" class="login-animation1">
       <el-input
         text
         clearable
@@ -22,10 +19,7 @@
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item
-      prop="password"
-      class="login-animation2"
-    >
+    <el-form-item prop="password" class="login-animation2">
       <el-input
         autocomplete="off"
         placeholder="请输入密码"
@@ -38,17 +32,18 @@
         <template #suffix>
           <i
             class="iconfont el-input__icon login-content-password"
-            :class="loginState.isShowPassword ? 'icon-yincangmima' : 'icon-xianshimima'"
+            :class="
+              loginState.isShowPassword
+                ? 'icon-yincangmima'
+                : 'icon-xianshimima'
+            "
             @click="loginState.isShowPassword = !loginState.isShowPassword"
           >
           </i>
         </template>
       </el-input>
     </el-form-item>
-    <el-form-item
-      prop="captcha"
-      class="login-animation3"
-    >
+    <el-form-item prop="captcha" class="login-animation3">
       <el-col :span="15">
         <el-input
           text
@@ -70,7 +65,8 @@
           v-waves
           class="login-content-code"
           @click="handleRefreshCaptcha"
-        >{{ captchaCode }}</el-button>
+          >{{ captchaCode }}</el-button
+        >
       </el-col>
     </el-form-item>
     <el-form-item class="login-animation4">
@@ -194,9 +190,9 @@ const getLoginUserInfo = async (): Promise<any> => {
       uuid: Local.get('uuid'),
     }
     const { data: res } = await signIn(params)
-    const { code, data, message, token } = res
+    const { code, data, message, token, clientInfo } = res
     if (code !== 200 || message !== 'Success') return ElMessage.error(data)
-    return { userInfo: data, token }
+    return { userInfo: data, token, clientInfo }
   } catch (error) {
     throw error
   }
@@ -211,9 +207,10 @@ const handleUserLogin = async () => {
     // 调用后端验证码校验接口
     const captchIsPass = await postCaptchaCode()
     if (!captchIsPass) return (loginState.loading.signIn = false)
-    const { userInfo, token } = await getLoginUserInfo()
+    const { userInfo, token, clientInfo } = await getLoginUserInfo()
     if (!userInfo) return (loginState.loading.signIn = false)
     // 存储 token 到浏览器缓存
+    Session.set('clientInfo', clientInfo)
     Session.set('userInfo', { ...userInfo, token })
     Session.set('userName', loginState.loginForm.userName)
     useUserInfoStores.setUserInfos(userInfo)
@@ -257,7 +254,10 @@ const signInSuccess = (isNoPower: boolean | undefined) => {
       console.log('if -----')
       router.push({
         path: <string>route.query?.redirect,
-        query: Object.keys(<string>route.query?.params).length > 0 ? JSON.parse(<string>route.query?.params) : '',
+        query:
+          Object.keys(<string>route.query?.params).length > 0
+            ? JSON.parse(<string>route.query?.params)
+            : '',
       })
     } else {
       console.log('else -----')
@@ -275,40 +275,40 @@ const signInSuccess = (isNoPower: boolean | undefined) => {
 
 <style scoped lang="scss">
 .login-content-form {
-	margin-top: 20px;
+  margin-top: 20px;
 
-	@for $i from 1 through 4 {
-		.login-animation#{$i} {
-			opacity: 0;
-			animation-name: error-num;
-			animation-duration: 0.5s;
-			animation-fill-mode: forwards;
-			animation-delay: calc($i/10) + s;
-		}
-	}
+  @for $i from 1 through 4 {
+    .login-animation#{$i} {
+      opacity: 0;
+      animation-name: error-num;
+      animation-duration: 0.5s;
+      animation-fill-mode: forwards;
+      animation-delay: calc($i/10) + s;
+    }
+  }
 
-	.login-content-password {
-		display: inline-block;
-		width: 20px;
-		cursor: pointer;
+  .login-content-password {
+    display: inline-block;
+    width: 20px;
+    cursor: pointer;
 
-		&:hover {
-			color: #909399;
-		}
-	}
+    &:hover {
+      color: #909399;
+    }
+  }
 
-	.login-content-code {
-		width: 100%;
-		padding: 0;
-		font-weight: bold;
-		letter-spacing: 5px;
-	}
+  .login-content-code {
+    width: 100%;
+    padding: 0;
+    font-weight: bold;
+    letter-spacing: 5px;
+  }
 
-	.login-content-submit {
-		width: 100%;
-		letter-spacing: 2px;
-		font-weight: 300;
-		margin-top: 15px;
-	}
+  .login-content-submit {
+    width: 100%;
+    letter-spacing: 2px;
+    font-weight: 300;
+    margin-top: 15px;
+  }
 }
 </style>
