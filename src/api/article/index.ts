@@ -76,16 +76,17 @@ export function useArticleApi() {
      * @author Peng
      * @date 2023-04-29
      * @param {any} file:FormData
+     * @param {any} type:string
      * @returns {any}
      */
-    uploadArticleCover(file: FormData) {
+    uploadArticleCover(file: FormData, type?: string) {
       return request({
-        url: '/article/upload-cover',
+        url: '/article/upload-resources',
         method: 'post',
         data: file,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'resource-classification': 'cover',
+          'resource-classification': type || 'cover',
         },
       })
     },

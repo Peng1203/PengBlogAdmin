@@ -99,14 +99,21 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, watchEffect, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useArticleApi } from '@/api/article/index'
-
+import { useArticleInfo } from '@/stores/articleInfo'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { toolbarConfig, editorConfig } from './editorConfig'
+import { Session } from '@/utils/storage'
 
 const route = useRoute()
 const router = useRouter()
+
+const articleInfoStore = useArticleInfo()
+const articleInfoState = storeToRefs(articleInfoStore)
+
 const { getArticleDetailById, addArticle, updateArticle, uploadArticleCover } =
   useArticleApi()
 
@@ -122,7 +129,7 @@ let articleForm = ref<any>({
   content: '',
   authorId: 0,
   cover: '',
-  categoryId: 0,
+  categoryId: '',
   tags: ref<number[]>([]),
   // commentCount: 0,
   // likeCount: 0,
@@ -218,7 +225,16 @@ const getArticleDetail = async () => {
     const { data: res } = await getArticleDetailById(route.params.aid as any)
     const { data, message, code } = res
     if (code !== 200 || message !== 'Success') return
-    articleForm.value = data
+    const { Category, authorId, content, brief, cover, tags, title } = data
+    articleForm.value = {
+      categoryId: Category.id,
+      authorId,
+      content,
+      brief,
+      cover,
+      tags,
+      title,
+    }
   } catch (e) {
     console.log(e)
   }
@@ -252,9 +268,14 @@ const handleAdd = () => {
 const addNewArticle = async (): Promise<boolean> => {
   try {
     const params = JSON.parse(JSON.stringify(articleForm.value))
-    console.log('params -----', params)
+    params.authorId = Session.get('userInfo').id
     const { data: res } = await addArticle(params)
-    console.log('res -----', res)
+    const { code, data, message } = res
+    if (code !== 200 || message !== 'Success') {
+      ElMessage.error(data)
+      return false
+    }
+    ElMessage.success(data)
     return true
   } catch (e) {
     console.log(e)
@@ -262,16 +283,49 @@ const addNewArticle = async (): Promise<boolean> => {
   }
 }
 
-// 获取分类下拉列表
-
-// 获取标签下拉列表
-
-// 保存编辑
+// 处理保存编辑
 const handleSaveEdit = () => {
   console.log(' -----', articleForm.value)
+  saveEditArticle()
+}
+// 保存修改
+const saveEditArticle = async (): Promise<boolean> => {
+  try {
+    const { data: res } = await updateArticle(
+      articleForm.value.authorId,
+      articleForm.value
+    )
+    const { code, data, message } = res
+    if (code !== 200 || message !== 'Success') {
+      ElMessage.error(data)
+      return false
+    }
+    ElMessage.success(data)
+    return true
+  } catch (e) {
+    console.log(e)
+    return false
+  }
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await Promise.all([
+    articleInfoStore.getAllCategoryList(),
+    articleInfoStore.getAllTagList(),
+  ])
+  articleInfoStore.getAllTagList()
+  articleInfoStore.getAllCategoryList()
+  // console.log(
+  //   'articleInfoState. -----',
+  //   articleInfoState.allCategoryOptions.value
+  // )
+  // console.log('articleInfoState. -----', articleInfoState.allTagOptions.value)
+
+  articleFormItemList.find((item) => item.prop === 'categoryId').options =
+    articleInfoState.allCategoryOptions.value
+  articleFormItemList.find((item) => item.prop === 'tags').options =
+    articleInfoState.allTagOptions.value
+
   if (route.params.aid === ':aid') return
   isAdd.value = false
   getArticleDetail()

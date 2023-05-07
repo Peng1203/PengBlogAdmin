@@ -1,3 +1,5 @@
+import { BASE_URL } from '@/api/baseURL'
+import { Session } from '/@/utils/storage'
 // 菜单栏配置
 export const toolbarConfig = {
   /**
@@ -41,6 +43,7 @@ export const toolbarConfig = {
     'emotion',
     'code',
     'codeBlock',
+    'insertLink',
     // 菜单组，包含多个菜单
     // {
     //   key: 'group-more-style', // 必填，要以 group 开头
@@ -145,17 +148,18 @@ export const editorConfig = {
     // 图片上传
     uploadImage: {
       // 小于该值就插入 base64 格式（而不上传），默认为 0
-      base64LimitSize: 2 * 1024 * 1024,
-      server: 'http://127.0.0.1:3000/api/upload-img',
-      // server: '/api/upload-img-10s', // test timeout
-      // server: '/api/upload-img-failed', // test failed
-      // server: '/api/xxx', // test 404
+      base64LimitSize: 10 * 1024 * 1024,
+      server: `${BASE_URL}/article/upload-resources`,
 
       timeout: 5 * 1000, // 5s
-      fieldName: 'custom-fileName',
-      meta: { token: 'xxx', a: 100 },
+      fieldName: 'file',
+      meta: { token: Session.get('token') },
       metaWithUrl: true, // join params to url
-      headers: { Accept: 'text/x-json' },
+      headers: {
+        // 'Content-Type': 'multipart/form-data',
+        'Content-Type': false,
+        'resource-classification': 'content',
+      },
 
       maxFileSize: 15 * 1024 * 1024, // 15M
     },

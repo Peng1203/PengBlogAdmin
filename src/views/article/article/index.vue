@@ -120,6 +120,7 @@
               <!-- 操作 -->
               <div>
                 <el-link
+                  v-auth="'VIEW'"
                   type="success"
                   icon="View"
                   title="查看"
@@ -127,6 +128,7 @@
                   :underline="false"
                 />
                 <el-link
+                  v-auth="'EDIT'"
                   type="primary"
                   icon="EditPen"
                   title="编辑"
@@ -135,6 +137,7 @@
                   @click="handleEditArticle(item.id)"
                 />
                 <el-link
+                  v-auth="'DELETE'"
                   type="danger"
                   icon="Delete"
                   title="删除"
