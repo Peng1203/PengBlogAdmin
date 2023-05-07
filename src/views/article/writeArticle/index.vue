@@ -124,6 +124,7 @@ const isAdd = ref<boolean>(true)
 
 // 文章表单信息
 let articleForm = ref<any>({
+  id: '',
   title: '',
   brief: '',
   content: '',
@@ -225,8 +226,14 @@ const getArticleDetail = async () => {
     const { data: res } = await getArticleDetailById(route.params.aid as any)
     const { data, message, code } = res
     if (code !== 200 || message !== 'Success') return
-    const { Category, authorId, content, brief, cover, tags, title } = data
+    const { Category, authorId, content, brief, cover, tags, title, id } = data
+    console.log(
+      `%c data ----`,
+      'color: #fff;background-color: black;font-size: 18px',
+      data
+    )
     articleForm.value = {
+      id,
       categoryId: Category.id,
       authorId,
       content,
@@ -268,6 +275,7 @@ const handleAdd = () => {
 const addNewArticle = async (): Promise<boolean> => {
   try {
     const params = JSON.parse(JSON.stringify(articleForm.value))
+    delete params.id
     params.authorId = Session.get('userInfo').id
     const { data: res } = await addArticle(params)
     const { code, data, message } = res
@@ -285,15 +293,18 @@ const addNewArticle = async (): Promise<boolean> => {
 
 // 处理保存编辑
 const handleSaveEdit = () => {
-  console.log(' -----', articleForm.value)
   saveEditArticle()
 }
 // 保存修改
 const saveEditArticle = async (): Promise<boolean> => {
   try {
+    const params = {
+      ...articleForm.value,
+    }
+    delete params.id
     const { data: res } = await updateArticle(
       articleForm.value.authorId,
-      articleForm.value
+      params
     )
     const { code, data, message } = res
     if (code !== 200 || message !== 'Success') {
