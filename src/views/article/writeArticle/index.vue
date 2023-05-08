@@ -296,7 +296,7 @@ const saveEditArticle = async (): Promise<boolean> => {
     const params = {
       ...articleForm.value,
     }
-    const aId = params.id
+    const aId = JSON.parse(JSON.stringify(params.id))
     delete params.id
     const { data: res } = await updateArticle(
       aId,
