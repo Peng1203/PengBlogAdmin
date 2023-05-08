@@ -227,11 +227,6 @@ const getArticleDetail = async () => {
     const { data, message, code } = res
     if (code !== 200 || message !== 'Success') return
     const { Category, authorId, content, brief, cover, tags, title, id } = data
-    console.log(
-      `%c data ----`,
-      'color: #fff;background-color: black;font-size: 18px',
-      data
-    )
     articleForm.value = {
       id,
       categoryId: Category.id,
@@ -301,9 +296,10 @@ const saveEditArticle = async (): Promise<boolean> => {
     const params = {
       ...articleForm.value,
     }
+    const aId = params.id
     delete params.id
     const { data: res } = await updateArticle(
-      articleForm.value.authorId,
+      aId,
       params
     )
     const { code, data, message } = res
