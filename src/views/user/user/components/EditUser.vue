@@ -117,7 +117,7 @@ const saveEditUserInfo = async () => {
     if (code !== 200 || message !== 'Success') return ElMessage.error(data)
     ElMessage.success(data)
   } catch (e) {
-    ElMessage.error('更新失败')
+    // ElMessage.error('更新失败')
     console.log(e)
   }
 }
