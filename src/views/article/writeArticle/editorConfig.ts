@@ -1,7 +1,8 @@
+import { IToolbarConfig } from '@wangeditor/editor'
 import { BASE_URL } from '@/api/baseURL'
 import { Session } from '/@/utils/storage'
 // 菜单栏配置
-export const toolbarConfig = {
+export const toolbarConfig: Partial<IToolbarConfig> = {
   /**
    * toolbarKeys 自定义配置
    */
