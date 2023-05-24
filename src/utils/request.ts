@@ -18,7 +18,7 @@ const service: AxiosInstance = axios.create({
     },
   },
 })
-
+window.httpRequestList = []
 // 添加请求拦截器
 service.interceptors.request.use(
   (config) => {
@@ -28,6 +28,11 @@ service.interceptors.request.use(
     uuid && (config.headers!['uuid'] = uuid)
     token && (config.headers!['Authorization'] = token)
     userId && (config.headers!['userId'] = userId)
+
+    config.cancelToken = new axios.CancelToken(cancel => {
+      window.httpRequestList.push(cancel) //存储cancle
+    })
+
     return config
   },
   (error) => {

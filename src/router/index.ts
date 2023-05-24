@@ -102,6 +102,11 @@ export function formatTwoStageRoutes(arr: any) {
 router.beforeEach(async (to, from, next) => {
 	NProgress.configure({ showSpinner: false });
 	if (to.meta.title) NProgress.start();
+	// 切换页面时取消未响应的请求
+	if (!from.meta.isKeepAlive && window.httpRequestList.length > 0) {
+    window.httpRequestList.forEach(c => c())
+    window.httpRequestList = []
+  }
 	if (to.path === '/login' && !sessionStorage.getItem('PengBlogAdmin:token')) {
 		next();
 		NProgress.done();
@@ -131,25 +136,6 @@ router.beforeEach(async (to, from, next) => {
 			next()
 		}
 	}
-	// else {
-	// 	const storesRoutesList = useRoutesList(pinia);
-	// 	const { routesList } = storeToRefs(storesRoutesList);
-	// 	if (routesList.value.length === 0) {
-	// 		if (isRequestRoutes) {
-	// 			// 后端控制路由：路由数据初始化，防止刷新时丢失
-	// 			await initBackEndControlRoutes();
-	// 			// 解决刷新时，一直跳 404 页面问题，关联问题 No match found for location with path 'xxx'
-	// 			// to.query 防止页面刷新时，普通路由带参数时，参数丢失。动态路由（xxx/:id/:name"）isDynamic 无需处理
-	// 			next({ path: to.path, query: to.query });
-	// 		} else {
-	// 			// https://gitee.com/lyt-top/vue-next-admin/issues/I5F1HP
-	// 			// await initFrontEndControlRoutes();
-	// 			next({ path: to.path, query: to.query });
-	// 		}
-	// 	} else {
-	// 		next();
-	// 	}
-	// }
 });
 
 // 路由加载后

@@ -26,7 +26,9 @@ declare module '*.vue' {
 /* eslint-disable */
 declare interface Window {
 	nextLoading: boolean;
-	clientType: string
+	clientType: string;
+	// axios 发送的HTTP请求列表
+	httpRequestList: any[]
 }
 
 // 声明路由当前项类型
