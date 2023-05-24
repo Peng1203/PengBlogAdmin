@@ -32,7 +32,9 @@
               class="cover"
               style="width: 100%; height: 100%"
             />
-            <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
+            <el-icon v-else class="cover-uploader-icon">
+              <Plus />
+            </el-icon>
           </el-upload>
         </template>
 
@@ -81,12 +83,7 @@
             <el-button type="primary" v-if="isAdd" @click="handleAdd">
               发 布
             </el-button>
-            <el-button
-              v-else
-              type="primary"
-              v-if="!isAdd"
-              @click="handleSaveEdit"
-            >
+            <el-button type="primary" v-if="!isAdd" @click="handleSaveEdit">
               保 存
             </el-button>
           </div>
@@ -298,10 +295,7 @@ const saveEditArticle = async (): Promise<boolean> => {
     }
     const aId = JSON.parse(JSON.stringify(params.id))
     delete params.id
-    const { data: res } = await updateArticle(
-      aId,
-      params
-    )
+    const { data: res } = await updateArticle(aId, params)
     const { code, data, message } = res
     if (code !== 200 || message !== 'Success') {
       ElMessage.error(data)
@@ -320,8 +314,6 @@ onMounted(async () => {
     articleInfoStore.getAllCategoryList(),
     articleInfoStore.getAllTagList(),
   ])
-  articleInfoStore.getAllTagList()
-  articleInfoStore.getAllCategoryList()
   // console.log(
   //   'articleInfoState. -----',
   //   articleInfoState.allCategoryOptions.value
