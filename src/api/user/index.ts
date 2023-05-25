@@ -73,6 +73,7 @@ export function useUserApi() {
         data: file,
         headers: {
           'Content-Type': 'multipart/form-data',
+          'resource-classification': 'user-cover',
         },
       })
     },

@@ -29,8 +29,9 @@
             </div>
             <div class="personal-user-right">
               <el-row>
-                <el-col :span="24" class="personal-title mb18"
-                  >{{ currentTime }}，{{
+                <el-col :span="24" class="personal-title mb18">
+                  {{ currentTime }}，
+                  {{
                     userInfoStores.userInfos.userName
                   }}，生活变的再糟糕，也不妨碍我变得更好！
                 </el-col>
@@ -377,7 +378,7 @@ const handleUploadUserAvatar = async (fileInfo: any) => {
     const { code, data, message, img } = res
     if (code !== 200 || message !== 'Success') return ElMessage.error(data)
     ElMessage.success(data)
-    userInfoStores.userInfos.avatar = img
+    userInfoStores.userInfos.avatarUrl = img
     Session.set(
       'userInfo',
       JSON.parse(JSON.stringify(userInfoStores.userInfos))
@@ -530,7 +531,7 @@ onMounted(async () => {
   await userAuthListStore.getAllRoleList()
   state.userInfoFormItems[1].options = userAuthList.allRoleOptions.value
 
-  imageUrl.value = userInfoStores.userInfos.avatar || ''
+  imageUrl.value = userInfoStores.userInfos.avatarUrl || ''
 
   state.userInfoForm.id = userInfoStores.userInfos.id
   state.userInfoForm.roleId = userInfoStores.userInfos.roleId

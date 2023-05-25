@@ -81,7 +81,7 @@
     >
       <span class="layout-navbars-breadcrumb-user-link">
         <img
-          :src="userInfos.avatar || ''"
+          :src="userInfos.avatarUrl || ''"
           class="layout-navbars-breadcrumb-user-link-photo mr5"
         />
         {{ userInfos.userName === '' ? 'common' : userInfos.userName }}

@@ -21,7 +21,6 @@
           <el-upload
             class="cover-uploader"
             :show-file-list="false"
-            :on-success="handleCoverSuccess"
             :before-upload="beforeCoverUpload"
             :http-request="handleUploadCover"
             style="width: 178px; height: 178px"
@@ -249,10 +248,6 @@ const handleUploadCover = async (fileInfo: any) => {
   } catch (e) {
     console.log(e)
   }
-}
-
-const handleCoverSuccess = () => {
-  console.log('上传成功 -----')
 }
 
 const beforeCoverUpload = () => {}
