@@ -39,7 +39,8 @@
 
         <!-- 文章富文本 -->
         <template #content>
-          <Toolbar
+          <PengMdEditor v-model="articleForm.content" />
+          <!-- <Toolbar
             :mode="mode"
             :editor="editorRef"
             :defaultConfig="toolbarConfig"
@@ -56,12 +57,26 @@
               overflow-y: auto;
             "
             @onCreated="handleCreated"
-          />
+          /> -->
         </template>
 
         <!-- 实时预览 -->
         <template #preview>
+          <!-- v-text="articleForm.content" -->
           <div
+            style="
+              width: 100%;
+              word-break: break-all;
+              min-height: 300px;
+              max-height: 600px;
+              overflow-y: auto;
+            "
+            id="editor-content-view"
+            class="editor-content-view"
+          >
+            {{ articleForm.content }}
+          </div>
+          <!-- <div
             style="
               width: 100%;
               word-break: break-all;
@@ -72,7 +87,7 @@
             v-html="articleForm.content"
             id="editor-content-view"
             class="editor-content-view"
-          />
+          /> -->
         </template>
 
         <!-- 操作行 -->
@@ -103,6 +118,10 @@ import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { toolbarConfig, editorConfig } from './editorConfig'
 import { Session } from '@/utils/storage'
+import PengMdEditor from '@/components/MdEditor/index.vue'
+
+import { MdEditor } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -197,7 +216,7 @@ const articleFormItemList: any[] = reactive([
   },
   {
     xs: 24,
-    span: 14,
+    span: 24,
     type: 'slot',
     slotName: 'content',
   },
