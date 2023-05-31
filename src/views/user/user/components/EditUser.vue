@@ -18,17 +18,10 @@
       />
 
       <div class="mt20 flex-e-c">
-        <el-button
-          size="small"
-          @click="editDrawerStatus = false"
-        >
+        <el-button size="small" @click="editDrawerStatus = false">
           取消
         </el-button>
-        <el-button
-          size="small"
-          type="primary"
-          @click="handleSaveEdit"
-        >
+        <el-button size="small" type="primary" @click="handleSaveEdit">
           保存
         </el-button>
       </div>
@@ -103,7 +96,16 @@ watch(
 // 保存编辑信息
 const saveEditUserInfo = async () => {
   try {
-    const { id, roleId, userName, state, email, unsealTime, updateTime, createdTime } = editFormState.data
+    const {
+      id,
+      roleId,
+      userName,
+      state,
+      email,
+      unsealTime,
+      updateTime,
+      createdTime,
+    } = editFormState.data
     const params = {
       roleId,
       userName,
@@ -111,7 +113,6 @@ const saveEditUserInfo = async () => {
       email,
       unsealTime,
     }
-
     const { data: res } = await updateUserInfo(id, params)
     const { data, code, message } = res
     if (code !== 200 || message !== 'Success') return ElMessage.error(data)
@@ -139,5 +140,4 @@ watch(editDrawerStatus, async (val) => {
 defineExpose({ editDrawerStatus })
 </script>
 
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>

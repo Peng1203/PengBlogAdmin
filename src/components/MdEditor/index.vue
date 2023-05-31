@@ -1,21 +1,22 @@
 <template>
-  <!-- v-model="props.modelValue" -->
-  <MdEditor
-    v-model="text"
-    :theme="props.theme"
-    :language="props.lang"
-    :showCodeRowNumber="showCodeRowNumber"
-    :tableShape="[10, 6]"
-    :autoDetectCode="true"
-    :toolbars="toolbarConfigHashMapping[config]"
-    @onChange="(val: string) => emit('update:modelValue', val)"
-  />
-  <!-- :sanitize="sanitize" -->
+  <div class="peng-editor-container">
+    <!-- v-model="props.modelValue" -->
+    <MdEditor
+      v-model="text"
+      :theme="props.theme"
+      :language="props.lang"
+      :showCodeRowNumber="showCodeRowNumber"
+      :tableShape="[10, 6]"
+      :autoDetectCode="true"
+      :toolbars="toolbarConfigHashMapping[config]"
+      @onChange="(val: string) => emit('update:modelValue', val)"
+    />
+    <!-- :sanitize="sanitize" -->
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
-import sanitizeHtml from 'sanitize-html'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 // 引入公共库中的预览主题
@@ -83,14 +84,6 @@ const props = withDefaults(defineProps<PengMarkdownEditorAttibute>(), {
   placeholder: '',
 })
 
-// 移除危险内容 xss 相关
-const sanitize = (html: string) => sanitizeHtml(html)
-
-// 获取并更新父组件中绑定的值
-const hangeUpdateHTML = (html: string) => {
-  emit('update:modelValue', html)
-}
-
 const text = ref<string>('')
 
 watch(
@@ -104,7 +97,9 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.md-editor-footer {
-  height: initial;
+.peng-editor-container {
+  :deep(.md-editor-footer) {
+    height: initial;
+  }
 }
 </style>

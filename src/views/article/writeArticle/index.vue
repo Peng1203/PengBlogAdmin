@@ -40,24 +40,6 @@
         <!-- 文章富文本 -->
         <template #content>
           <PengMdEditor v-model="articleForm.content" />
-          <!-- <Toolbar
-            :mode="mode"
-            :editor="editorRef"
-            :defaultConfig="toolbarConfig"
-            style="border-bottom: 1px solid #ccc"
-          />
-          <Editor
-            :mode="mode"
-            :defaultConfig="editorConfig"
-            v-model="articleForm.content"
-            style="
-              width: 100%;
-              min-height: 300px;
-              max-height: 600px;
-              overflow-y: auto;
-            "
-            @onCreated="handleCreated"
-          /> -->
         </template>
 
         <!-- 实时预览 -->
@@ -119,9 +101,6 @@ import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import { toolbarConfig, editorConfig } from './editorConfig'
 import { Session } from '@/utils/storage'
 import PengMdEditor from '@/components/MdEditor/index.vue'
-
-import { MdEditor } from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
 
 const route = useRoute()
 const router = useRouter()
@@ -273,7 +252,6 @@ const beforeCoverUpload = () => {}
 
 // 处理发布文章
 const handleAdd = () => {
-  console.log(' -----', articleForm.value)
   addNewArticle()
 }
 
