@@ -1,21 +1,22 @@
-import vue from '@vitejs/plugin-vue';
-import { resolve } from 'path';
-import { defineConfig, loadEnv, ConfigEnv } from 'vite';
-import vueSetupExtend from 'vite-plugin-vue-setup-extend';
+import vue from '@vitejs/plugin-vue'
+import { resolve } from 'path'
+import { defineConfig, loadEnv, ConfigEnv } from 'vite'
+import vueSetupExtend from 'vite-plugin-vue-setup-extend'
+import viteCompression from 'vite-plugin-compression'
 
 const pathResolve = (dir: string) => {
-  return resolve(__dirname, '.', dir);
-};
+  return resolve(__dirname, '.', dir)
+}
 
 const alias: Record<string, string> = {
   '/@': pathResolve('./src/'),
   '@': pathResolve('./src/'),
-};
+}
 
 const viteConfig = defineConfig((mode: ConfigEnv) => {
-  const env = loadEnv(mode.mode, process.cwd());
+  const env = loadEnv(mode.mode, process.cwd())
   return {
-    plugins: [vue(), vueSetupExtend()],
+    plugins: [vue(), vueSetupExtend(), viteCompression()],
     root: process.cwd(),
     resolve: { alias },
     base: mode.command === 'serve' ? './' : env.VITE_PUBLIC_PATH,
@@ -55,7 +56,7 @@ const viteConfig = defineConfig((mode: ConfigEnv) => {
       __NEXT_VERSION__: JSON.stringify(process.env.npm_package_version),
       __NEXT_NAME__: JSON.stringify(process.env.npm_package_name),
     },
-  };
-});
+  }
+})
 
-export default viteConfig;
+export default viteConfig

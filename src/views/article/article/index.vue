@@ -126,6 +126,7 @@
                   title="查看"
                   class="ml10"
                   :underline="false"
+                  @click="handlePreViewArticle(item.id)"
                 />
                 <el-link
                   v-auth="'EDIT'"
@@ -232,12 +233,15 @@
         加载完毕
       </p>
       <el-backtop :right="100" :bottom="100" />
+
+      <!-- 预览 -->
+      <PreviewArticleDialog ref="previewDialogRef" />
     </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, defineAsyncComponent } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserApi } from '@/api/user/index'
 import { useArticleApi } from '@/api/article/index'
@@ -441,6 +445,20 @@ const handleEditArticle = (aid: number) => {
     name: 'WriteArticle',
     params: { aid },
   })
+}
+
+// 预览组件
+const PreviewArticleDialog = defineAsyncComponent(
+  () => import('./components/PreviewArticle.vue')
+)
+
+const previewDialogRef = ref<any>(null)
+// 处理预览操作
+const handlePreViewArticle = async (aid: number) => {
+  await previewDialogRef.value.getArticleDetailById(aid)
+  setTimeout(() => {
+    previewDialogRef.value.previewDialogStatus = true
+  }, 500)
 }
 
 onMounted(() => {

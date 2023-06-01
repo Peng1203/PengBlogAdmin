@@ -18,6 +18,12 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { MdEditor } from 'md-editor-v3'
+import type {
+  Themes,
+  preThemes,
+  codeTheme,
+  toolbarConfigs,
+} from '@/types/markdown.d.ts'
 import 'md-editor-v3/lib/style.css'
 // 引入公共库中的预览主题
 import '@vavt/md-editor-extension/dist/previewTheme/arknights.css'
@@ -30,28 +36,7 @@ const toolbarConfigHashMapping = {
   common: commonToolbars,
 }
 
-type Themes = 'light' | 'dark'
-type preThemes =
-  | 'default'
-  | 'github'
-  | 'vuepress'
-  | 'mk-cute'
-  | 'smart-blue'
-  | 'cyanosis'
-  | 'arknights'
-type codeTheme =
-  | 'atom'
-  | 'a11y'
-  | 'github'
-  | 'gradient'
-  | 'kimbie'
-  | 'paraiso'
-  | 'qtcreator'
-  | 'stackoverflow'
-
-type toolbarConfigs = 'all' | 'common'
-
-interface PengMarkdownEditorAttibute {
+interface MarkdownEditorAttibute {
   // toolbar配置
   config?: toolbarConfigs
   // 内容
@@ -66,7 +51,7 @@ interface PengMarkdownEditorAttibute {
   codeTheme?: codeTheme
   // 代码块是否显示行数
   showCodeRowNumber?: boolean
-  //
+  // 提示
   placeholder?: string
   // 不展示的工具栏
   toolbarsExclude?: []
@@ -74,7 +59,7 @@ interface PengMarkdownEditorAttibute {
 
 const emit = defineEmits(['update:modelValue'])
 
-const props = withDefaults(defineProps<PengMarkdownEditorAttibute>(), {
+const props = withDefaults(defineProps<MarkdownEditorAttibute>(), {
   config: 'common',
   theme: 'light',
   preTheme: 'default',
@@ -98,6 +83,7 @@ watch(
 
 <style lang="scss" scoped>
 .peng-editor-container {
+  width: 100%;
   :deep(.md-editor-footer) {
     height: initial;
   }

@@ -42,36 +42,6 @@
           <PengMdEditor v-model="articleForm.content" />
         </template>
 
-        <!-- 实时预览 -->
-        <template #preview>
-          <!-- v-text="articleForm.content" -->
-          <div
-            style="
-              width: 100%;
-              word-break: break-all;
-              min-height: 300px;
-              max-height: 600px;
-              overflow-y: auto;
-            "
-            id="editor-content-view"
-            class="editor-content-view"
-          >
-            {{ articleForm.content }}
-          </div>
-          <!-- <div
-            style="
-              width: 100%;
-              word-break: break-all;
-              min-height: 300px;
-              max-height: 600px;
-              overflow-y: auto;
-            "
-            v-html="articleForm.content"
-            id="editor-content-view"
-            class="editor-content-view"
-          /> -->
-        </template>
-
         <!-- 操作行 -->
         <template #operation>
           <div class="flex-e-c" style="width: 100%">
@@ -105,16 +75,14 @@ import PengMdEditor from '@/components/MdEditor/index.vue'
 const route = useRoute()
 const router = useRouter()
 
-const articleInfoStore = useArticleInfo()
+const articleInfoStore: any = useArticleInfo()
 const articleInfoState = storeToRefs(articleInfoStore)
 
 const { getArticleDetailById, addArticle, updateArticle, uploadArticleCover } =
   useArticleApi()
 
-const mode = 'simple'
-
 // 是否是添加文章
-const isAdd = ref<boolean>(true)
+const isAdd = ref<boolean>(route.params.aid === ':aid')
 
 // 文章表单信息
 let articleForm = ref<any>({
@@ -194,25 +162,18 @@ const articleFormItemList: any[] = reactive([
     slotName: 'operation',
   },
   {
-    xs: 24,
+    // xs: 24,
     span: 24,
     type: 'slot',
     slotName: 'content',
   },
-  {
-    xs: 24,
-    span: 10,
-    type: 'slot',
-    slotName: 'preview',
-  },
+  // {
+  //   xs: 24,
+  //   span: 10,
+  //   type: 'slot',
+  //   slotName: 'preview',
+  // },
 ])
-
-// 富文本编辑器
-// 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef()
-const handleCreated = (editor: any) => {
-  editorRef.value = editor // 记录 editor 实例，重要！
-}
 
 // 通过ID获取文章详情
 const getArticleDetail = async () => {
@@ -317,9 +278,9 @@ onMounted(async () => {
   articleFormItemList.find((item) => item.prop === 'tags').options =
     articleInfoState.allTagOptions.value
 
-  if (route.params.aid === ':aid') return
-  isAdd.value = false
-  getArticleDetail()
+  // if (route.params.aid === ':aid') return
+  // isAdd.value = false
+  if (!isAdd.value) getArticleDetail()
 })
 </script>
 
