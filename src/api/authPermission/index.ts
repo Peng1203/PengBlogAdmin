@@ -1,5 +1,6 @@
 import request from '@/utils/request'
-import { listParams } from '/@/types/axios'
+import type { RequestListParams } from 'axios'
+// import { RequestListParams } from '/@/types/axios'
 
 /**
  * 操作权限标识
@@ -13,10 +14,10 @@ export function useAuthPermissionApi() {
      * 获取权限标识列表
      * @author Peng
      * @date 2023-04-16
-     * @param {any} params:listParams
+     * @param {any} params:RequestListParams
      * @returns {any}
      */
-    getAuthPermissionList(params: listParams) {
+    getAuthPermissionList(params: RequestListParams) {
       return request({
         url: '/auth-permission/getAuthPermissionList',
         method: 'get',
@@ -33,7 +34,7 @@ export function useAuthPermissionApi() {
     delAuthPermission(id: number) {
       return request({
         url: `/auth-permission/deleteAuthPermById/${id}`,
-        method: 'delete'
+        method: 'delete',
       })
     },
     /**
@@ -47,7 +48,7 @@ export function useAuthPermissionApi() {
       return request({
         url: '/auth-permission/addAuthPermission',
         method: 'post',
-        data: params
+        data: params,
       })
     },
     /**
@@ -62,8 +63,8 @@ export function useAuthPermissionApi() {
       return request({
         url: `/auth-permission/updateAuthPermInfoById/${id}`,
         method: 'put',
-        data: params
+        data: params,
       })
-    }
+    },
   }
 }

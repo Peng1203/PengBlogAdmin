@@ -1,10 +1,10 @@
-declare interface OperationItem {
+interface OperationItem {
   label: string
   value: string | number | boolean
   [key: string]: T
 }
 // 封装表单formItem属性
-declare interface FormItem<T = any> {
+interface FormItem<T = any> {
   type: string // slot input select
   label: string
   prop: string
@@ -29,7 +29,7 @@ declare interface FormItem<T = any> {
 }
 
 // 封装表单 下拉框 / switch 组件 自定义事件传递参数
-declare type FormItemChangeType = {
+type FormItemChangeType = {
   newVal: any
   prop: string
   index: number

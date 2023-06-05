@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { listParams } from '/@/types/axios'
+import { RequestListParams } from '/@/types/axios'
 
 export function useRoleApi() {
   return {
@@ -7,14 +7,14 @@ export function useRoleApi() {
      * 获取角色列表
      * @author Peng
      * @date 2023-04-21
-     * @param {any} params:listParams
+     * @param {any} params:RequestListParams
      * @returns {any}
      */
-    getRoleList(params: listParams) {
+    getRoleList(params: RequestListParams) {
       return request({
         url: '/role/getRoleList',
         method: 'get',
-        params
+        params,
       })
     },
     /**
@@ -28,7 +28,7 @@ export function useRoleApi() {
       return request({
         url: '/role/addRole',
         method: 'post',
-        data: params
+        data: params,
       })
     },
     /**
@@ -43,7 +43,7 @@ export function useRoleApi() {
       return request({
         url: `/role/updateRoleInfoById/${id}`,
         method: 'put',
-        data: params
+        data: params,
       })
     },
     /**
@@ -56,8 +56,8 @@ export function useRoleApi() {
     deleteRole(id: number) {
       return request({
         url: `/role/deleteRoleById/${id}`,
-        method: 'delete'
+        method: 'delete',
       })
-    }
+    },
   }
 }

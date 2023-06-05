@@ -5,7 +5,8 @@
   >
     <!-- 顶部过滤 -->
     <el-card shadow="hover">
-      <div claas="header-filter-container">
+      <el-skeleton :rows="3" animated v-if="articleListState.filterLoading" />
+      <div claas="header-filter-container" v-else>
         <div class="row category-row">
           <span class="row-label">分类：</span>
 
@@ -90,8 +91,6 @@
           </div>
         </div>
       </div>
-
-      <!-- 文章列表 -->
     </el-card>
 
     <!-- 文章列表容器 -->
@@ -215,18 +214,11 @@
         </template>
       </div>
 
-      <!-- 加载 -->
-      <p class="flex-c-c" v-if="articleListState.loading">
-        loading...
-        <!-- <img src="@/assets/images/摸头3.webp" alt="" /> -->
-      </p>
-
-      <p class="flex-c-c" v-else-if="!articleListState.total">暂无数据</p>
-
       <!-- 加载完毕 -->
       <p
         class="flex-c-c"
-        v-else-if="
+        v-if="
+          !articleListState.loading &&
           articleListState.articleList.length === articleListState.total
         "
       >
@@ -267,7 +259,8 @@ const articleStatisticsInfoHashMapping = [
 
 // 文章列表参数
 const articleListState = reactive({
-  loading: false,
+  loading: true,
+  filterLoading: false,
   // 选中分类ID
   activeCId: 0,
   // 分类数据
@@ -461,9 +454,11 @@ const handlePreViewArticle = async (aid: number) => {
   }, 500)
 }
 
-onMounted(() => {
-  getAllCategoryLsit()
-  getUserOptions()
+onMounted(async () => {
+  articleListState.filterLoading = true
+  await Promise.all([getAllCategoryLsit(), getUserOptions()])
+  articleListState.filterLoading = false
+
   getArticleDataList()
 })
 </script>

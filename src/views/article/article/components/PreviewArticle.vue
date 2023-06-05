@@ -35,18 +35,10 @@ const articleInfo = ref<any>({
 
 const id = 'preview-only'
 
-const onGetCatalog = (list: unknown) => {
-  console.log(
-    `%c 目录 ----`,
-    'color: #fff;background-color: #000;font-size: 18px',
-    list
-  )
-}
-
 // 获取文章详情
 const getArticleDetailById = async (aid: number): Promise<void> => {
   try {
-    const { data: res } = await getArticle(aid)
+    const { data: res }: any = await getArticle(aid)
     const { data, message, code } = res
     if (code !== 200 || message !== 'Success') return
     articleInfo.value = data

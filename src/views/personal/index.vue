@@ -4,7 +4,23 @@
       <!-- 个人信息 -->
       <el-col :xs="24" :sm="16">
         <el-card shadow="hover" header="个人信息">
-          <div class="personal-user">
+          <!-- 暂未用上 -->
+          <div class="user-info-skeleton-container flex-sb-c" v-if="loading">
+            <el-skeleton
+              style="
+                --el-skeleton-circle-size: 140px;
+                width: auto;
+                margin-right: 10px;
+              "
+            >
+              <template #template>
+                <el-skeleton-item variant="circle" />
+              </template>
+            </el-skeleton>
+            <el-skeleton />
+          </div>
+
+          <div class="personal-user" v-else>
             <div class="personal-user-left">
               <el-upload
                 class="avatar-uploader"
@@ -31,9 +47,8 @@
               <el-row>
                 <el-col :span="24" class="personal-title mb18">
                   {{ currentTime }}，
-                  {{
-                    userInfoStores.userInfos.userName
-                  }}，生活变的再糟糕，也不妨碍我变得更好！
+                  {{ userInfoStores.userInfos.userName }}
+                  ，生活变的再糟糕，也不妨碍我变得更好！
                 </el-col>
                 <el-col :span="24">
                   <el-row>
@@ -46,7 +61,7 @@
                     <el-col :xs="24" :sm="16" class="personal-item mb6">
                       <div class="personal-item-label">身份：</div>
                       <div class="personal-item-value">
-                        {{ userInfoStores.userInfos.roleDesc }}
+                        {{ userInfoStores.userInfos.roleName }}
                       </div>
                     </el-col>
                   </el-row>
@@ -76,7 +91,7 @@
                       </div>
                     </el-col>
                     <el-col :xs="24" :sm="16" class="personal-item mb6">
-                      <div class="personal-item-label">操作信息：</div>
+                      <div class="personal-item-label">操作系统：</div>
                       <div class="personal-item-value">
                         {{ clientInfo.os }}
                       </div>
@@ -148,24 +163,46 @@
       <el-col :span="24">
         <el-card shadow="hover" class="mt15 personal-edit" header="更新信息">
           <div class="personal-edit-title">基本信息</div>
-          <Peng-Form
-            class="mt35 mb35"
-            size="default"
-            :gutter="35"
-            :labelW="80"
-            :labelP="'right'"
-            :formData="state.userInfoForm"
-            :formItemList="state.userInfoFormItems"
-          >
-            <template #updata>
-              <el-button type="primary" @click="handleUpdatePersonalInfo">
-                <el-icon>
-                  <ele-Position />
-                </el-icon>
-                更新个人信息
-              </el-button>
+          <!-- 表单信息 -->
+          <el-skeleton :loading="loading" animated>
+            <template #template>
+              <el-skeleton-item
+                variant="p"
+                style="height: 35px; margin: 15px 0 5px 0"
+              />
+
+              <el-skeleton-item
+                variant="p"
+                style="height: 35px; margin-bottom: 15px"
+              />
+
+              <el-skeleton-item
+                variant="button"
+                style="width: 135px; margin-left: 5%"
+              />
             </template>
-          </Peng-Form>
+
+            <template #default>
+              <Peng-Form
+                class="mt35 mb35"
+                size="default"
+                :gutter="35"
+                :labelW="80"
+                :labelP="'right'"
+                :formData="state.userInfoForm"
+                :formItemList="state.userInfoFormItems"
+              >
+                <template #updata>
+                  <el-button type="primary" @click="handleUpdatePersonalInfo">
+                    <el-icon>
+                      <ele-Position />
+                    </el-icon>
+                    更新个人信息
+                  </el-button>
+                </template>
+              </Peng-Form>
+            </template>
+          </el-skeleton>
 
           <div class="personal-edit-title mb15">账号安全</div>
           <div class="personal-edit-safe-box">
@@ -268,6 +305,7 @@ import { useUserInfo } from '@/stores/userInfo'
 import { Session } from '/@/utils/storage'
 import { useUserAuthList } from '@/stores/userAuthList'
 import { storeToRefs } from 'pinia'
+import { AxiosResponse } from 'axios'
 
 const userAuthListStore = useUserAuthList()
 const userAuthList = storeToRefs(userAuthListStore)
@@ -365,6 +403,8 @@ const state = reactive<PersonalState>({
   ]),
 })
 
+const loading = ref<boolean>(false)
+
 const imageUrl = ref('')
 // 上传用户头像
 const handleUploadUserAvatar = async (fileInfo: any) => {
@@ -424,7 +464,7 @@ const saveEditUserInfo = async () => {
       email,
     }
 
-    const { data: res } = await updateUserInfo(id, params)
+    const { data: res }: AxiosResponse = await updateUserInfo(id, params)
     const { data, code, message } = res
     if (code !== 200 || message !== 'Success') return ElMessage.error(data)
     ElMessage.success(data)
@@ -527,6 +567,7 @@ const changePwd = async (): Promise<boolean> => {
 }
 
 onMounted(async () => {
+  loading.value = true
   // 获取角色下拉列表
   await userAuthListStore.getAllRoleList()
   state.userInfoFormItems[1].options = userAuthList.allRoleOptions.value
@@ -538,6 +579,7 @@ onMounted(async () => {
   state.userInfoForm.userName = userInfoStores.userInfos.userName
   state.userInfoForm.email = userInfoStores.userInfos.email
   state.userInfoForm.state = userInfoStores.userInfos.state
+  loading.value = false
 })
 </script>
 
@@ -765,5 +807,9 @@ onMounted(async () => {
   width: 178px;
   height: 178px;
   text-align: center;
+}
+
+.user-info-skeleton-container {
+  /* width: auto; */
 }
 </style>

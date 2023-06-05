@@ -285,7 +285,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.cover-uploader .el-upload {
+.cover-uploader, .el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
   cursor: pointer;
