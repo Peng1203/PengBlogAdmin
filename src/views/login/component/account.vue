@@ -239,38 +239,6 @@ const handleUserLogin = async () => {
 const currentTime = computed(() => {
   return formatAxis(new Date())
 })
-// 登录成功后的跳转
-const signInSuccess = (isNoPower: boolean | undefined) => {
-  console.log('isNoPower -----', isNoPower)
-  if (isNoPower) {
-    ElMessage.warning('抱歉，您没有登录权限')
-    Session.clear()
-  } else {
-    // 初始化登录成功时间问候语
-    let currentTimeInfo = currentTime.value
-    // 登录成功，跳到转首页
-    // 如果是复制粘贴的路径，非首页/登录页，那么登录成功后重定向到对应的路径中
-    if (route.query?.redirect) {
-      console.log('if -----')
-      router.push({
-        path: <string>route.query?.redirect,
-        query:
-          Object.keys(<string>route.query?.params).length > 0
-            ? JSON.parse(<string>route.query?.params)
-            : '',
-      })
-    } else {
-      console.log('else -----')
-      router.push('/')
-    }
-    // 登录成功提示
-    const signInText = '欢迎回来！'
-    ElMessage.success(`${currentTimeInfo}，${signInText}`)
-    // 添加 loading，防止第一次进入界面时出现短暂空白
-    NextLoading.start()
-  }
-  loginState.loading.signIn = false
-}
 </script>
 
 <style scoped lang="scss">

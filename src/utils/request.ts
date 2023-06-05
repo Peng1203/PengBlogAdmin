@@ -2,14 +2,14 @@ import qs from 'qs'
 import axios, { AxiosInstance } from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Session, Local } from '@/utils/storage'
-import { BASE_URL } from '@/api/baseURL'
+// import { BASE_URL } from '@/api/baseURL'
 import { useUserInfo } from '@/stores/userInfo'
 
 // 配置新建一个 axios 实例
 const service: AxiosInstance = axios.create({
-  // baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   // withCredentials: true,
-  baseURL: BASE_URL,
+  // baseURL: BASE_URL,
   timeout: 50000,
   headers: { 'Content-Type': 'application/json' },
   paramsSerializer: {
@@ -29,7 +29,7 @@ service.interceptors.request.use(
     token && (config.headers!['Authorization'] = token)
     userId && (config.headers!['userId'] = userId)
 
-    config.cancelToken = new axios.CancelToken(cancel => {
+    config.cancelToken = new axios.CancelToken((cancel) => {
       window.httpRequestList.push(cancel) //存储cancle
     })
 

@@ -88,7 +88,7 @@ const getThemeConfig = computed(() => {
 })
 // 页面加载时
 onMounted(() => {
-	NextLoading.done()
+	// NextLoading.done()
 })
 </script>
 
