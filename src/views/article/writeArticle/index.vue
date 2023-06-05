@@ -21,7 +21,6 @@
           <el-upload
             class="cover-uploader"
             :show-file-list="false"
-            :before-upload="beforeCoverUpload"
             :http-request="handleUploadCover"
             style="width: 178px; height: 178px"
           >
@@ -39,7 +38,10 @@
 
         <!-- 文章富文本 -->
         <template #content>
-          <PengMdEditor v-model="articleForm.content" />
+          <PengMdEditor
+            v-model="articleForm.content"
+            @uploadImg="handleUploadArticleImg"
+          />
         </template>
 
         <!-- 操作行 -->
@@ -209,12 +211,8 @@ const handleUploadCover = async (fileInfo: any) => {
   }
 }
 
-const beforeCoverUpload = () => {}
-
 // 处理发布文章
-const handleAdd = () => {
-  addNewArticle()
-}
+const handleAdd = () => addNewArticle()
 
 // 添加新文章
 const addNewArticle = async (): Promise<boolean> => {
@@ -237,9 +235,8 @@ const addNewArticle = async (): Promise<boolean> => {
 }
 
 // 处理保存编辑
-const handleSaveEdit = () => {
-  saveEditArticle()
-}
+const handleSaveEdit = () => saveEditArticle()
+
 // 保存修改
 const saveEditArticle = async (): Promise<boolean> => {
   try {
@@ -262,16 +259,19 @@ const saveEditArticle = async (): Promise<boolean> => {
   }
 }
 
+// 文章上传图片
+const handleUploadArticleImg = async ({ files, callback }: UploadImgParams) => {
+  console.log('files -----', files)
+  // 允许上传多个
+  callback(['http://116.204.120.144:3000/resource/cover/download.webp'])
+  return 121
+}
+
 onMounted(async () => {
   await Promise.all([
     articleInfoStore.getAllCategoryList(),
     articleInfoStore.getAllTagList(),
   ])
-  // console.log(
-  //   'articleInfoState. -----',
-  //   articleInfoState.allCategoryOptions.value
-  // )
-  // console.log('articleInfoState. -----', articleInfoState.allTagOptions.value)
 
   articleFormItemList.find((item) => item.prop === 'categoryId').options =
     articleInfoState.allCategoryOptions.value
@@ -285,7 +285,8 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.cover-uploader, .el-upload {
+.cover-uploader,
+.el-upload {
   border: 1px dashed var(--el-border-color);
   border-radius: 6px;
   cursor: pointer;

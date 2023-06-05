@@ -41,10 +41,8 @@ interface MarkdownEditorAttibute {
   toolbarsExclude?: []
 }
 
-export {
-  type MarkdownEditorAttibute,
-  type Themes,
-  type preThemes,
-  type codeTheme,
-  type toolbarConfigs,
+// 上传图片函数参数
+type UploadImgParams = {
+  files: File[]
+  callback: (urls: Array<string>) => void
 }

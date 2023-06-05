@@ -10,6 +10,7 @@
       :autoDetectCode="true"
       :toolbars="toolbarConfigHashMapping[config]"
       @onChange="(val: string) => emit('update:modelValue', val)"
+      @onUploadImg="handleUploadImg"
     />
     <!-- :sanitize="sanitize" -->
   </div>
@@ -18,12 +19,6 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { MdEditor } from 'md-editor-v3'
-import type {
-  Themes,
-  preThemes,
-  codeTheme,
-  toolbarConfigs,
-} from '@/types/markdown.d.ts'
 import 'md-editor-v3/lib/style.css'
 // 引入公共库中的预览主题
 import '@vavt/md-editor-extension/dist/previewTheme/arknights.css'
@@ -57,7 +52,7 @@ interface MarkdownEditorAttibute {
   toolbarsExclude?: []
 }
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'uploadImg'])
 
 const props = withDefaults(defineProps<MarkdownEditorAttibute>(), {
   config: 'common',
@@ -69,8 +64,17 @@ const props = withDefaults(defineProps<MarkdownEditorAttibute>(), {
   placeholder: '',
 })
 
-const text = ref<string>('')
+// 上传图片事件
+const handleUploadImg = async (
+  files: File[],
+  cb: (urls: Array<string>) => void
+) => {
+  const res = emit('uploadImg', { files, cb })
+  console.log('res -----', res)
+  // cb('http://116.204.120.144:3000/resource/cover/download.webp')
+}
 
+const text = ref<string>('')
 watch(
   () => props.modelValue,
   (val) => (text.value = val),
