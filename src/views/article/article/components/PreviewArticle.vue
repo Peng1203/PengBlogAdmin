@@ -57,11 +57,6 @@ watch(previewDialogStatus, (val) => {
   }, 300)
 })
 
-onMounted(() => {
-  const scrollElement = document.querySelector('.el-dialog__body')
-  console.log('scrollElement -----', scrollElement)
-})
-
 defineExpose({ previewDialogStatus, getArticleDetailById })
 </script>
 

@@ -44,5 +44,5 @@ interface MarkdownEditorAttibute {
 // 上传图片函数参数
 type UploadImgParams = {
   files: File[]
-  callback: (urls: Array<string>) => void
+  callback: (urls: string) => void
 }

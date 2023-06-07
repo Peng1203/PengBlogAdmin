@@ -79,14 +79,33 @@ export function useArticleApi() {
      * @param {any} type:string
      * @returns {any}
      */
-    uploadArticleCover(file: FormData, type?: string) {
+    uploadArticleCover(file: FormData) {
       return request({
         url: '/article/upload-resources',
         method: 'post',
         data: file,
         headers: {
           'Content-Type': 'multipart/form-data',
-          'resource-classification': type || 'cover',
+          'resource-classification': 'cover',
+        },
+      })
+    },
+    /**
+     * 上传文章内容图片
+     * @author Peng
+     * @date 2023-06-07
+     * @param {any} file:FormData
+     * @param {any} type:string
+     * @returns {any}
+     */
+    uploadArticleContentResource(file: FormData) {
+      return request({
+        url: '/article/upload-resources',
+        method: 'post',
+        data: file,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'resource-classification': 'content',
         },
       })
     },

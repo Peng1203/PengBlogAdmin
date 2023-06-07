@@ -113,3 +113,12 @@ declare interface TableType<T = any> {
     [key: string]: T
   }
 }
+
+// data响应结构
+interface ResResponse<T = any> {
+  code: number
+  // message: string
+  message: 'Success' | 'Failed'
+  data: T
+  [key: string]: T
+}

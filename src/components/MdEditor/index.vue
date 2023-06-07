@@ -11,6 +11,7 @@
       :toolbars="toolbarConfigHashMapping[config]"
       @onChange="(val: string) => emit('update:modelValue', val)"
       @onUploadImg="handleUploadImg"
+      @onSave="handleDownSave"
     />
     <!-- :sanitize="sanitize" -->
   </div>
@@ -52,7 +53,7 @@ interface MarkdownEditorAttibute {
   toolbarsExclude?: []
 }
 
-const emit = defineEmits(['update:modelValue', 'uploadImg'])
+const emit = defineEmits(['update:modelValue', 'uploadImg', 'fastSave'])
 
 const props = withDefaults(defineProps<MarkdownEditorAttibute>(), {
   config: 'common',
@@ -68,11 +69,11 @@ const props = withDefaults(defineProps<MarkdownEditorAttibute>(), {
 const handleUploadImg = async (
   files: File[],
   cb: (urls: Array<string>) => void
-) => {
-  const res = emit('uploadImg', { files, cb })
-  console.log('res -----', res)
-  // cb('http://116.204.120.144:3000/resource/cover/download.webp')
-}
+) => emit('uploadImg', files, cb)
+
+// ctrl + s 保存事件
+const handleDownSave = async (val: string, html: Promise<string>) =>
+  html.then((htmlVal) => emit('fastSave', val, htmlVal))
 
 const text = ref<string>('')
 watch(

@@ -132,8 +132,9 @@
                   type="primary"
                   icon="EditPen"
                   title="编辑"
-                  :underline="false"
                   class="ml10"
+                  :underline="false"
+                  v-if="isShowEdit(item.authorId)"
                   @click="handleEditArticle(item.id)"
                 />
                 <el-link
@@ -141,8 +142,9 @@
                   type="danger"
                   icon="Delete"
                   title="删除"
-                  :underline="false"
                   class="ml10"
+                  :underline="false"
+                  v-if="isShowDelete(item.authorId)"
                   @click="handleDelete(item.id, item.title)"
                 />
               </div>
@@ -233,7 +235,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onMounted, watch, defineAsyncComponent } from 'vue'
+import {
+  ref,
+  reactive,
+  onMounted,
+  watch,
+  defineAsyncComponent,
+  computed,
+} from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserApi } from '@/api/user/index'
 import { useArticleApi } from '@/api/article/index'
@@ -453,6 +462,16 @@ const handlePreViewArticle = async (aid: number) => {
     previewDialogRef.value.previewDialogStatus = true
   }, 500)
 }
+
+// 根据 登录用户 判断 是否展示编辑按钮
+const isShowEdit = (aId: number): boolean => userStore.userInfos.id === aId
+
+const isShowDelete = (aId: number): boolean =>
+  userStore.userInfos.id === aId || userStore.userInfos.id === 1
+// 根据 登录用户 判断是否展示删除按钮 admin 默认可以删除任何
+// const isShowEdit = computed<boolean>(
+//   (aId: number) => userStore.userInfos.id === aId
+// )
 
 onMounted(async () => {
   articleListState.filterLoading = true

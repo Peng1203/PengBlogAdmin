@@ -5,11 +5,13 @@ import * as axios from 'axios'
 declare module 'axios' {
   export interface AxiosResponse<T = any> {
     code: number
+    status: number
+    statusText: string
+    headers: any
     data: T
-    message: string
     [key: string]: T
   }
-  export type RequestListParams = {
+  export type RequestListParams<T = any> = {
     page: number
     pageSize: number
     queryStr: string
@@ -18,4 +20,3 @@ declare module 'axios' {
     [key: string]: T
   }
 }
-// 'p' | 'text' | 'h1' | 'h3' | 'caption' | 'button' | 'image' | 'circle' | 'rect'

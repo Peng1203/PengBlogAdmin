@@ -7,6 +7,7 @@
       shadow="hover"
       style="overflow-y: scroll"
       class="layout-padding-auto"
+      v-loading="laoding"
     >
       <!-- labelP="top" -->
       <Peng-Form
@@ -40,6 +41,7 @@
         <template #content>
           <PengMdEditor
             v-model="articleForm.content"
+            @fastSave="handleFastSave"
             @uploadImg="handleUploadArticleImg"
           />
         </template>
@@ -62,15 +64,13 @@
 </template>
 
 <script lang="ts" setup>
+import { AxiosResponse } from 'axios'
 import { ref, reactive, onMounted, watchEffect, shallowRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useArticleApi } from '@/api/article/index'
 import { useArticleInfo } from '@/stores/articleInfo'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import { toolbarConfig, editorConfig } from './editorConfig'
 import { Session } from '@/utils/storage'
 import PengMdEditor from '@/components/MdEditor/index.vue'
 
@@ -80,12 +80,18 @@ const router = useRouter()
 const articleInfoStore: any = useArticleInfo()
 const articleInfoState = storeToRefs(articleInfoStore)
 
-const { getArticleDetailById, addArticle, updateArticle, uploadArticleCover } =
-  useArticleApi()
+const {
+  getArticleDetailById,
+  addArticle,
+  updateArticle,
+  uploadArticleCover,
+  uploadArticleContentResource,
+} = useArticleApi()
 
 // 是否是添加文章
 const isAdd = ref<boolean>(route.params.aid === ':aid')
 
+const laoding = ref<boolean>(false)
 // 文章表单信息
 let articleForm = ref<any>({
   id: '',
@@ -180,6 +186,7 @@ const articleFormItemList: any[] = reactive([
 // 通过ID获取文章详情
 const getArticleDetail = async () => {
   try {
+    laoding.value = true
     const { data: res } = await getArticleDetailById(route.params.aid as any)
     const { data, message, code } = res
     if (code !== 200 || message !== 'Success') return
@@ -196,6 +203,8 @@ const getArticleDetail = async () => {
     }
   } catch (e) {
     console.log(e)
+  } finally {
+    laoding.value = false
   }
 }
 
@@ -259,12 +268,25 @@ const saveEditArticle = async (): Promise<boolean> => {
   }
 }
 
-// 文章上传图片
-const handleUploadArticleImg = async ({ files, callback }: UploadImgParams) => {
-  console.log('files -----', files)
-  // 允许上传多个
-  callback(['http://116.204.120.144:3000/resource/cover/download.webp'])
-  return 121
+// 处理文章上传图片
+const handleUploadArticleImg = async (
+  files: File[],
+  callback: (urls: Array<string>) => void
+) => {
+  try {
+    const file = new FormData()
+    file.append('file', files[0])
+    const { data: url }: AxiosResponse<string> =
+      await uploadArticleContentResource(file)
+    callback([url])
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// 快速保存
+const handleFastSave = (val: string, html: string) => {
+  saveEditArticle()
 }
 
 onMounted(async () => {
