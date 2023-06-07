@@ -17,7 +17,26 @@
               :effect="value === articleListState.activeCId ? 'dark' : 'plain'"
               size="small"
               class="ml15 pseudo-link"
-              @click="handleSwitchCatagory(value)"
+              @click="handleFilterByCatagory(value)"
+            >
+              {{ label }}
+            </el-tag>
+          </div>
+        </div>
+
+        <el-divider style="margin: 15px 0" />
+
+        <div class="row category-row">
+          <span class="row-label">标签：</span>
+
+          <div>
+            <el-tag
+              v-for="{ label, value } in articleListState.tagList"
+              :key="value"
+              :effect="value === articleListState.tagId ? 'dark' : 'plain'"
+              size="small"
+              class="ml15 pseudo-link"
+              @click="handleFilterByTag(value)"
             >
               {{ label }}
             </el-tag>
@@ -243,20 +262,23 @@ import {
   defineAsyncComponent,
   computed,
 } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useUserApi } from '@/api/user/index'
 import { useArticleApi } from '@/api/article/index'
 import { useCategoryApi } from '@/api/category/index'
 import { useUserInfo } from '@/stores/userInfo'
+import { useArticleInfo } from '@/stores/articleInfo'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
 const router = useRouter()
+const articleInfoStore: any = useArticleInfo()
+const articleInfoState = storeToRefs(articleInfoStore)
+const userStore = useUserInfo()
 
 const { getAllUserOptions } = useUserApi()
 const { getArticleList, delArticleById } = useArticleApi()
 const { getCategoryList } = useCategoryApi()
-
-const userStore = useUserInfo()
 
 // 文章统计信息
 const articleStatisticsInfoHashMapping = [
@@ -274,6 +296,8 @@ const articleListState = reactive({
   activeCId: 0,
   // 分类数据
   categoryList: [{ label: '全部', value: 0 }],
+  // 标签数据
+  tagList: [{ label: '全部', value: 0 }],
 
   // 选中作者的id
   authorIds: ref<number[]>([]),
@@ -333,14 +357,20 @@ const getArticleDataList = async () => {
   }
 }
 
-// 切换分类
-const handleSwitchCatagory = (val: number) => {
+// 分类筛选
+const handleFilterByCatagory = (val: number) => {
   articleListState.activeCId = val
   resetFilterGetDataList()
 }
 
+// 标签筛选
+const handleFilterByTag = (val: number) => {
+  articleListState.tagId = val
+  resetFilterGetDataList()
+}
+
 // 获取全部分类列表
-const getAllCategoryLsit = async () => {
+const getAllCategoryOptions = async () => {
   try {
     const params = {
       page: 1,
@@ -475,8 +505,23 @@ const isShowDelete = (aId: number): boolean =>
 
 onMounted(async () => {
   articleListState.filterLoading = true
-  await Promise.all([getAllCategoryLsit(), getUserOptions()])
+  await Promise.all([
+    articleInfoStore.getAllCategoryList(),
+    articleInfoStore.getAllTagList(),
+    ,
+    getUserOptions(),
+  ])
   articleListState.filterLoading = false
+
+  articleListState.categoryList = [
+    ...articleListState.categoryList,
+    ...articleInfoState.allCategoryOptions.value,
+  ]
+
+  articleListState.tagList = [
+    ...articleListState.tagList,
+    ...articleInfoState.allTagOptions.value,
+  ]
 
   getArticleDataList()
 })
