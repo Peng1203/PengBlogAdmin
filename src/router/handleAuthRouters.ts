@@ -1,6 +1,6 @@
 import { RouteRecordRaw } from 'vue-router'
 import { allAuthRoutes } from './authRoutes'
-import { router } from './index'
+import { router, formatFlatteningRoutes } from './index'
 import { Session } from '@/utils/storage'
 import { useRoutesList } from '/@/stores/routesList'
 import pinia from '@/stores/index'
@@ -26,6 +26,8 @@ export async function handleUserAuthRouters(): Promise<any> {
   const userInfo = Session.get('userInfo')
   useUserInfoStores.setUserInfos({ ...userInfo, token: Session.get('token') })
 
+  const allRouterRules = formatFlatteningRoutes(allAuthRoutes[0].children)
+
   const { id, userName } = userInfo
 
   // 当登录 用户为 admin 用户是不进行菜单处理直接添加全部权限路由
@@ -36,7 +38,7 @@ export async function handleUserAuthRouters(): Promise<any> {
     )
     // 设置
     await storesRoutesList.setRoutesList(allAuthRoutes[0].children as any)
-    await storesTagsView.setTagsViewRoutes(allAuthRoutes[0].children as any)
+    await storesTagsView.setTagsViewRoutes(allRouterRules)
     // 返回第一个跳转后第一个展示的菜单展示
     NextLoading.done()
     return (allAuthRoutes[0].children as any)[0].name
@@ -61,7 +63,7 @@ export async function handleUserAuthRouters(): Promise<any> {
     // console.log('allAuthRoutes -----', userInfo, allAuthRoutes)
     // 设置
     await storesRoutesList.setRoutesList(newRule[0].children)
-    await storesTagsView.setTagsViewRoutes(newRule[0].children)
+    await storesTagsView.setTagsViewRoutes(allRouterRules)
     // 返回第一个跳转后第一个展示的菜单展示
     NextLoading.done()
     return (newRule[0].children as any)[0].name
