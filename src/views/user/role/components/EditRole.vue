@@ -16,17 +16,10 @@
       />
 
       <div class="mt20 flex-e-c">
-        <el-button
-          size="small"
-          @click="editDrawerStatus = false"
-        >
+        <el-button size="small" @click="editDrawerStatus = false">
           取消
         </el-button>
-        <el-button
-          size="small"
-          type="primary"
-          @click="handleSaveEdit"
-        >
+        <el-button size="small" type="primary" @click="handleSaveEdit">
           保存
         </el-button>
       </div>
@@ -60,7 +53,7 @@ const emits = defineEmits(['updateList'])
 const editDrawerStatus = ref<boolean>(false)
 
 const editFormState = reactive({
-  data: {
+  data: ref<Role>({
     id: 0,
     roleName: '',
     roleDesc: '',
@@ -68,7 +61,7 @@ const editFormState = reactive({
     operationPermissions: [],
     updateTime: '',
     createdTime: '',
-  },
+  }),
   formItemList: ref<FormItem[]>([
     {
       type: 'input',
@@ -105,7 +98,7 @@ const editFormState = reactive({
   ]),
 })
 
-const editFormRef = ref<any>(null)
+const editFormRef = ref<RefType>(null)
 // 处理保存修改
 const handleSaveEdit = async () => {
   const valdateRes = await editFormRef.value
@@ -122,7 +115,15 @@ const handleSaveEdit = async () => {
 // 保存修改数据
 const saveEditRole = async (): Promise<boolean> => {
   try {
-    const { id, roleName, roleDesc, menus, operationPermissions, updateTime, createdTime } = editFormState.data
+    const {
+      id,
+      roleName,
+      roleDesc,
+      menus,
+      operationPermissions,
+      updateTime,
+      createdTime,
+    } = editFormState.data
     const params = {
       roleName,
       roleDesc,
@@ -146,9 +147,7 @@ const saveEditRole = async (): Promise<boolean> => {
 watch(
   () => props.editRow,
   (val) => (editFormState.data = JSON.parse(JSON.stringify(val))),
-  {
-    deep: true,
-  }
+  { deep: true }
 )
 
 watch(
@@ -159,7 +158,8 @@ watch(
       await userAuthListStore.getAllMenuList()
       await userAuthListStore.getAllAuthPermissionList()
       editFormState.formItemList[1].options = userAuthList.allMenuOptions.value
-      editFormState.formItemList[2].options = userAuthList.allAuthPermissionOptions.value
+      editFormState.formItemList[2].options =
+        userAuthList.allAuthPermissionOptions.value
     }
   },
   {
@@ -171,5 +171,4 @@ watch(
 defineExpose({ editDrawerStatus })
 </script>
 
-<style lang='scss' scoped>
-</style>
+<style lang="scss" scoped></style>

@@ -104,14 +104,15 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 // import PengFrom from '@/components/Form/Index.vue'
 import { useUserApi } from '@/api/user'
+import { AxiosResponse } from 'axios'
 
 const { getUserList, deleteUserById } = useUserApi()
 
 // 表格参数
 const tableState = reactive({
   loading: false,
-  data: [],
-  tableColumns: [
+  data: ref<User[]>([]),
+  tableColumns: ref<ColumnItem[]>([
     {
       label: '用户名',
       prop: 'userName',
@@ -132,22 +133,28 @@ const tableState = reactive({
     { label: '解禁时间', prop: 'unsealTime', minWidth: 200, sort: true },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
     { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
-    { label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
-  ],
+    {
+      label: '操作',
+      prop: '',
+      minWidth: 95,
+      slotName: 'operation',
+      fixed: 'right',
+    },
+  ]),
   column: '',
   order: '',
   queryStr: '',
 
   // 分页器信息
-  pagerInfo: {
+  pagerInfo: ref<PageInfo>({
     page: 1,
     pageSize: 10,
     total: 0,
-  },
+  }),
 })
 
 // 根据条件来判断复选框是否可选
-const handleCheckboxIsEnable = (row: any) => (row.id === 1 ? false : true)
+const handleCheckboxIsEnable = (row: User) => (row.id === 1 ? false : true)
 
 // 搜索
 const handleSearch = () => {
@@ -156,15 +163,14 @@ const handleSearch = () => {
 }
 
 // 分页器修改时触发
-const handlePageInfoChange = (pageInfo: any) => {
-  const { page, pageSize } = pageInfo
+const handlePageInfoChange = ({ page, pageSize }: PageChangeParams) => {
   tableState.pagerInfo.page = page
   tableState.pagerInfo.pageSize = pageSize
   getUserTableData()
 }
 
 // 表格排序
-const handleColumnChange = ({ column, order }: any) => {
+const handleColumnChange = ({ column, order }: ColumnChangeParams) => {
   tableState.column = column
   tableState.order = order
   getUserTableData()
@@ -187,7 +193,7 @@ const getUserTableData = async () => {
       column: tableState.column,
       order: tableState.order,
     }
-    const { data: res } = await getUserList(params)
+    const { data: res }: AxiosResponse<UserData> = await getUserList(params)
     const { code, message, data, total } = res
     if (code !== 200 || message !== 'Success') return
     tableState.data = data
@@ -200,7 +206,7 @@ const getUserTableData = async () => {
 }
 
 // 打开删除用户
-const handleDelUser = (row: any) => {
+const handleDelUser = (row: User) => {
   ElMessageBox.confirm(
     `此操作将永久删除用户：“${row.userName}”，是否继续?`,
     '提示',
@@ -232,11 +238,11 @@ const deleteUser = async (id: number) => {
 const EditUserDrawer = defineAsyncComponent(
   () => import('./components/EditUser.vue')
 )
-const editDrawerRef = ref<any>(null)
-const editRow = ref<object>()
+const editDrawerRef = ref<RefType>(null)
+const editRow = ref<User>()
 // 打开编辑用户信息抽屉
-const handleEditUserInfo = (row: object) => {
-  editRow.value = row
+const handleEditUserInfo = (row: User) => {
+  editRow.value = JSON.parse(JSON.stringify(row))
   editDrawerRef.value.editDrawerStatus = true
 }
 
@@ -244,7 +250,7 @@ const handleEditUserInfo = (row: object) => {
 const AddUserDialog = defineAsyncComponent(
   () => import('./components/AddUser.vue')
 )
-const addDialogRef = ref<any>(null)
+const addDialogRef = ref<RefType>(null)
 
 // 页面加载时
 onMounted(() => {

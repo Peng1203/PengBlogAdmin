@@ -1,9 +1,6 @@
 <template>
   <div class="system-user-container layout-padding">
-    <el-card
-      shadow="hover"
-      class="layout-padding-auto"
-    >
+    <el-card shadow="hover" class="layout-padding-auto">
       <!-- 顶部 -->
       <!-- <IconSelector v-model="test" /> -->
       <div class="mb15 flex-sb-c">
@@ -16,9 +13,7 @@
         >
           <!-- @click="addAuthDialogRef.addAuthPermissonDialogStatus = true" -->
           <Peng-Icon name="icon-jiaoseguanli1" />
-          <span style="margin-left: 5px">
-            添加角色
-          </span>
+          <span style="margin-left: 5px"> 添加角色 </span>
         </el-button>
 
         <Peng-Search
@@ -83,10 +78,7 @@
     />
 
     <!-- 添加角色对话框 -->
-    <AddRoleDialog
-      ref="addDialogRef"
-      @updateList="getRoleTableData"
-    />
+    <AddRoleDialog ref="addDialogRef" @updateList="getRoleTableData" />
   </div>
 </template>
 
@@ -100,32 +92,58 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 import { queryStrHighlight } from '@/utils/queryStrHighlight'
 import { useRoleApi } from '@/api/role/index'
+import { AxiosResponse } from 'axios'
 
 const { getRoleList, deleteRole } = useRoleApi()
 
 // 表格参数
 const tableState = reactive({
   loading: false,
-  data: [],
-  tableColumns: [
-    { label: '角色名称', prop: 'roleName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'queryHighNight' },
-    { label: '角色描述', prop: 'roleDesc', minWidth: 150, sort: false, tooltip: true, slotName: 'queryHighNight' },
+  data: ref<Role[]>([]),
+  tableColumns: ref<ColumnItem[]>([
+    {
+      label: '角色名称',
+      prop: 'roleName',
+      minWidth: 130,
+      tooltip: true,
+      fixed: 'left',
+      slotName: 'queryHighNight',
+    },
+    {
+      label: '角色描述',
+      prop: 'roleDesc',
+      minWidth: 150,
+      sort: false,
+      tooltip: true,
+      slotName: 'queryHighNight',
+    },
     { label: '菜单', prop: 'menus', minWidth: 170, tooltip: true },
-    { label: '操作权限', prop: 'operationPermissions', minWidth: 100, tooltip: true },
+    {
+      label: '操作权限',
+      prop: 'operationPermissions',
+      minWidth: 100,
+      tooltip: true,
+    },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
     { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
-    { label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
-  ],
+    {
+      label: '操作',
+      prop: 'operation',
+      minWidth: 95,
+      slotName: 'operation',
+      fixed: 'right',
+    },
+  ]),
   column: '',
   order: '',
   queryStr: '',
 
   // 分页器信息
-  pagerInfo: {
+  pagerInfo: ref<PageInfo>({
     page: 1,
     pageSize: 10,
     total: 0,
-  },
+  }),
 })
 
 // 获取角色表格数据
@@ -140,7 +158,7 @@ const getRoleTableData = async () => {
       page: pagerInfo.page,
       pageSize: pagerInfo.pageSize,
     }
-    const { data: res } = await getRoleList(params)
+    const { data: res }: AxiosResponse<RoleDate> = await getRoleList(params)
     const { code, message, data, total } = res
     if (code !== 200 || message !== 'Success') return
     tableState.data = data
@@ -153,8 +171,7 @@ const getRoleTableData = async () => {
 }
 
 // 分页器修改时触发
-const handlePageInfoChange = (pageInfo: any) => {
-  const { page, pageSize } = pageInfo
+const handlePageInfoChange = ({ page, pageSize }: PageChangeParams) => {
   tableState.pagerInfo.page = page
   tableState.pagerInfo.pageSize = pageSize
   getRoleTableData()
@@ -167,19 +184,23 @@ const handleSearch = () => {
 }
 
 // 表格排序
-const handleColumnChange = ({ column, order }: any) => {
+const handleColumnChange = ({ column, order }: ColumnChangeParams) => {
   tableState.column = column
   tableState.order = order
   getRoleTableData()
 }
 
 // 处理删除角色
-const handleDelRole = async (row: any) => {
-  const confirmRes = await ElMessageBox.confirm(`此操作将永久角色：“${row.roleName}”，是否继续?`, '提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
+const handleDelRole = async (row: Role) => {
+  const confirmRes = await ElMessageBox.confirm(
+    `此操作将永久角色：“${row.roleName}”，是否继续?`,
+    '提示',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).catch(() => false)
   if (!confirmRes) return
   const delRes = await deleteRoleById(row.id)
   if (delRes) getRoleTableData()
@@ -204,16 +225,20 @@ const deleteRoleById = async (id: number): Promise<boolean> => {
 
 // 处理编辑角色
 const editRow = ref()
-const EditRoleDrawer = defineAsyncComponent(() => import('./components/EditRole.vue'))
-const editDrawerRef = ref<any>(null)
-const handleEditRole = (row: any) => {
+const EditRoleDrawer = defineAsyncComponent(
+  () => import('./components/EditRole.vue')
+)
+const editDrawerRef = ref<RefType>(null)
+const handleEditRole = (row: Role) => {
   editRow.value = JSON.parse(JSON.stringify(row))
   editDrawerRef.value.editDrawerStatus = true
 }
 
 // 处理添加角色
-const AddRoleDialog = defineAsyncComponent(() => import('./components/AddRole.vue'))
-const addDialogRef = ref<any>(null)
+const AddRoleDialog = defineAsyncComponent(
+  () => import('./components/AddRole.vue')
+)
+const addDialogRef = ref<RefType>(null)
 
 // 页面加载时
 onMounted(() => {
@@ -221,16 +246,16 @@ onMounted(() => {
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .system-user-container {
-	:deep(.el-card__body) {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		overflow: auto;
-		.el-table {
-			flex: 1;
-		}
-	}
+  :deep(.el-card__body) {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    .el-table {
+      flex: 1;
+    }
+  }
 }
 </style>

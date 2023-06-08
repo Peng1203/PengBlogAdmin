@@ -1,9 +1,6 @@
 <template>
   <div class="system-user-container layout-padding">
-    <el-card
-      shadow="hover"
-      class="layout-padding-auto"
-    >
+    <el-card shadow="hover" class="layout-padding-auto">
       <!-- 顶部 -->
       <!-- <IconSelector v-model="test" /> -->
       <div class="mb15 flex-sb-c">
@@ -41,10 +38,7 @@
         <!-- 权限标识名称 权限标识代码 查询高亮 -->
         <template #queryHighNight="{ row, prop }">
           <div class="flex-s-c">
-            <Peng-Icon
-              v-if="row.menuIcon"
-              :name="row.menuIcon"
-            />
+            <Peng-Icon v-if="row.menuIcon" :name="row.menuIcon" />
             <!-- style="margin-left: 10px;" -->
             <span
               class="ml5"
@@ -56,15 +50,8 @@
         <!-- 菜单图标 -->
         <template #menuIcon="{ row, prop }">
           <!-- type="class" -->
-          <Peng-Icon
-            v-if="row[prop]"
-            :name="row[prop]"
-            size="30"
-          />
-          <span
-            style="color: red"
-            v-else
-          >{{ '未设置图标' }}</span>
+          <Peng-Icon v-if="row[prop]" :name="row[prop]" size="30" />
+          <span style="color: red" v-else>{{ '未设置图标' }}</span>
           <!-- <i v-if="row[prop].indexOf('iconfont') !== -1"></i> -->
         </template>
 
@@ -122,35 +109,62 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 import { queryStrHighlight } from '@/utils/queryStrHighlight'
 import { useMenuApi } from '@/api/menu/index'
+import { AxiosResponse } from 'axios'
 
 const { getMenuList, deleteMenu } = useMenuApi()
 
 // 表格参数
 const tableState = reactive({
   loading: false,
-  data: [],
+  data: ref<Menu[]>([]),
   // 已添加菜单的全部URI标识
   URIs: ref<string[]>(),
-  tableColumns: [
-    { label: '菜单名', prop: 'menuName', minWidth: 130, tooltip: true, fixed: 'left', slotName: 'queryHighNight' },
-    { label: '唯一URI', prop: 'menuURI', minWidth: 150, sort: false, tooltip: true },
+  tableColumns: ref<ColumnItem[]>([
+    {
+      label: '菜单名',
+      prop: 'menuName',
+      minWidth: 130,
+      tooltip: true,
+      fixed: 'left',
+      slotName: 'queryHighNight',
+    },
+    {
+      label: '唯一URI',
+      prop: 'menuURI',
+      minWidth: 150,
+      sort: false,
+      tooltip: true,
+    },
     { label: '菜单路径', prop: 'menuPath', minWidth: 170, tooltip: true },
-    { label: '菜单图标', prop: 'menuIcon', minWidth: 100, tooltip: true, slotName: 'menuIcon', align: 'center' },
+    {
+      label: '菜单图标',
+      prop: 'menuIcon',
+      minWidth: 100,
+      tooltip: true,
+      slotName: 'menuIcon',
+      align: 'center',
+    },
     { label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
     { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
-    { label: '操作', minWidth: 95, slotName: 'operation', fixed: 'right' },
-  ],
+    {
+      label: '操作',
+      prop: 'operation',
+      minWidth: 95,
+      slotName: 'operation',
+      fixed: 'right',
+    },
+  ]),
   column: '',
   order: '',
   queryStr: '',
 
   // 分页器信息
-  pagerInfo: {
+  pagerInfo: ref<PageInfo>({
     page: 1,
     pageSize: 10,
     total: 0,
-  },
+  }),
 })
 
 // 获取菜单表格数据
@@ -165,7 +179,7 @@ const getMenuTableData = async () => {
       page: pagerInfo.page,
       pageSize: pagerInfo.pageSize,
     }
-    const { data: res } = await getMenuList(params)
+    const { data: res }: AxiosResponse<MenuData> = await getMenuList(params)
     const { code, message, data, total, URIs } = res
     if (code !== 200 || message !== 'Success') return
     tableState.data = data
@@ -179,33 +193,36 @@ const getMenuTableData = async () => {
 }
 
 // 分页器修改时触发
-const handlePageInfoChange = (pageInfo: any) => {
-  const { page, pageSize } = pageInfo
+const handlePageInfoChange = ({ page, pageSize }: PageChangeParams): void => {
   tableState.pagerInfo.page = page
   tableState.pagerInfo.pageSize = pageSize
   getMenuTableData()
 }
 
 // 搜索
-const handleSearch = () => {
+const handleSearch = (): void => {
   tableState.pagerInfo.page = 1
   getMenuTableData()
 }
 
 // 表格排序
-const handleColumnChange = ({ column, order }: any) => {
+const handleColumnChange = ({ column, order }: ColumnChangeParams) => {
   tableState.column = column
   tableState.order = order
   getMenuTableData()
 }
 
 // 处理删除菜单
-const handleDelMenu = async (row: any) => {
-  const confirmRes = await ElMessageBox.confirm(`此操作将永久删除菜单：“${row.menuName}”，是否继续?`, '提示', {
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
+const handleDelMenu = async (row: Menu) => {
+  const confirmRes = await ElMessageBox.confirm(
+    `此操作将永久删除菜单：“${row.menuName}”，是否继续?`,
+    '提示',
+    {
+      confirmButtonText: '确认',
+      cancelButtonText: '取消',
+      type: 'warning',
+    }
+  ).catch(() => false)
   if (!confirmRes) return
   const delRes = await deleteMenuById(row.id)
   if (delRes) getMenuTableData()
@@ -230,16 +247,20 @@ const deleteMenuById = async (id: number): Promise<boolean> => {
 
 // 处理编辑菜单
 const editRow = ref()
-const EditMenuDrawer = defineAsyncComponent(() => import('./components/EditMenu.vue'))
-const editDrawerRef = ref<any>(null)
-const handleEditMenu = (row: any) => {
+const EditMenuDrawer = defineAsyncComponent(
+  () => import('./components/EditMenu.vue')
+)
+const editDrawerRef = ref<RefType>(null)
+const handleEditMenu = (row: Menu) => {
   editRow.value = JSON.parse(JSON.stringify(row))
   editDrawerRef.value.editDrawerStatus = true
 }
 
 // 处理添加菜单
-const AddMenuDialog = defineAsyncComponent(() => import('./components/AddMenu.vue'))
-const addDialogRef = ref<any>(null)
+const AddMenuDialog = defineAsyncComponent(
+  () => import('./components/AddMenu.vue')
+)
+const addDialogRef = ref<RefType>(null)
 
 // 页面加载时
 onMounted(() => {
@@ -247,16 +268,17 @@ onMounted(() => {
 })
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .system-user-container {
-	:deep(.el-card__body) {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		overflow: auto;
-		.el-table {
-			flex: 1;
-		}
-	}
+  :deep(.el-card__body) {
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: auto;
+    .el-table {
+      flex: 1;
+    }
+  }
 }
 </style>

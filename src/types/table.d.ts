@@ -22,12 +22,21 @@ declare interface ColumnItem<T = any> {
   align?: 'left' | 'center' | 'right'
   childrenColumns?: ColumnItem[]
   [key: string]: T
-
 }
-
+// 分页器信息
 declare interface PageInfo {
-  page: number,
-  pageSize: number,
-  total: number,
+  page: number
+  pageSize: number
+  total: number
   pageSizeList?: number[]
+}
+// 表格排序切换 参数
+interface ColumnChangeParams {
+  column: string
+  order: string
+}
+// 分页器切换 参数
+interface PageChangeParams {
+  page: number
+  pageSize: number
 }

@@ -114,11 +114,12 @@ declare interface TableType<T = any> {
   }
 }
 
-// data响应结构
+type MessageEnum = 'Success' | 'Failed'
+
+// 默认 data 响应结构
 interface ResResponse<T = any> {
   code: number
-  // message: string
-  message: 'Success' | 'Failed'
+  message: MessageEnum
   data: T
   [key: string]: T
 }

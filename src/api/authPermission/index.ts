@@ -1,6 +1,5 @@
 import request from '@/utils/request'
 import type { RequestListParams } from 'axios'
-// import { RequestListParams } from '/@/types/axios'
 
 /**
  * 操作权限标识
