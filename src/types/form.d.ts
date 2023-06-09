@@ -23,7 +23,7 @@ interface FormItem<T = any> {
   xl?: number
   isShow?: boolean
   slotName?: string
-  options?: OperationItem[]
+  options?: OperationItem[] | RadioItem[] | T
   multiple?: boolean // 开启多选
   [key: string]: T
 }
@@ -33,4 +33,13 @@ type FormItemChangeType = {
   newVal: any
   prop: string
   index: number
+}
+
+// radio 菜单 Options 项
+interface RadioItem {
+  value: number | string | null
+  label: number | string
+  disabled?: boolean
+  border?: boolean
+  size?: 'large' | 'default' | 'small'
 }

@@ -46,6 +46,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isIframe: false,
           roles: ['admin'],
           icon: 'iconfont icon-auth',
+          // icon: 'ele-Edit',
         },
         children: [
           {
@@ -90,7 +91,8 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isAffix: false,
               isIframe: false,
               roles: ['admin'],
-              icon: 'iconfont icon-permissions-o',
+              // icon: 'iconfont icon-permissions-o',
+              icon: 'ele-Key',
             },
           },
         ],
@@ -142,7 +144,8 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isAffix: false,
           isIframe: false,
           roles: ['admin'],
-          icon: 'iconfont icon-wenzhangfenlei1',
+          // icon: 'iconfont icon-wenzhangfenlei1',
+          icon: 'iconfont icon-wenzhangfenlei2',
         },
         children: [
           {

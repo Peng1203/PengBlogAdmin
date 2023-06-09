@@ -55,7 +55,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-if="type === 'slot'"
         >
           <!-- 自定义插槽 -->
@@ -77,7 +83,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-else-if="type === 'input'"
         >
           <el-form-item
@@ -107,7 +119,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-else-if="type === 'pwd'"
         >
           <el-form-item
@@ -139,7 +157,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-else-if="type === 'select'"
         >
           <el-form-item
@@ -177,7 +201,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-else-if="type === 'switch'"
         >
           <el-form-item
@@ -207,6 +237,51 @@
           </el-form-item>
         </el-col>
 
+        <!-- radio 单选框 -->
+        <el-col
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
+          v-else-if="type === 'radio'"
+        >
+          <el-form-item
+            :size="size"
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="isShow === undefined ? true : isShow"
+          >
+            <el-radio-group
+              :disabled="disabled"
+              v-model="formData[prop]"
+              @change="handleRadioChange($event, prop, i)"
+            >
+              <el-radio
+                v-for="item in options"
+                :key="item.value"
+                :label="item.value"
+                :value="item.value"
+                :size="item.size || size"
+              >
+                {{ item.label }}
+              </el-radio>
+              <!-- <el-radio :size="size" label="2">Option 2</el-radio> -->
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+
         <!-- 富文本输入框 -->
         <el-col
           :span="span"
@@ -216,7 +291,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-else-if="type === 'textarea'"
         >
           <el-form-item
@@ -237,6 +318,7 @@
             />
           </el-form-item>
         </el-col>
+
         <!-- 透明占位符 -->
         <el-col
           :span="span"
@@ -246,7 +328,13 @@
           :md="md"
           :lg="lg"
           :xl="xl"
-          :class="i + 1 === formItemList.length ? '' : 'mb20'"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
           v-else-if="type === 'transparent'"
         ></el-col>
       </template>
@@ -267,7 +355,7 @@ interface PengFormAttribute {
   gutter?: number
 }
 
-const emit = defineEmits(['switchChange', 'selectChange'])
+const emit = defineEmits(['switchChange', 'selectChange', 'radioChange'])
 
 const props = withDefaults(defineProps<PengFormAttribute>(), {
   formData: () => ({}),
@@ -294,6 +382,15 @@ const handleSwitchChange = (newVal: any, prop: string, index: number) => {
 const handleSelectChange = (newVal: any, prop: string, index: number) => {
   // console.log('switch切换 -----', newVal, prop, index)
   emit('selectChange', { newVal, prop, index })
+}
+
+// 单选框切换
+const handleRadioChange = (
+  newVal: string | number | boolean,
+  prop: string,
+  index: number
+) => {
+  emit('radioChange', { newVal, prop, index })
 }
 
 // 暴露出 可被父组件调用的变量或方法
