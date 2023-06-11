@@ -4,6 +4,8 @@
     style="width: 100%"
     empty-text="暂无数据"
     v-loading="props.loading"
+    row-key="id"
+    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
     :border="props.border"
     :data="props.data"
     @filter-change="handleFilterTable"
@@ -16,6 +18,8 @@
       :selectable="checkBoxIsEnableCallBack"
     />
     <!-- :selectable="handleCheckboxIsEnable" -->
+    <slot name="expand"></slot>
+
     <template
       :key="i"
       v-for="(
@@ -30,6 +34,7 @@
           align,
           slotName,
           childrenColumns,
+          classNname,
         },
         i
       ) in tableColumns"
@@ -42,6 +47,7 @@
         :width="width || 'auto'"
         :sortable="sort"
         :min-width="minWidth"
+        :class-name="classNname"
         :show-overflow-tooltip="tooltip"
         :fixed="
           deviceClientType === 'pc' ? fixed : fixed === 'left' ? false : fixed
@@ -58,6 +64,7 @@
       <el-table-column
         :label="label"
         :align="align || 'center'"
+        :class-name="classNname"
         v-else-if="childrenColumns && childrenColumns.length"
       >
         <template
@@ -67,6 +74,7 @@
           <!-- 自定义内容 -->
           <el-table-column
             v-if="childrenItem.slotName"
+            :class-name="classNname"
             :label="childrenItem.label"
             :prop="childrenItem.prop"
             :min-width="childrenItem.minWidth"
@@ -85,6 +93,7 @@
 
           <el-table-column
             v-else
+            :class-name="classNname"
             :label="childrenItem.label"
             :prop="childrenItem.prop"
             :min-width="childrenItem.minWidth"
@@ -101,6 +110,7 @@
         :label="label"
         :width="width"
         :sortable="sort"
+        :class-name="classNname"
         :min-width="minWidth || ''"
         :show-overflow-tooltip="tooltip"
         :fixed="deviceClientType === 'pc' ? fixed : false"
@@ -295,4 +305,9 @@ onMounted(() => {
 })
 </script>
 
-<style scop lang="scss"></style>
+<!-- expand 展开column 插槽 -->
+<!-- <template #expand>
+  <el-table-column width="30" type="expand" fixed="left">
+    <template #default="props"> {{ props.row }} </template>
+  </el-table-column>
+</template> -->

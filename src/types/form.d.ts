@@ -25,6 +25,10 @@ interface FormItem<T = any> {
   slotName?: string
   options?: OperationItem[] | RadioItem[] | T
   multiple?: boolean // 开启多选
+  tText?: string | number
+  fText?: string | number
+  tValue?: string | number | boolean
+  fValue?: string | number | boolean
   [key: string]: T
 }
 

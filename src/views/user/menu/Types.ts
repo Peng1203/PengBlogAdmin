@@ -18,4 +18,5 @@ interface Menu {
   roles: number[]
   updateTime: string
   createdTime: string
+  children?: any[]
 }

@@ -35,6 +35,13 @@
         @columnSort="handleColumnChange"
         @pageNumOrSizeChange="handlePageInfoChange"
       >
+        <!-- expand 展开column 插槽 -->
+        <!-- <template #expand>
+          <el-table-column width="30" type="expand" fixed="left">
+            <template #default="props"> {{ props.row }} </template>
+          </el-table-column>
+        </template> -->
+
         <!-- 权限标识名称 权限标识代码 查询高亮 -->
         <template #queryHighNight="{ row, prop }">
           <div class="flex-s-c">
@@ -123,19 +130,20 @@ const tableState = reactive({
     {
       label: '菜单名',
       prop: 'menuName',
-      minWidth: 130,
+      minWidth: 150,
       tooltip: true,
-      fixed: 'left',
+      // fixed: 'left',
       slotName: 'queryHighNight',
+      classNname: 'expand-row',
     },
     {
-      label: '唯一URI',
+      label: '唯一标识',
       prop: 'menuURI',
       minWidth: 150,
       sort: false,
       tooltip: true,
     },
-    { label: '菜单路径', prop: 'menuPath', minWidth: 170, tooltip: true },
+    { label: '菜单访问路径', prop: 'menuPath', minWidth: 170, tooltip: true },
     {
       label: '菜单图标',
       prop: 'menuIcon',
@@ -144,7 +152,7 @@ const tableState = reactive({
       slotName: 'menuIcon',
       align: 'center',
     },
-    { label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
+    // { label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
     { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
     {
@@ -182,9 +190,33 @@ const getMenuTableData = async () => {
     const { data: res }: AxiosResponse<MenuData> = await getMenuList(params)
     const { code, message, data, total, URIs } = res
     if (code !== 200 || message !== 'Success') return
+    console.log(
+      `%c data ----`,
+      'color: #fff;background-color: #000;font-size: 18px',
+      data
+    )
+    data.forEach(
+      (item, i) =>
+        (item.children = [
+          {
+            createdTime: '2023-04-21 01:06:02',
+            updateTime: '2023-06-09 13:49:22',
+            id: 116,
+            menuName: '个人中心',
+            menuPath: '/personal',
+            menuURI: 'Personal',
+            menuIcon: 'ele-UserFilled',
+            parentId: 0,
+            menuType: '2',
+            menuRedirect: null,
+            otherConfig: null,
+          },
+        ])
+    )
     tableState.data = data
     tableState.pagerInfo.total = total
     tableState.URIs = URIs
+    console.log(' tableState.data', JSON.parse(JSON.stringify(tableState.data)))
   } catch (e) {
     console.log(e)
   } finally {
@@ -279,6 +311,11 @@ onMounted(() => {
     .el-table {
       flex: 1;
     }
+  }
+
+  :deep(.expand-row > .cell) {
+    display: flex;
+    align-items: center;
   }
 }
 </style>
