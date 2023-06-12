@@ -4,19 +4,23 @@
       <!-- 顶部 -->
       <!-- <IconSelector v-model="test" /> -->
       <div class="mb15 flex-sb-c">
-        <el-button
-          v-auth="'ADD'"
-          size="default"
-          type="success"
-          class="ml10"
-          @click="addDialogRef.addMenuDialogStatus = true"
-        >
-          <!-- @click="addAuthDialogRef.addAuthPermissonDialogStatus = true" -->
-          <el-icon>
-            <Menu />
-          </el-icon>
-          添加菜单
-        </el-button>
+        <div>
+          <el-button
+            v-auth="'ADD'"
+            size="default"
+            type="success"
+            class="ml10"
+            @click="addDialogRef.addMenuDialogStatus = true"
+          >
+            <!-- @click="addAuthDialogRef.addAuthPermissonDialogStatus = true" -->
+            <el-icon>
+              <Menu />
+            </el-icon>
+            添加菜单
+          </el-button>
+
+          <AddAllMenuButton />
+        </div>
 
         <Peng-Search
           placeholder="请输入菜单名称"
@@ -190,29 +194,6 @@ const getMenuTableData = async () => {
     const { data: res }: AxiosResponse<MenuData> = await getMenuList(params)
     const { code, message, data, total, URIs } = res
     if (code !== 200 || message !== 'Success') return
-    console.log(
-      `%c data ----`,
-      'color: #fff;background-color: #000;font-size: 18px',
-      data
-    )
-    data.forEach(
-      (item, i) =>
-        (item.children = [
-          {
-            createdTime: '2023-04-21 01:06:02',
-            updateTime: '2023-06-09 13:49:22',
-            id: 116,
-            menuName: '个人中心',
-            menuPath: '/personal',
-            menuURI: 'Personal',
-            menuIcon: 'ele-UserFilled',
-            parentId: 0,
-            menuType: '2',
-            menuRedirect: null,
-            otherConfig: null,
-          },
-        ])
-    )
     tableState.data = data
     tableState.pagerInfo.total = total
     tableState.URIs = URIs
@@ -293,6 +274,11 @@ const AddMenuDialog = defineAsyncComponent(
   () => import('./components/AddMenu.vue')
 )
 const addDialogRef = ref<RefType>(null)
+
+// 添加全部菜单按钮
+const AddAllMenuButton = defineAsyncComponent(
+  () => import('./components/AddAllMenu.vue')
+)
 
 // 页面加载时
 onMounted(() => {

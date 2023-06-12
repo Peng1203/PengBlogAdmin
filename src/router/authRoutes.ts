@@ -29,6 +29,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isKeepAlive: false,
           // roles: ['admin', 'common'],
           icon: 'ele-HomeFilled',
+          menuType: '3',
         },
       },
       // 权限管理
@@ -47,6 +48,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           // roles: ['admin'],
           icon: 'iconfont icon-auth',
           // icon: 'ele-Edit',
+          menuType: '1',
         },
         children: [
           {
@@ -63,6 +65,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isIframe: false,
               // roles: ['admin'],
               icon: 'iconfont icon-jiaoseguanli1',
+              menuType: '4',
             },
           },
           {
@@ -79,6 +82,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isIframe: false,
               // roles: ['admin'],
               icon: 'ele-Menu',
+              menuType: '4',
             },
           },
           {
@@ -96,6 +100,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               // roles: ['admin'],
               // icon: 'iconfont icon-permissions-o',
               icon: 'ele-Key',
+              menuType: '4',
             },
           },
         ],
@@ -115,6 +120,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isIframe: false,
           // roles: ['admin'],
           icon: 'iconfont icon-jiaoseguanli',
+          menuType: '1',
         },
         children: [
           {
@@ -131,6 +137,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isIframe: false,
               // roles: ['admin'],
               icon: 'iconfont icon-yonghuguanli',
+              menuType: '4',
             },
           },
         ],
@@ -150,6 +157,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           // roles: ['admin'],
           // icon: 'iconfont icon-wenzhangfenlei1',
           icon: 'iconfont icon-wenzhangfenlei2',
+          menuType: '1',
         },
         children: [
           {
@@ -167,6 +175,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               // roles: ['admin'],
               // icon: 'iconfont icon-tianchongxing-',
               icon: 'iconfont icon-weibiaoti--',
+              menuType: '4',
             },
           },
           {
@@ -183,12 +192,12 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isIframe: false,
               // roles: ['admin'],
               icon: 'iconfont icon-wenzhangguanli',
+              menuType: '4',
             },
           },
-
           {
-            path: '/tag',
-            name: 'Tag',
+            path: '/article/tag',
+            name: 'ArticleTag',
             component: () => import('@/views/article/tag/index.vue'),
             meta: {
               parentMenuName: 'Article',
@@ -200,11 +209,12 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isIframe: false,
               // roles: ['admin'],
               icon: 'iconfont icon-tags',
+              menuType: '4',
             },
           },
           {
-            path: '/category',
-            name: 'Category',
+            path: '/article/category',
+            name: 'ArticleCategory',
             component: () => import('@/views/article/category/index.vue'),
             meta: {
               parentMenuName: 'Article',
@@ -216,6 +226,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
               isIframe: false,
               // roles: ['admin'],
               icon: 'iconfont icon-fenlei',
+              menuType: '4',
             },
           },
         ],
@@ -234,6 +245,7 @@ export const allAuthRoutes: Array<RouteRecordRaw> = [
           isIframe: false,
           // roles: ['admin', 'common'],
           icon: 'ele-UserFilled',
+          menuType: '3',
         },
       },
     ],

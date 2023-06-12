@@ -61,5 +61,22 @@ export function useMenuApi() {
         data: params,
       })
     },
+    /**
+     * 添加全部默认菜单
+     * @author Peng
+     * @date 2023-06-12
+     * @param {any} menus:any[]
+     * @returns {any}
+     */
+    addAllDefaultMenu(menus: any[]) {
+      return request({
+        url: '/menu/addAllDefaultMenus',
+        method: 'post',
+        data: JSON.stringify(menus),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+    },
   }
 }
