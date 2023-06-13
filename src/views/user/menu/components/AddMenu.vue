@@ -117,11 +117,11 @@ const addMenuState = reactive({
           value: '1',
         },
         {
-          label: '一级菜单',
+          label: '目录',
           value: '2',
         },
         {
-          label: '目录',
+          label: '一级菜单',
           value: '3',
         },
         {
@@ -238,10 +238,6 @@ const addMenuState = reactive({
 const addFormRef = ref<any>(null)
 // 处理添加操作
 const handleAdd = async () => {
-  console.log(
-    'addMenuState.data',
-    JSON.parse(JSON.stringify(addMenuState.data))
-  )
   // 校验结果
   let validRes: boolean = false
   let validProps: any[] = []
@@ -261,6 +257,8 @@ const handleAdd = async () => {
       break
     case '2':
       validProps = [
+        'parentId',
+        'regedit',
         'menuURI',
         'menuName',
         'menuPath',
@@ -271,8 +269,6 @@ const handleAdd = async () => {
       break
     case '3':
       validProps = [
-        'parentId',
-        'regedit',
         'menuURI',
         'menuName',
         'menuPath',
@@ -369,6 +365,26 @@ const handleSelectChange = ({ newVal, prop, index }: FormItemChangeType) => {
     addMenuState.data.menuPath = path
     addMenuState.data.regedit = redirect ? redirect.name : ''
     addMenuState.data.parentMenuName = meta.parentMenuName || ''
+    addMenuState.data.menuType = meta.menuType
+
+    // 选择父级菜单行 是否展示
+    const findRes1 = addMenuState.formItemList.find(
+      (i) => i.prop === 'parentId'
+    )
+    // 输入重定向地址
+    const findRes2 = addMenuState.formItemList.find((i) => i.prop === 'regedit')
+
+    if (['2', '4'].includes(addMenuState.data.menuType)) {
+      findRes1 && (findRes1.isShow = true)
+    } else if (['1', '3'].includes(addMenuState.data.menuType)) {
+      findRes1 && (findRes1.isShow = false)
+    }
+
+    if (['1', '2'].includes(addMenuState.data.menuType)) {
+      findRes2 && (findRes2.isShow = true)
+    } else if (['3', '4'].includes(addMenuState.data.menuType)) {
+      findRes2 && (findRes2.isShow = false)
+    }
   }
 }
 
@@ -394,15 +410,15 @@ const handleRadioChange = ({ newVal, prop, index }: FormItemChangeType) => {
     // 输入重定向地址
     const findRes2 = addMenuState.formItemList.find((i) => i.prop === 'regedit')
 
-    if (['3', '4'].includes(newVal)) {
+    if (['2', '4'].includes(newVal)) {
       findRes1 && (findRes1.isShow = true)
-    } else if (['1', '2'].includes(newVal)) {
+    } else if (['1', '3'].includes(newVal)) {
       findRes1 && (findRes1.isShow = false)
     }
 
-    if (['1', '3'].includes(newVal)) {
+    if (['1', '2'].includes(newVal)) {
       findRes2 && (findRes2.isShow = true)
-    } else if (['2', '4'].includes(newVal)) {
+    } else if (['3', '4'].includes(newVal)) {
       findRes2 && (findRes2.isShow = false)
     }
 

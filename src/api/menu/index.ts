@@ -11,7 +11,12 @@ export function useMenuApi() {
      * @param {any} params:RequestListParams
      * @returns {any}
      */
-    getMenuList(params: RequestListParams) {
+    getMenuList(params: {
+      queryStr: string
+      column: string
+      order: string
+      [key: string]: any
+    }) {
       return request({
         url: '/menu/getMenuList',
         method: 'get',

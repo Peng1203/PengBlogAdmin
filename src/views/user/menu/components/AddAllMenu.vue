@@ -38,18 +38,7 @@ const handleAddAllMenu = () => {
       isHide: item.meta.isHide,
       parentMenuName: item.meta?.parentMenuName || '',
     },
-    // otherConfig: JSON.stringify({
-    //   isKeepAlive: item.meta.isKeepAlive,
-    //   isHide: item.meta.isHide,
-    //   parentMenuName: item.meta?.parentMenuName || '',
-    // }),
   }))
-
-  console.log(
-    `%c data ----`,
-    'color: #fff;background-color: #000;font-size: 18px',
-    data
-  )
 
   addDefaultMenus(data)
 }

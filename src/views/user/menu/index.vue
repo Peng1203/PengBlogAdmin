@@ -31,6 +31,7 @@
       </div>
 
       <Peng-Table
+        :isNeedPager="false"
         :isFilterShowColumn="true"
         :data="tableState.data"
         :loading="tableState.loading"
@@ -188,14 +189,14 @@ const getMenuTableData = async () => {
       queryStr,
       column,
       order,
-      page: pagerInfo.page,
-      pageSize: pagerInfo.pageSize,
+      // page: pagerInfo.page,
+      // pageSize: pagerInfo.pageSize,
     }
     const { data: res }: AxiosResponse<MenuData> = await getMenuList(params)
     const { code, message, data, total, URIs } = res
     if (code !== 200 || message !== 'Success') return
     tableState.data = data
-    tableState.pagerInfo.total = total
+    // tableState.pagerInfo.total = total
     tableState.URIs = URIs
     console.log(' tableState.data', JSON.parse(JSON.stringify(tableState.data)))
   } catch (e) {
