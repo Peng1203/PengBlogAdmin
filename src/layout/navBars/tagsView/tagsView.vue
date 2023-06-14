@@ -495,7 +495,6 @@ const onMousedownMenu = (v: RouteItem, e: MouseEvent) => {
 }
 // 当前的 tagsView 项点击时
 const onTagsClick = (v: RouteItem, k: number) => {
-  console.log('state.tagsViewList -----', state.tagsViewList)
   state.tagsRefsIndex = k
   router.push(v)
 }
