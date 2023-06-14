@@ -14,13 +14,17 @@
 </template>
 
 <script lang="ts" setup>
+import { AxiosResponse } from 'axios'
+import { ElMessage } from 'element-plus'
 import { allAuthRoutes } from '@/router/authRoutes'
 import { formatFlatteningRoutes } from '@/router/index'
 import { useMenuApi } from '@/api/menu/index'
 
+const emits = defineEmits(['updateList'])
+
 const { addAllDefaultMenu } = useMenuApi()
 
-const handleAddAllMenu = () => {
+const handleAddAllMenu = async () => {
   const allMenuRules = formatFlatteningRoutes(allAuthRoutes).filter(
     (rule: any) => rule.name !== 'Index'
   )
@@ -40,15 +44,24 @@ const handleAddAllMenu = () => {
     },
   }))
 
-  addDefaultMenus(data)
+  const editRes = await addDefaultMenus(data)
+  if (!editRes) return
+  emits('updateList')
 }
 
-const addDefaultMenus = async (data: any[]) => {
+const addDefaultMenus = async (params: any[]): Promise<boolean> => {
   try {
-    const { data: res } = await addAllDefaultMenu(data)
-    console.log('res -----', res)
+    const { data: res }: AxiosResponse<ResResponse> = await addAllDefaultMenu(
+      params
+    )
+    const { data, message, code } = res
+    if (message !== 'Success' || code !== 200) return false
+
+    ElMessage.success(data)
+    return true
   } catch (e) {
-    console.log('e -----', e)
+    return false
+    console.log(e)
   }
 }
 </script>
