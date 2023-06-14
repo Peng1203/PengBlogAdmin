@@ -7,6 +7,14 @@ interface MenuData {
   total: number
 }
 
+// 菜单其他配置
+
+interface OtherConfig {
+  isHide: boolean
+  isKeepAlive: boolean
+  parentMenuName: string | ''
+}
+
 // 菜单信息
 interface Menu {
   id: number
@@ -15,8 +23,10 @@ interface Menu {
   menuPath: string
   menuURI: string
   parentId: number
-  roles: number[]
+  menuType: '1' | '2' | '3' | '4'
+  menuRedirect: string
+  otherConfig: OtherConfig
   updateTime: string
   createdTime: string
-  children?: any[]
+  children?: Menu[]
 }

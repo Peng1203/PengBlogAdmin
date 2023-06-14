@@ -63,7 +63,7 @@ export function useMenuApi() {
       return request({
         url: `/menu/updateMenuById/${id}`,
         method: 'put',
-        data: params,
+        data: JSON.stringify(params),
       })
     },
     /**
