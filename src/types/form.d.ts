@@ -3,9 +3,22 @@ interface OperationItem {
   value: string | number | boolean
   [key: string]: T
 }
+
+type FormItemEnum =
+  | 'slot'
+  | 'input'
+  | 'select'
+  | 'switch'
+  | 'checkbox'
+  | 'radio'
+  | 'pwd'
+  | 'transparent'
+  | 'textarea'
+
 // 封装表单formItem属性
 interface FormItem<T = any> {
-  type: string // slot input select
+  // type: string // slot input select
+  type: FormItemEnum // slot input select
   label: string
   prop: string
   size?: string

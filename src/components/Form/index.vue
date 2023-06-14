@@ -270,6 +270,7 @@
             >
               <el-radio
                 v-for="item in options"
+                :disabled="disabled"
                 :key="item.value"
                 :label="item.value"
                 :value="item.value"
