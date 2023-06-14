@@ -19,7 +19,7 @@
             添加菜单
           </el-button>
 
-          <AddAllMenuButton />
+          <AddAllMenuButton @updateList="getMenuTableData" />
         </div>
 
         <Peng-Search
@@ -59,12 +59,96 @@
           </div>
         </template>
 
+        <!-- 菜单路径 -->
+        <template #menuPath="{ row, prop }">
+          <el-link
+            type="primary"
+            :disabled="linkState(row)"
+            @click="$router.push({ name: row[`menuURI`] })"
+          >
+            {{ row[prop] }}
+          </el-link>
+        </template>
+
+        <!-- 菜单类型 -->
+        <template #menuType="{ row, prop }">
+          <el-tag
+            size="small"
+            type="success"
+            effect="dark"
+            v-if="row[prop] === '1'"
+          >
+            一级目录
+          </el-tag>
+          <el-tag
+            size="small"
+            type="info"
+            effect="dark"
+            v-else-if="row[prop] === '2'"
+          >
+            目录
+          </el-tag>
+          <el-tag
+            size="small"
+            type="danger"
+            effect="dark"
+            v-else-if="row[prop] === '3'"
+          >
+            一级菜单
+          </el-tag>
+          <el-tag
+            size="small"
+            type="warning"
+            effect="dark"
+            v-else-if="row[prop] === '4'"
+          >
+            菜单
+          </el-tag>
+        </template>
+
         <!-- 菜单图标 -->
         <template #menuIcon="{ row, prop }">
-          <!-- type="class" -->
           <Peng-Icon v-if="row[prop]" :name="row[prop]" size="30" />
           <span style="color: red" v-else>{{ '未设置图标' }}</span>
-          <!-- <i v-if="row[prop].indexOf('iconfont') !== -1"></i> -->
+        </template>
+
+        <!-- 菜单唯一标识 -->
+        <template #menuURI="{ row, prop }">
+          <div class="flex-s-c">
+            <span>{{ row[prop] }}</span>
+
+            <Peng-Icon
+              size="16"
+              class="pseudo-link ml5"
+              name="ele-DocumentCopy"
+              v-copy="row[prop]"
+            />
+          </div>
+        </template>
+
+        <!-- 菜单重定向 -->
+        <template #redirect="{ row, prop }">
+          <!-- :disabled="linkState(row)" -->
+          <el-link
+            v-if="row[prop]"
+            type="warning"
+            @click="$router.push({ name: row[prop] })"
+          >
+            {{ row[prop] }}
+          </el-link>
+          <!-- <span v-else></span> -->
+        </template>
+
+        <template #isKeepAlive="{ row, prop }">
+          <el-tag type="success" size="small" v-if="row[prop].isKeepAlive">
+            是
+          </el-tag>
+          <el-tag type="danger" size="small" v-else>否</el-tag>
+        </template>
+
+        <template #isHide="{ row, prop }">
+          <Peng-Icon color="red" name="ele-Hide" v-if="row[prop].isHide" />
+          <Peng-Icon color="rgb(93, 201, 93)" name="ele-View" v-else />
         </template>
 
         <!-- 操作 -->
@@ -112,7 +196,7 @@
 </template>
 
 <script setup lang="ts" name="systemMenu">
-import { defineAsyncComponent, ref, onMounted, reactive } from 'vue'
+import { defineAsyncComponent, ref, onMounted, reactive, nextTick } from 'vue'
 // import { RouteRecordRaw } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 // import { storeToRefs } from 'pinia'
@@ -135,20 +219,12 @@ const tableState = reactive({
     {
       label: '菜单名',
       prop: 'menuName',
-      minWidth: 150,
+      minWidth: 120,
       tooltip: true,
       // fixed: 'left',
       slotName: 'queryHighNight',
       classNname: 'expand-row',
     },
-    {
-      label: '唯一标识',
-      prop: 'menuURI',
-      minWidth: 150,
-      sort: false,
-      tooltip: true,
-    },
-    { label: '菜单访问路径', prop: 'menuPath', minWidth: 170, tooltip: true },
     {
       label: '菜单图标',
       prop: 'menuIcon',
@@ -156,6 +232,47 @@ const tableState = reactive({
       tooltip: true,
       slotName: 'menuIcon',
       align: 'center',
+    },
+    {
+      label: '菜单访问路径',
+      slotName: 'menuPath',
+      prop: 'menuPath',
+      minWidth: 170,
+      tooltip: true,
+    },
+    {
+      label: '重定向菜单',
+      slotName: 'redirect',
+      prop: 'menuRedirect',
+      minWidth: 120,
+    },
+    {
+      label: '类型',
+      slotName: 'menuType',
+      prop: 'menuType',
+      minWidth: 100,
+    },
+    {
+      label: '缓存',
+      prop: 'otherConfig',
+      slotName: 'isKeepAlive',
+      align: 'center',
+      minWidth: 60,
+    },
+    {
+      label: '可见状态',
+      prop: 'otherConfig',
+      slotName: 'isHide',
+      align: 'center',
+      minWidth: 80,
+    },
+    {
+      label: '唯一标识',
+      prop: 'menuURI',
+      slotName: 'menuURI',
+      minWidth: 120,
+      sort: false,
+      tooltip: true,
     },
     // { label: '持有角色', prop: 'roles', minWidth: 200, tooltip: true },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
@@ -198,7 +315,6 @@ const getMenuTableData = async () => {
     tableState.data = data
     // tableState.pagerInfo.total = total
     tableState.URIs = URIs
-    console.log(' tableState.data', JSON.parse(JSON.stringify(tableState.data)))
   } catch (e) {
     console.log(e)
   } finally {
@@ -266,8 +382,10 @@ const EditMenuDrawer = defineAsyncComponent(
 )
 const editDrawerRef = ref<RefType>(null)
 const handleEditMenu = (row: Menu) => {
-  editRow.value = JSON.parse(JSON.stringify(row))
-  editDrawerRef.value.editDrawerStatus = true
+  editRow.value = row
+  nextTick(() => {
+    editDrawerRef.value.editDrawerStatus = true
+  })
 }
 
 // 处理添加菜单
@@ -280,6 +398,9 @@ const addDialogRef = ref<RefType>(null)
 const AddAllMenuButton = defineAsyncComponent(
   () => import('./components/AddAllMenu.vue')
 )
+
+// 菜单跳转链接计算属性
+const linkState = (row: Menu): boolean => row.menuPath.includes(':')
 
 // 页面加载时
 onMounted(() => {
