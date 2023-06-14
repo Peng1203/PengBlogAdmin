@@ -2,7 +2,7 @@
   <span :title="title">
     <!-- element 图标 -->
     <span v-if="iconClass.indexOf('ele') !== -1">
-      <component :is="iconClass" />
+      <component :is="iconClass" :style="{ color: props.color }" />
     </span>
     <!-- svg 带彩色 阿里图标 -->
     <svg v-else-if="type === 'svg'" aria-hidden="true">
@@ -81,6 +81,8 @@ svg {
 }
 i {
   color: v-bind(color);
+  // background-color: v-bind(color);
   font-size: v-bind(sizePx);
+  color: rgb(93, 201, 93);
 }
 </style>
