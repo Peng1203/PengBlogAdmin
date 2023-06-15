@@ -260,7 +260,7 @@ const tableState = reactive({
       minWidth: 60,
     },
     {
-      label: '可见状态',
+      label: '菜单状态',
       prop: 'otherConfig',
       slotName: 'isHide',
       align: 'center',

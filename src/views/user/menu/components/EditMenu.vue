@@ -171,10 +171,10 @@ const editFormState = reactive({
     },
     {
       type: 'switch',
-      label: '可见状态',
+      label: '菜单状态',
       prop: 'isHide',
-      tValue: true,
-      fValue: false,
+      tValue: false,
+      fValue: true,
       tText: '可见',
       fText: '隐藏',
     },

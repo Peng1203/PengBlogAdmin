@@ -61,7 +61,7 @@ import {
 import { storeToRefs } from 'pinia'
 import { ElMessage } from 'element-plus'
 import { useMenuApi } from '@/api/menu/index'
-import { allAuthRoutes } from '@/router/authRoutes'
+import { allDynamicRoutes } from '/@/router/dynamicRoutes.js'
 import { formatFlatteningRoutes } from '@/router/index'
 import { useUserAuthList } from '@/stores/userAuthList'
 import { useRoutesList } from '/@/stores/routesList'
@@ -368,11 +368,9 @@ const handleSelectChange = ({ newVal, prop, index }: FormItemChangeType) => {
     addMenuState.data.menuType = meta.menuType
 
     // 选择父级菜单行 是否展示
-    const findRes1 = addMenuState.formItemList.find(
-      (i) => i.prop === 'parentId'
-    )
+    const findRes1 = addMenuState.formItemList.find(i => i.prop === 'parentId')
     // 输入重定向地址
-    const findRes2 = addMenuState.formItemList.find((i) => i.prop === 'regedit')
+    const findRes2 = addMenuState.formItemList.find(i => i.prop === 'regedit')
 
     if (['2', '4'].includes(addMenuState.data.menuType)) {
       findRes1 && (findRes1.isShow = true)
@@ -404,11 +402,9 @@ const handleSwitchChange = ({ newVal, prop, index }: FormItemChangeType) => {
 const handleRadioChange = ({ newVal, prop, index }: FormItemChangeType) => {
   if (prop === 'menuType') {
     // 选择父级菜单行 是否展示
-    const findRes1 = addMenuState.formItemList.find(
-      (i) => i.prop === 'parentId'
-    )
+    const findRes1 = addMenuState.formItemList.find(i => i.prop === 'parentId')
     // 输入重定向地址
-    const findRes2 = addMenuState.formItemList.find((i) => i.prop === 'regedit')
+    const findRes2 = addMenuState.formItemList.find(i => i.prop === 'regedit')
 
     if (['2', '4'].includes(newVal)) {
       findRes1 && (findRes1.isShow = true)
@@ -434,10 +430,10 @@ const menuOptions = ref([])
 
 watch(
   () => props.URIs,
-  (val) => {
+  val => {
     // 根据本地全部的菜单数组 以及数据库中以存在的菜单 对比过滤出 可选添加的新菜单
     // .filter((rule: any) => !rule.redirect && rule)
-    const menuRules = formatFlatteningRoutes(allAuthRoutes).filter(
+    const menuRules = formatFlatteningRoutes(allDynamicRoutes).filter(
       (rule: any) => rule.name !== 'Index'
     )
 
@@ -449,7 +445,7 @@ watch(
       label: item.meta.title,
       value: item.name,
     }))
-    const findMenu = addMenuState.formItemList.find((i) => i.prop === 'menuURI')
+    const findMenu = addMenuState.formItemList.find(i => i.prop === 'menuURI')
     findMenu && (findMenu.options = menuOptions.value)
     // addMenuState.formItemList[0]
   },
@@ -478,7 +474,7 @@ const reSetAddForm = () => {
 }
 
 // 弹框关闭时清除表单信息
-watch(addMenuDialogStatus, async (val) => {
+watch(addMenuDialogStatus, async val => {
   if (val) {
     await userAuthListStore.getAllRoleList()
     addMenuState.formItemList[5].options = userAuthList.allRoleOptions.value
@@ -492,7 +488,7 @@ watch(addMenuDialogStatus, async (val) => {
 const allMenuRules = ref<any>()
 // 处理级联选择器菜单数据
 const hanldeFormatCascader = (rules: any[]) => {
-  rules.forEach((rule) => {
+  rules.forEach(rule => {
     rule.title = rule.meta.title
     if (rule.children && rule.children.length) {
       rule.disabled = false
