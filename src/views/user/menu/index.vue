@@ -195,7 +195,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="systemMenu">
+<script setup lang="ts" name="SystemMenu">
 import { defineAsyncComponent, ref, onMounted, reactive, nextTick } from 'vue'
 // import { RouteRecordRaw } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'

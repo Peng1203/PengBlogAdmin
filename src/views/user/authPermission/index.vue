@@ -78,7 +78,7 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="SystemAuthPermission">
 import { ref, reactive, onMounted, defineAsyncComponent } from 'vue'
 import { useAuthPermissionApi } from '@/api/authPermission/index'
 import { Delete, Edit } from '@element-plus/icons-vue'

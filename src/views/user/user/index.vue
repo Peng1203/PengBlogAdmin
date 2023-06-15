@@ -90,7 +90,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="systemUser">
+<script setup lang="ts" name="SystemUser">
 import {
   defineAsyncComponent,
   reactive,
