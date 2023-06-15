@@ -4,9 +4,8 @@
       <!-- 顶部 -->
       <!-- <IconSelector v-model="test" /> -->
       <div class="mb15 flex-sb-c">
-        <div>
+        <div v-auth="'ADD'">
           <el-button
-            v-auth="'ADD'"
             size="default"
             type="success"
             class="ml10"
