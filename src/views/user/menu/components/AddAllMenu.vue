@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
-import { allAuthRoutes } from '@/router/authRoutes'
+import { allDynamicRoutes } from '/@/router/dynamicRoutes.js'
 import { formatFlatteningRoutes } from '@/router/index'
 import { useMenuApi } from '@/api/menu/index'
 
@@ -25,7 +25,7 @@ const emits = defineEmits(['updateList'])
 const { addAllDefaultMenu } = useMenuApi()
 
 const handleAddAllMenu = async () => {
-  const allMenuRules = formatFlatteningRoutes(allAuthRoutes).filter(
+  const allMenuRules = formatFlatteningRoutes(allDynamicRoutes).filter(
     (rule: any) => rule.name !== 'Index'
   )
 

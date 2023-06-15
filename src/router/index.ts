@@ -1,8 +1,4 @@
-import {
-  createRouter,
-  createWebHashHistory,
-  createWebHistory,
-} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import pinia from '@/stores/index'
@@ -11,10 +7,8 @@ import { useKeepALiveNames } from '@/stores/keepAliveNames'
 import { useRoutesList } from '@/stores/routesList'
 import { useThemeConfig } from '@/stores/themeConfig'
 import { Session } from '@/utils/storage'
-import { staticRoutes, notFoundAndNoPower } from '@/router/route'
-import { initFrontEndControlRoutes } from '@/router/frontEnd'
-import { initBackEndControlRoutes } from '@/router/backEnd'
-import { handleUserAuthRouters } from './handleAuthRouters'
+import { staticRoutes, notFoundAndNoPower } from './route'
+import { handleUserAuthRouters } from './handleAuthRouter'
 /**
  * 1、前端控制路由时：isRequestRoutes 为 false，需要写 roles，需要走 setFilterRoute 方法。
  * 2、后端控制路由时：isRequestRoutes 为 true，不需要写 roles，不需要走 setFilterRoute 方法），
@@ -115,7 +109,7 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.title) NProgress.start()
   // 切换页面时取消未响应的请求
   if (!from.meta.isKeepAlive && window.httpRequestList.length > 0) {
-    window.httpRequestList.forEach((c) => c())
+    window.httpRequestList.forEach(c => c())
     window.httpRequestList = []
   }
   if (to.path === '/login' && !sessionStorage.getItem('PengBlogAdmin:token')) {
