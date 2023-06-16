@@ -68,6 +68,7 @@
           <el-form-item
             :prop="prop"
             :label="label"
+            :required="required"
             v-show="isShow === undefined ? true : isShow"
           >
             <slot :name="slotName" />
@@ -283,6 +284,50 @@
           </el-form-item>
         </el-col>
 
+        <!-- 多选框 -->
+        <el-col
+          :span="span"
+          :offset="offset"
+          :xs="xs"
+          :sm="sm"
+          :md="md"
+          :lg="lg"
+          :xl="xl"
+          :class="
+            i + 1 === formItemList.length
+              ? ''
+              : isShow === true || isShow === undefined
+              ? 'mb20'
+              : ''
+          "
+          v-else-if="type === 'checkbox'"
+        >
+          <el-form-item
+            :size="size"
+            :prop="prop"
+            :label="label"
+            :rules="rules"
+            :required="required"
+            v-show="isShow === undefined ? true : isShow"
+          >
+            <el-checkbox-group
+              :size="size"
+              :disabled="disabled"
+              v-model="formData[prop]"
+            >
+              <!-- 当绑定的复选框为一个 对象时 -->
+              <!-- <template v-if="options"></template> -->
+              <el-checkbox
+                :key="i"
+                :label="item.value"
+                v-for="(item, i) of options"
+              >
+                {{ item.label }}
+              </el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>
+        </el-col>
+
         <!-- 富文本输入框 -->
         <el-col
           :span="span"
@@ -344,7 +389,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref } from 'vue'
 interface PengFormAttribute {
   formData: Record<string, unknown>
   formItemList: FormItem[]
