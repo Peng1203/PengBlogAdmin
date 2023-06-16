@@ -63,23 +63,18 @@ export const useUserAuthList = defineStore('userAuthList', {
     // 获取全部菜列表
     async getAllMenuList(updata?: boolean) {
       try {
-        if (this.allMenuList.length && this.allMenuOptions.length && !updata)
-          return
+        if (this.allMenuList.length && !updata) return
         const params = {
-          ...this.allParams,
+          queryStr: '',
+          column: '',
+          order: '',
         }
         const { data: res } = await getMenuList(params)
         const { code, message, data } = res
         if (code !== 200 || message !== 'Success') {
           this.allMenuList = []
-          this.allMenuOptions = []
         } else {
           this.allMenuList = data
-          this.allMenuOptions = data.map(({ menuName, menuIcon, id }: any) => ({
-            label: menuName,
-            value: id,
-            icon: menuIcon,
-          }))
         }
       } catch (e) {
         this.allAuthPermissionList = []

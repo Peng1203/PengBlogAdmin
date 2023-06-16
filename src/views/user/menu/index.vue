@@ -18,7 +18,7 @@
             添加菜单
           </el-button>
 
-          <AddAllMenuButton @updateList="getMenuTableData" />
+          <AddAllMenuButton @updateList="handleUpdate" />
         </div>
 
         <Peng-Search
@@ -182,20 +182,21 @@
     <EditMenuDrawer
       :editRow="editRow"
       ref="editDrawerRef"
-      @updateList="getMenuTableData"
+      @updateList="handleUpdate"
     />
 
     <!-- 添加菜单对话框 -->
     <AddMenuDialog
       ref="addDialogRef"
       :URIs="tableState.URIs"
-      @updateList="getMenuTableData"
+      @updateList="handleUpdate"
     />
   </div>
 </template>
 
 <script setup lang="ts" name="SystemMenu">
 import { defineAsyncComponent, ref, onMounted, reactive, nextTick } from 'vue'
+import { AxiosResponse } from 'axios'
 // import { RouteRecordRaw } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 // import { storeToRefs } from 'pinia'
@@ -204,9 +205,11 @@ import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 import { queryStrHighlight } from '@/utils/queryStrHighlight'
 import { useMenuApi } from '@/api/menu/index'
-import { AxiosResponse } from 'axios'
+import { useUserAuthList } from '@/stores/userAuthList'
 
 const { getMenuList, deleteMenu } = useMenuApi()
+
+const userAuthStore = useUserAuthList()
 
 // 表格参数
 const tableState = reactive({
@@ -400,6 +403,12 @@ const AddAllMenuButton = defineAsyncComponent(
 
 // 菜单跳转链接计算属性
 const linkState = (row: Menu): boolean => row.menuPath.includes(':')
+
+// 处理子组件通知父组件更新列表
+const handleUpdate = () => {
+  getMenuTableData()
+  userAuthStore.getAllMenuList(true)
+}
 
 // 页面加载时
 onMounted(() => {

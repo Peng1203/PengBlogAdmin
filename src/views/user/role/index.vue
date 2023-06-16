@@ -73,28 +73,36 @@
     <!-- 编辑角色抽屉 -->
     <EditRoleDrawer
       :editRow="editRow"
+      :menus="tableState.menuTreeData"
       ref="editDrawerRef"
-      @updateList="getRoleTableData"
+      @updateList="handleUpdate"
     />
 
     <!-- 添加角色对话框 -->
-    <AddRoleDialog ref="addDialogRef" @updateList="getRoleTableData" />
+    <AddRoleDialog
+      ref="addDialogRef"
+      :menus="tableState.menuTreeData"
+      @updateList="handleUpdate"
+    />
   </div>
 </template>
 
 <script setup lang="ts" name="SystemRole">
 import { defineAsyncComponent, ref, onMounted, reactive } from 'vue'
+import { AxiosResponse } from 'axios'
 // import { RouteRecordRaw } from 'vue-router'
 import { ElMessageBox, ElMessage } from 'element-plus'
 // import { storeToRefs } from 'pinia'
 // import { useRoutesList } from '@/stores/routesList'
 // import { setBackEndControlRefreshRoutes } from "@/router/backEnd";
 import { Delete, Edit } from '@element-plus/icons-vue'
+import { useUserAuthList } from '@/stores/userAuthList'
 import { queryStrHighlight } from '@/utils/queryStrHighlight'
 import { useRoleApi } from '@/api/role/index'
-import { AxiosResponse } from 'axios'
 
 const { getRoleList, deleteRole } = useRoleApi()
+
+const userAuthStore = useUserAuthList()
 
 // 表格参数
 const tableState = reactive({
@@ -137,6 +145,9 @@ const tableState = reactive({
   column: '',
   order: '',
   queryStr: '',
+
+  // 菜单树形数据
+  menuTreeData: ref<any[]>([]),
 
   // 分页器信息
   pagerInfo: ref<PageInfo>({
@@ -240,9 +251,17 @@ const AddRoleDialog = defineAsyncComponent(
 )
 const addDialogRef = ref<RefType>(null)
 
-// 页面加载时
-onMounted(() => {
+// 更新列表
+const handleUpdate = () => {
   getRoleTableData()
+  userAuthStore.getAllRoleList(true)
+}
+
+// 页面加载时
+onMounted(async () => {
+  getRoleTableData()
+  await userAuthStore.getAllMenuList()
+  tableState.menuTreeData = userAuthStore.allMenuList
 })
 </script>
 
