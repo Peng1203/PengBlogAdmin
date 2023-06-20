@@ -1,5 +1,4 @@
 <template>
-  <!-- :inline="inline" -->
   <el-form
     ref="formRef"
     :size="size"
@@ -446,5 +445,11 @@ defineExpose({ getRef })
 <style lang="scss" scoped>
 .el-select {
   width: 100%;
+}
+</style>
+
+<style>
+textarea {
+  min-height: 100px;
 }
 </style>
