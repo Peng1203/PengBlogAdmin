@@ -11,27 +11,27 @@
       >
         <!-- 菜单树形 -->
         <template #menuTree>
-          <div class="flex-c-c">
-            <el-input v-model="filterText" placeholder="菜单过滤" />
+          <div class="flex-c-c w100">
+            <el-input
+              style="flex: 1"
+              v-model="filterStr"
+              placeholder="菜单过滤"
+            />
+
+            <div style="flex: 1" />
 
             <el-button
               size="small"
               type="primary"
               class="ml20"
-              @click="()=>{
-                treeRef!.setCheckedKeys(menusId, false)
-                addRoleState.data.menus = menusId
-              }"
+              @click="handleTreeBtnSelect(menusId)"
             >
               全选
             </el-button>
             <el-button
               size="small"
               type="info"
-              @click="() => {
-                treeRef!.setCheckedKeys([], false)
-                addRoleState.data.menus = []
-              }"
+              @click="handleTreeBtnSelect([])"
             >
               重置
             </el-button>
@@ -40,7 +40,7 @@
             </el-button>
           </div>
 
-          <el-scrollbar max-height="300px">
+          <el-scrollbar max-height="230px" style="margin: 5px 0 0 0">
             <el-tree
               ref="treeRef"
               node-key="id"
@@ -119,29 +119,6 @@ const getMenusID = (data: Menu[]) => {
 
 getMenusID(props.menus)
 
-// 树形过滤
-
-const filterText = ref('')
-
-const treeRef = ref<InstanceType<typeof ElTree>>()
-
-watch(filterText, val => treeRef.value!.filter(val))
-
-const handleMenuTreeCheck = (menu: Menu, treeInfo: any) => {
-  addRoleState.data.menus = treeInfo.checkedKeys
-}
-
-const filterNode = (value: string, data: { [key: string]: any }) => {
-  if (!value) return true
-  return data.label.includes(value)
-}
-
-const allExpand = ref(false)
-
-const handleIsExpand = () => {
-  treeRef.value
-}
-
 const addRoleDialogStatus = ref<boolean>(false)
 
 const addRoleState = reactive({
@@ -157,7 +134,7 @@ const addRoleState = reactive({
   formItemList: ref<FormItem[]>([
     {
       xs: 24,
-      span: 24,
+      span: 18,
       type: 'input',
       label: '角色名称',
       prop: 'roleName',
@@ -194,6 +171,35 @@ const addRoleState = reactive({
     },
   ]),
 })
+
+// 树形过滤
+const filterStr = ref('')
+
+const treeRef = ref<RefType>()
+// treeRef.value!.filter(val)
+watch(filterStr, val => {
+  treeRef.value.filter(val)
+})
+
+const filterNode = (value: string, data: { [key: string]: any }) => {
+  if (!value) return true
+  return data.menuName.includes(value)
+}
+
+const handleMenuTreeCheck = (menu: Menu, treeInfo: any) => {
+  addRoleState.data.menus = treeInfo.checkedKeys
+}
+
+const allExpand = ref(false)
+
+// 菜单树形 全选或重置
+const handleTreeBtnSelect = (value: any[]) => {
+  filterStr.value = ''
+  treeRef.value.setCheckedKeys(value, false)
+  addRoleState.data.menus = value
+}
+
+const handleIsExpand = () => {}
 
 const addRoleFormRef = ref<RefType>(null)
 // 处理添加操作
