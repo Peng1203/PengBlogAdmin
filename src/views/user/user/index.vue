@@ -3,19 +3,39 @@
     <el-card shadow="hover" class="layout-padding-auto">
       <!-- 顶部操作 -->
       <div class="mb15 flex-sb-c">
-        <el-button
-          v-auth="'ADD'"
-          size="default"
-          type="success"
-          class="ml10"
-          @click="() => (addDialogRef.addUserDialogStatus = true)"
-        >
-          <!-- @click="handleShowAddDialog" -->
-          <el-icon>
-            <ele-FolderAdd />
-          </el-icon>
-          新增用户
-        </el-button>
+        <div>
+          <el-button
+            v-auth="'ADD'"
+            size="default"
+            type="success"
+            class="ml10"
+            @click="() => (addDialogRef.addUserDialogStatus = true)"
+          >
+            <!-- @click="handleShowAddDialog" -->
+            <el-icon>
+              <ele-FolderAdd />
+            </el-icon>
+            新增用户
+          </el-button>
+
+          <el-button
+            v-auth="'DELETE'"
+            size="default"
+            type="danger"
+            :disabled="!tableState.selectVal.length"
+          >
+            <el-icon>
+              <Delete />
+            </el-icon>
+            批量删除
+          </el-button>
+
+          <!-- v-model="value11" -->
+          <Peng-Select
+            v-model="value11"
+            :options="[{ value: 1, label: '1' }]"
+          />
+        </div>
 
         <Peng-Search
           placeholder="请输入用户名"
@@ -34,6 +54,7 @@
         :pagerInfo="tableState.pagerInfo"
         :columns="tableState.tableColumns"
         :checkBoxIsEnableCallBack="handleCheckboxIsEnable"
+        @selectionChange="(val: any) => tableState.selectVal = val.map((item: any)=> item.id)"
         @columnSort="handleColumnChange"
         @pageNumOrSizeChange="handlePageInfoChange"
       >
@@ -48,8 +69,9 @@
             effect="dark"
             type="success"
             v-if="row[prop] === 1"
-            >启用</el-tag
           >
+            启用
+          </el-tag>
           <el-tag size="small" effect="dark" type="danger" v-else>锁定</el-tag>
         </template>
 
@@ -106,11 +128,18 @@ import { Delete, Edit } from '@element-plus/icons-vue'
 import { useUserApi } from '@/api/user'
 import { AxiosResponse } from 'axios'
 
+const value11 = ref(121)
+
+watch(value11, val => {
+  console.log('val -----', val)
+})
+
 const { getUserList, deleteUserById } = useUserApi()
 
 // 表格参数
 const tableState = reactive({
   loading: false,
+  selectVal: ref<number[]>([]),
   data: ref<User[]>([]),
   tableColumns: ref<ColumnItem[]>([
     {
