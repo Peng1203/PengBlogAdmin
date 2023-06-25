@@ -67,23 +67,23 @@
     <EditAuthPermissonDrawer
       ref="editAuthDrawerRef"
       :editRow="editAuthRowInfo"
-      @updateList="getAuthPermissionTableData"
+      @updateList="handleUpdate"
     />
 
     <!-- 添加权限标识 -->
-    <AddAuthPermissonDialog
-      ref="addAuthDialogRef"
-      @updateList="getAuthPermissionTableData"
-    />
+    <AddAuthPermissonDialog ref="addAuthDialogRef" @updateList="handleUpdate" />
   </div>
 </template>
 
 <script lang="ts" setup name="SystemAuthPermission">
+import { AxiosResponse } from 'axios'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive, onMounted, defineAsyncComponent } from 'vue'
 import { useAuthPermissionApi } from '@/api/authPermission/index'
 import { Delete, Edit } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { AxiosResponse } from 'axios'
+import { useUserAuthList } from '@/stores/userAuthList'
+
+const userAuthStore = useUserAuthList()
 
 const { getAuthPermissionList, delAuthPermission } = useAuthPermissionApi()
 // 表格参数
@@ -228,6 +228,11 @@ const AddAuthPermissonDialog = defineAsyncComponent(
   () => import('./components/AddAuthPermisson.vue')
 )
 const addAuthDialogRef = ref<RefType>(null)
+
+const handleUpdate = () => {
+  getAuthPermissionTableData()
+  userAuthStore.getAllAuthPermissionList(true)
+}
 
 onMounted(() => {
   getAuthPermissionTableData()
