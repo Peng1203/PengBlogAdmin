@@ -10,6 +10,7 @@
     :data="props.data"
     @filter-change="handleFilterTable"
     @sort-change="handleColumnSort"
+    @selection-change="handleSelectionChange"
   >
     <el-table-column
       v-if="props.isSelection"
@@ -154,15 +155,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  ref,
-  reactive,
-  watch,
-  onMounted,
-  PropType,
-  defineEmits,
-  inject,
-} from 'vue'
+import { ref, reactive, watch, onMounted, inject } from 'vue'
 
 const deviceClientType = inject('deviceClientType')
 
@@ -209,6 +202,7 @@ const emits = defineEmits([
   'pageChange',
   'pageSizeChange',
   'pageNumOrSizeChange',
+  'selectionChange',
 ])
 
 // 表格展示的 columns
@@ -222,7 +216,7 @@ interface filterItem {
 const filterList = reactive<filterItem[]>([])
 watch(
   () => props.isFilterShowColumn,
-  (val) => {
+  val => {
     if (!val) return
     props.columns.forEach(({ label, prop }) =>
       filterList.push({ text: label, value: prop })
@@ -276,7 +270,7 @@ const Total = ref<number>(0)
 // 分页器
 watch(
   () => props.pagerInfo,
-  (val) => {
+  val => {
     if (!val || !props.isNeedPager) return
     const { page, pageSize, total } = val
     Page.value = page
@@ -293,11 +287,16 @@ const handlePageChange = (val: number) => {
   emits('pageChange', val)
   emits('pageNumOrSizeChange', { page: Page.value, pageSize: PageSize.value })
 }
+
 const handlePageSzieChange = (val: number) => {
   PageSize.value = val
   Page.value = 1
   emits('pageSizeChange', val)
   emits('pageNumOrSizeChange', { page: Page.value, pageSize: PageSize.value })
+}
+
+const handleSelectionChange = (val: any) => {
+  emits('selectionChange', val)
 }
 
 onMounted(() => {
