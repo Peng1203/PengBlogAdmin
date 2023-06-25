@@ -13,39 +13,7 @@
         :labelW="100"
         :formData="editFormState.data"
         :formItemList="editFormState.formItemList"
-      >
-        <!-- 菜单树形 -->
-        <template #menuTree>
-          <div class="flex-c-c w100">
-            <el-input
-              style="flex: 1"
-              v-model="filterStr"
-              placeholder="菜单过滤"
-            />
-          </div>
-
-          <!-- <el-scrollbar max-height="350px" style="margin: 5px 0 0 0"> -->
-          <el-tree
-            ref="treeRef"
-            node-key="id"
-            show-checkbox
-            :default-expand-all="false"
-            :data="props.menus"
-            :default-checked-keys="editFormState.data.menus"
-            :filter-node-method="filterNode"
-            :props="{ children: 'children', label: 'menuName' }"
-            @check="handleMenuTreeCheck"
-          >
-            <template #default="{ node, data }">
-              <span class="flex-c-c">
-                <Peng-Icon :name="data.menuIcon" />
-                <span class="ml5">{{ node.label }}</span>
-              </span>
-            </template>
-          </el-tree>
-          <!-- </el-scrollbar> -->
-        </template>
-      </Peng-Form>
+      />
 
       <div class="mt20 flex-e-c">
         <el-button size="small" @click="editDrawerStatus = false">
@@ -73,12 +41,12 @@ const userAuthList = storeToRefs(userAuthListStore)
 
 const deviceClientType = inject('deviceClientType')
 
-interface EditRowProps {
-  editRow: Menu
-  menus: Menu[]
-}
-
-const props = defineProps<EditRowProps>()
+const props = defineProps({
+  editRow: {
+    type: Object as PropType<object>,
+    require: true,
+  },
+})
 const emits = defineEmits(['updateList'])
 
 // 抽屉状态
@@ -103,19 +71,22 @@ const editFormState = reactive({
       rules: [{ required: true, trigger: 'blur' }],
     },
     {
-      type: 'slot',
-      slotName: 'menuTree',
+      type: 'select',
+      multiple: true,
       label: '持有菜单',
       prop: 'menus',
       placeholder: '请选择角色拥有菜单',
-      required: true,
+      rules: [{ required: true, trigger: 'change' }],
+      options: [],
     },
     {
-      type: 'checkbox',
+      type: 'select',
+      multiple: true,
       label: '持有操作权限',
       prop: 'operationPermissions',
+      placeholder: '请选择角色拥有操作权限',
+      rules: [{ required: true, trigger: 'change' }],
       options: [],
-      required: true,
     },
     {
       type: 'textarea',
@@ -126,24 +97,6 @@ const editFormState = reactive({
     },
   ]),
 })
-
-// 树形过滤
-const filterStr = ref('')
-
-const treeRef = ref<RefType>()
-// treeRef.value!.filter(val)
-watch(filterStr, val => {
-  treeRef.value.filter(val)
-})
-
-const filterNode = (value: string, data: { [key: string]: any }) => {
-  if (!value) return true
-  return data.menuName.includes(value)
-}
-
-const handleMenuTreeCheck = (menu: Menu, treeInfo: any) => {
-  editFormState.data.menus = treeInfo.checkedKeys
-}
 
 const editFormRef = ref<RefType>(null)
 // 处理保存修改
@@ -193,13 +146,13 @@ const saveEditRole = async (): Promise<boolean> => {
 
 watch(
   () => props.editRow,
-  val => (editFormState.data = JSON.parse(JSON.stringify(val))),
+  (val) => (editFormState.data = JSON.parse(JSON.stringify(val))),
   { deep: true }
 )
 
 watch(
   editDrawerStatus,
-  async val => {
+  async (val) => {
     // 当打开编辑抽屉时 为选择操作权限标识和菜单的下拉选择赋值数据
     if (val) {
       await userAuthListStore.getAllMenuList()
@@ -207,9 +160,12 @@ watch(
       editFormState.formItemList[1].options = userAuthList.allMenuOptions.value
       editFormState.formItemList[2].options =
         userAuthList.allAuthPermissionOptions.value
-    } else treeRef.value.setCheckedKeys([], false)
+    }
   },
-  { deep: true }
+  {
+    deep: true,
+    immediate: true,
+  }
 )
 
 defineExpose({ editDrawerStatus })

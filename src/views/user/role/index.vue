@@ -13,7 +13,7 @@
         >
           <!-- @click="addAuthDialogRef.addAuthPermissonDialogStatus = true" -->
           <Peng-Icon name="icon-jiaoseguanli1" />
-          <span style="margin-left: 5px">添加角色</span>
+          <span style="margin-left: 5px"> 添加角色 </span>
         </el-button>
 
         <Peng-Search
@@ -125,13 +125,13 @@ const tableState = reactive({
       tooltip: true,
       slotName: 'queryHighNight',
     },
-    // { label: '菜单', prop: 'menus', minWidth: 170, tooltip: true },
-    // {
-    //   label: '操作权限',
-    //   prop: 'operationPermissions',
-    //   minWidth: 100,
-    //   tooltip: true,
-    // },
+    { label: '菜单', prop: 'menus', minWidth: 170, tooltip: true },
+    {
+      label: '操作权限',
+      prop: 'operationPermissions',
+      minWidth: 100,
+      tooltip: true,
+    },
     { label: '更新时间', prop: 'updateTime', minWidth: 200, sort: true },
     { label: '创建时间', prop: 'createdTime', minWidth: 200, sort: true },
     {
