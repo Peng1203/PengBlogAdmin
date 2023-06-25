@@ -4,6 +4,7 @@ import Drawer from '@/components/Drawer/index.vue'
 import Dialog from '@/components/Dialog/index.vue'
 import Form from '@/components/Form/index.vue'
 import Icon from '@/components/SymbolIcon/index.vue'
+import Select from '@/components/Select/index.vue'
 
 const commonName = 'Peng'
 
@@ -14,6 +15,7 @@ const ComponentHashMap = {
   [`${commonName}Dialog`]: Dialog,
   [`${commonName}Form`]: Form,
   [`${commonName}Icon`]: Icon,
+  [`${commonName}Select`]: Select,
 }
 
 export default ComponentHashMap

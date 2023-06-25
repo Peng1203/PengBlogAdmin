@@ -123,3 +123,5 @@ interface ResResponse<T = any> {
   data: T
   [key: string]: T
 }
+
+type SizeEnum = 'large' | 'default' | 'small'
