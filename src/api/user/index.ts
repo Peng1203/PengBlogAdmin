@@ -104,5 +104,19 @@ export function useUserApi() {
         data: params,
       })
     },
+    /**
+     * 批量删除用户
+     * @author Peng
+     * @date 2023-06-26
+     * @param {any} ids:number[]
+     * @returns {any}
+     */
+    batchDeleteUsers(ids: number[]) {
+      return request({
+        url: '/user/deleteUsers',
+        method: 'delete',
+        data: { ids },
+      })
+    },
   }
 }

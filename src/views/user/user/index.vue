@@ -23,6 +23,7 @@
             size="default"
             type="danger"
             :disabled="!tableState.selectVal.length"
+            @click="handleBatchDelUser"
           >
             <el-icon>
               <Delete />
@@ -30,10 +31,17 @@
             批量删除
           </el-button>
 
-          <!-- v-model="value11" -->
+          <!-- virtual -->
           <Peng-Select
-            v-model="value11"
-            :options="[{ value: 1, label: '1' }]"
+            class="ml12"
+            width="150px"
+            placeholder="角色过滤"
+            v-model="tableState.roleId"
+            :options="[
+              { label: '全部', value: 0 },
+              ...userAuthStore.allRoleOptions,
+            ]"
+            @change="handleRoleFilter"
           />
         </div>
 
@@ -113,28 +121,17 @@
 </template>
 
 <script setup lang="ts" name="SystemUser">
-import {
-  defineAsyncComponent,
-  reactive,
-  onMounted,
-  ref,
-  watch,
-  inject,
-  watchEffect,
-} from 'vue'
+import { defineAsyncComponent, reactive, onMounted, ref, nextTick } from 'vue'
+import { useUserAuthList } from '@/stores/userAuthList'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { Delete, Edit } from '@element-plus/icons-vue'
 // import PengFrom from '@/components/Form/Index.vue'
 import { useUserApi } from '@/api/user'
 import { AxiosResponse } from 'axios'
 
-const value11 = ref(121)
+const { getUserList, deleteUserById, batchDeleteUsers } = useUserApi()
 
-watch(value11, val => {
-  console.log('val -----', val)
-})
-
-const { getUserList, deleteUserById } = useUserApi()
+const userAuthStore = useUserAuthList()
 
 // 表格参数
 const tableState = reactive({
@@ -150,7 +147,7 @@ const tableState = reactive({
       fixed: 'left',
       slotName: 'uName',
     },
-    { label: '角色', prop: 'roleId' },
+    { label: '角色', prop: 'roleName', minWidth: 150 },
     {
       label: '用户状态',
       prop: 'state',
@@ -173,7 +170,7 @@ const tableState = reactive({
   column: '',
   order: '',
   queryStr: '',
-
+  roleId: '',
   // 分页器信息
   pagerInfo: ref<PageInfo>({
     page: 1,
@@ -221,6 +218,7 @@ const getUserTableData = async () => {
       queryStr: tableState.queryStr,
       column: tableState.column,
       order: tableState.order,
+      roleId: tableState.roleId,
     }
     const { data: res }: AxiosResponse<UserData> = await getUserList(params)
     const { code, message, data, total } = res
@@ -246,20 +244,25 @@ const handleDelUser = (row: User) => {
     }
   )
     .then(async () => {
-      await deleteUser(row.id)
-      getUserTableData()
+      const delRes = await deleteUser(row.id)
+      if (delRes) getUserTableData()
     })
     .catch(() => {})
 }
 // 删除用户
-const deleteUser = async (id: number) => {
+const deleteUser = async (id: number): Promise<boolean> => {
   try {
-    const { data: res } = await deleteUserById(id)
+    const { data: res }: AxiosResponse<ResResponse> = await deleteUserById(id)
     const { code, data, message } = res
-    if (code !== 200 || message !== 'Success') return ElMessage.error(data)
+    if (code !== 200 || message !== 'Success') {
+      ElMessage.error(data)
+      return false
+    }
     ElMessage.success(data)
+    return true
   } catch (e) {
     console.log(e)
+    return false
   }
 }
 
@@ -281,9 +284,36 @@ const AddUserDialog = defineAsyncComponent(
 )
 const addDialogRef = ref<RefType>(null)
 
-// 页面加载时
+// 按角色过滤
+const handleRoleFilter = () => {
+  tableState.pagerInfo.page = 1
+  getUserTableData()
+}
+
+// 处理批量删除用户操作
+const handleBatchDelUser = async () => {
+  const delRes = await batchDel()
+  if (delRes) getUserTableData()
+}
+// 批量删除用户
+const batchDel = async (): Promise<boolean> => {
+  try {
+    const { data: res }: AxiosResponse<ResResponse> = await batchDeleteUsers(
+      tableState.selectVal
+    )
+    const { code, message, data } = res
+    if (code !== 200 || message !== 'Success') return false
+    ElMessage.success(data)
+    return true
+  } catch (e) {
+    console.log(e)
+    return false
+  }
+}
+
 onMounted(() => {
   getUserTableData()
+  userAuthStore.getAllRoleList()
 })
 </script>
 
