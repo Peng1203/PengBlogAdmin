@@ -1,14 +1,29 @@
 <template>
-  <el-select
-    v-model="props.modelValue"
+  <el-select-v2
+    v-if="props.virtual"
+    v-model="value"
+    :size="props.size"
+    :options="options"
+    :clearable="clearable"
+    :filterable="filterable"
+    :multiple="props.multiple"
+    :disabled="props.disabled"
+    :placeholder="props.placeholder"
     :style="`width: ${props.width}`"
+    @change="handleSelectChange"
+  />
+
+  <el-select
+    v-else
+    v-model="value"
     :size="props.size"
     :clearable="clearable"
     :filterable="filterable"
     :multiple="props.multiple"
     :disabled="props.disabled"
     :placeholder="props.placeholder"
-    @change=""
+    :style="`width: ${props.width}`"
+    @change="handleSelectChange"
   >
     <el-option
       v-for="item in options"
@@ -20,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 type SizeEnum = 'large' | 'default' | 'small'
 
@@ -35,12 +50,13 @@ interface SelectAttribute {
   // valueKey?: string
   clearable?: boolean
   filterable?: boolean
+  // 是否使用虚拟化选择器
+  virtual?: boolean
 }
 
 // 双向数据绑定值
 // const value = defineModel()
-
-// const value = ref()
+const emits = defineEmits(['update:modelValue', 'selectChange'])
 
 const props = withDefaults(defineProps<SelectAttribute>(), {
   width: '100px',
@@ -49,9 +65,15 @@ const props = withDefaults(defineProps<SelectAttribute>(), {
   disabled: false,
   multiple: false,
   filterable: true,
+  virtual: false,
 })
 
-const emits = defineEmits([''])
+const value = ref(props.modelValue)
+
+const handleSelectChange = (val: any) => {
+  emits('update:modelValue', val)
+  emits('selectChange', val)
+}
 </script>
 
 <style scoped lang="scss"></style>
