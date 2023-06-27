@@ -1,36 +1,12 @@
 <template>
-  <div
-    class="article system-user-container layout-padding"
-    style="padding: 10px !important"
-  >
-    <el-card
-      shadow="hover"
-      style="overflow-y: scroll"
-      class="layout-padding-auto"
-      v-loading="laoding"
-    >
+  <div class="article system-user-container layout-padding" style="padding: 10px !important">
+    <el-card shadow="hover" style="overflow-y: scroll" class="layout-padding-auto" v-loading="laoding">
       <!-- labelP="top" -->
-      <Peng-Form
-        ref="addFormRef"
-        size="default"
-        :labelW="'90px'"
-        :formData="articleForm"
-        :formItemList="articleFormItemList"
-      >
+      <Peng-Form ref="addFormRef" size="default" :labelW="'90px'" :formData="articleForm" :formItemList="articleFormItemList">
         <!-- 封面上传 -->
         <template #cover>
-          <el-upload
-            class="cover-uploader"
-            :show-file-list="false"
-            :http-request="handleUploadCover"
-            style="width: 178px; height: 178px"
-          >
-            <img
-              v-if="articleForm.cover"
-              :src="articleForm.cover"
-              class="cover"
-              style="width: 100%; height: 100%"
-            />
+          <el-upload class="cover-uploader" :show-file-list="false" :http-request="handleUploadCover" style="width: 178px; height: 178px">
+            <img v-if="articleForm.cover" :src="articleForm.cover" class="cover" style="width: 100%; height: 100%" />
             <el-icon v-else class="cover-uploader-icon">
               <Plus />
             </el-icon>
@@ -39,23 +15,15 @@
 
         <!-- 文章富文本 -->
         <template #content>
-          <PengMdEditor
-            v-model="articleForm.content"
-            @fastSave="handleFastSave"
-            @uploadImg="handleUploadArticleImg"
-          />
+          <PengMdEditor v-model="articleForm.content" @fastSave="handleFastSave" @uploadImg="handleUploadArticleImg" />
         </template>
 
         <!-- 操作行 -->
         <template #operation>
           <div class="flex-e-c" style="width: 100%">
             <el-button v-if="!isAdd" @click="router.go(-1)">返 回</el-button>
-            <el-button type="primary" v-if="isAdd" @click="handleAdd">
-              发 布
-            </el-button>
-            <el-button type="primary" v-if="!isAdd" @click="handleSaveEdit">
-              保 存
-            </el-button>
+            <el-button type="primary" v-if="isAdd" @click="handleAdd">发 布</el-button>
+            <el-button type="primary" v-if="!isAdd" @click="handleSaveEdit">保 存</el-button>
           </div>
         </template>
       </Peng-Form>
@@ -63,14 +31,14 @@
   </div>
 </template>
 
-<script lang="ts" setup>
+<script lang="ts" setup name="WriteArticle">
 import { AxiosResponse } from 'axios'
-import { ref, reactive, onMounted, watchEffect, shallowRef } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useArticleApi } from '@/api/article/index'
 import { useArticleInfo } from '@/stores/articleInfo'
-import { ElMessageBox, ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { Session } from '@/utils/storage'
 import PengMdEditor from '@/components/MdEditor/index.vue'
 
@@ -80,13 +48,7 @@ const router = useRouter()
 const articleInfoStore: any = useArticleInfo()
 const articleInfoState = storeToRefs(articleInfoStore)
 
-const {
-  getArticleDetailById,
-  addArticle,
-  updateArticle,
-  uploadArticleCover,
-  uploadArticleContentResource,
-} = useArticleApi()
+const { getArticleDetailById, addArticle, updateArticle, uploadArticleCover, uploadArticleContentResource } = useArticleApi()
 
 // 是否是添加文章
 const isAdd = ref<boolean>(route.params.aid === ':aid')
@@ -112,7 +74,7 @@ let articleForm = ref<any>({
 })
 
 // 表单行信息
-const articleFormItemList: any[] = reactive([
+const articleFormItemList: FormItem[] = reactive([
   {
     xs: 24,
     span: 7,
@@ -133,6 +95,8 @@ const articleFormItemList: any[] = reactive([
     rules: [{ required: true, trigger: 'change' }],
   },
   {
+    label: '',
+    prop: '',
     span: 8,
     type: 'transparent',
   },
@@ -158,6 +122,7 @@ const articleFormItemList: any[] = reactive([
   {
     xs: 24,
     span: 14,
+    prop: '',
     type: 'slot',
     label: '封面',
     slotName: 'cover',
@@ -166,12 +131,16 @@ const articleFormItemList: any[] = reactive([
   {
     xs: 24,
     span: 10,
+    label: '',
+    prop: '',
     type: 'slot',
     slotName: 'operation',
   },
   {
     // xs: 24,
     span: 24,
+    label: '',
+    prop: '',
     type: 'slot',
     slotName: 'content',
   },
@@ -269,15 +238,11 @@ const saveEditArticle = async (): Promise<boolean> => {
 }
 
 // 处理文章上传图片
-const handleUploadArticleImg = async (
-  files: File[],
-  callback: (urls: Array<string>) => void
-) => {
+const handleUploadArticleImg = async (files: File[], callback: (urls: Array<string>) => void) => {
   try {
     const file = new FormData()
     file.append('file', files[0])
-    const { data: url }: AxiosResponse<string> =
-      await uploadArticleContentResource(file)
+    const { data: url }: AxiosResponse<string> = await uploadArticleContentResource(file)
     callback([url])
   } catch (e) {
     console.log(e)
@@ -290,15 +255,13 @@ const handleFastSave = (val: string, html: string) => {
 }
 
 onMounted(async () => {
-  await Promise.all([
-    articleInfoStore.getAllCategoryList(),
-    articleInfoStore.getAllTagList(),
-  ])
+  await Promise.all([articleInfoStore.getAllCategoryList(), articleInfoStore.getAllTagList()])
 
-  articleFormItemList.find((item) => item.prop === 'categoryId').options =
-    articleInfoState.allCategoryOptions.value
-  articleFormItemList.find((item) => item.prop === 'tags').options =
-    articleInfoState.allTagOptions.value
+  const findCategoryItem = articleFormItemList.find(item => item.prop === 'categoryId')
+  if (findCategoryItem) findCategoryItem.options = articleInfoState.allCategoryOptions.value
+
+  const findTagItem = articleFormItemList.find(item => item.prop === 'tags')
+  if (findTagItem) findTagItem.options = articleInfoState.allTagOptions.value
 
   // if (route.params.aid === ':aid') return
   // isAdd.value = false

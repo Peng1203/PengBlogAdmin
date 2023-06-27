@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="article system-user-container layout-padding"
-    style="padding: 10px !important"
-  >
+  <div class="article system-user-container layout-padding" style="padding: 10px !important">
     <!-- 顶部过滤 -->
     <el-card shadow="hover">
       <el-skeleton :rows="3" animated v-if="articleListState.filterLoading" />
@@ -59,22 +56,10 @@
               :options="articleListState.authorOptionList"
               v-model="articleListState.authorIds"
             />
-            <el-link
-              type="primary"
-              style="font-size: 10px"
-              class="ml10"
-              @click="articleListState.authorIds = [userStore.userInfos.id]"
-            >
+            <el-link type="primary" style="font-size: 10px" class="ml10" @click="articleListState.authorIds = [userStore.userInfos.id]">
               只看我自己
             </el-link>
-            <el-link
-              type="info"
-              style="font-size: 10px"
-              class="ml10"
-              @click="articleListState.authorIds = []"
-            >
-              重置
-            </el-link>
+            <el-link type="info" style="font-size: 10px" class="ml10" @click="articleListState.authorIds = []">重置</el-link>
           </div>
         </div>
 
@@ -101,38 +86,24 @@
             </div>
 
             <!-- 搜索框 -->
-            <Peng-Search
-              size="small"
-              placeholder="文章标题/内容简介"
-              v-model="articleListState.queryStr"
-              @search="handleSearch"
-            />
+            <Peng-Search size="small" placeholder="文章标题/内容简介" v-model="articleListState.queryStr" @search="handleSearch" />
           </div>
         </div>
       </div>
     </el-card>
 
     <!-- 文章列表容器 -->
-    <el-card
-      shadow="hover"
-      class="layout-padding-auto mt15"
-      v-loading="articleListState.loading"
-    >
+    <el-card shadow="hover" class="layout-padding-auto mt15" v-loading="articleListState.loading">
       <div
         v-infinite-scroll="load"
         infinite-scroll-immediate
-        :infinite-scroll-disabled="
-          articleListState.articleList.length === articleListState.total
-        "
+        :infinite-scroll-disabled="articleListState.articleList.length === articleListState.total"
       >
         <template :key="item.id" v-for="item in articleListState.articleList">
           <div class="article-item">
             <!-- 文章标题 -->
             <h2 class="flex-sb-c mb15">
-              <span
-                class="pseudo-link-hover"
-                style="border-bottom: 1px solid rgba(0, 0, 0, 0)"
-              >
+              <span class="pseudo-link-hover" style="border-bottom: 1px solid rgba(0, 0, 0, 0)">
                 {{ item.title }}
               </span>
               <!-- 操作 -->
@@ -194,20 +165,12 @@
             <div class="flex-sb-c">
               <!-- 文章统计信息 -->
               <div class="flex-c-c article-statistics">
-                <template
-                  :key="prop"
-                  v-for="(
-                    { iconName, prop }, i
-                  ) in articleStatisticsInfoHashMapping"
-                >
+                <template :key="prop" v-for="({ iconName, prop }, i) in articleStatisticsInfoHashMapping">
                   <span class="flex-c-c">
                     <Peng-Icon :name="iconName" />
                     <span class="ml5">{{ item[prop] }}</span>
                   </span>
-                  <el-divider
-                    direction="vertical"
-                    v-if="i !== articleStatisticsInfoHashMapping.length - 1"
-                  />
+                  <el-divider direction="vertical" v-if="i !== articleStatisticsInfoHashMapping.length - 1" />
                 </template>
               </div>
 
@@ -215,14 +178,7 @@
               <div class="">
                 <Peng-Icon size="20" name="icon-biaoqian" />
 
-                <el-tag
-                  round
-                  class="ml5"
-                  size="small"
-                  effect="plain"
-                  :key="tag.id"
-                  v-for="tag in item.tags"
-                >
+                <el-tag round class="ml5" size="small" effect="plain" :key="tag.id" v-for="tag in item.tags">
                   <Peng-Icon v-if="tag.tagIcon" :name="tag.tagIcon" />
                   <span class="ml3" style="font-size: 10px">
                     {{ tag.tagName }}
@@ -236,15 +192,7 @@
       </div>
 
       <!-- 加载完毕 -->
-      <p
-        class="flex-c-c"
-        v-if="
-          !articleListState.loading &&
-          articleListState.articleList.length === articleListState.total
-        "
-      >
-        加载完毕
-      </p>
+      <p class="flex-c-c" v-if="!articleListState.loading && articleListState.articleList.length === articleListState.total">加载完毕</p>
       <el-backtop :right="100" :bottom="100" />
 
       <!-- 预览 -->
@@ -253,20 +201,13 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import {
-  ref,
-  reactive,
-  onMounted,
-  watch,
-  defineAsyncComponent,
-  computed,
-} from 'vue'
+<script lang="ts" setup name="ArticleList">
+import { ref, reactive, onMounted, watch, defineAsyncComponent } from 'vue'
 import { storeToRefs } from 'pinia'
+import { AxiosResponse } from 'axios'
 import { useRouter } from 'vue-router'
 import { useUserApi } from '@/api/user/index'
 import { useArticleApi } from '@/api/article/index'
-import { useCategoryApi } from '@/api/category/index'
 import { useUserInfo } from '@/stores/userInfo'
 import { useArticleInfo } from '@/stores/articleInfo'
 import { ElMessageBox, ElMessage } from 'element-plus'
@@ -278,7 +219,6 @@ const userStore = useUserInfo()
 
 const { getAllUserOptions } = useUserApi()
 const { getArticleList, delArticleById } = useArticleApi()
-const { getCategoryList } = useCategoryApi()
 
 // 文章统计信息
 const articleStatisticsInfoHashMapping = [
@@ -314,7 +254,7 @@ const articleListState = reactive({
   tagId: 0,
 
   // 文章列表数据
-  articleList: ref<any[]>([]),
+  articleList: ref<Article[]>([]),
   total: 0,
 })
 
@@ -322,17 +262,7 @@ const articleListState = reactive({
 const getArticleDataList = async () => {
   articleListState.loading = true
   try {
-    const {
-      queryStr,
-      activeCId,
-      page,
-      pageSize,
-      tagId,
-      order,
-      column,
-      authorIds,
-      timeVal,
-    } = articleListState
+    const { queryStr, activeCId, page, pageSize, tagId, order, column, authorIds, timeVal } = articleListState
     const params = {
       page,
       pageSize,
@@ -345,7 +275,7 @@ const getArticleDataList = async () => {
       startTime: timeVal ? timeVal[0] : '',
       endTime: timeVal ? timeVal[1] : '',
     }
-    const { data: res } = await getArticleList(params)
+    const { data: res }: AxiosResponse<ArticleData> = await getArticleList(params)
     const { data, message, code, total } = res
     if (code !== 200 || message !== 'Success') return
     articleListState.articleList = [...articleListState.articleList, ...data]
@@ -359,46 +289,25 @@ const getArticleDataList = async () => {
 
 // 分类筛选
 const handleFilterByCatagory = (val: number) => {
+  if (articleListState.activeCId === val) return
   articleListState.activeCId = val
   resetFilterGetDataList()
 }
 
 // 标签筛选
 const handleFilterByTag = (val: number) => {
+  if (articleListState.tagId === val) return
   articleListState.tagId = val
   resetFilterGetDataList()
-}
-
-// 获取全部分类列表
-const getAllCategoryOptions = async () => {
-  try {
-    const params = {
-      page: 1,
-      pageSize: 999,
-      column: '',
-      order: '',
-      queryStr: '',
-    }
-    const { data: res } = await getCategoryList(params)
-    if (res.code !== 200 || res.message !== 'Success') return
-    articleListState.categoryList = [
-      ...articleListState.categoryList,
-      ...res.data.map(({ id, categoryName }: any) => ({
-        label: categoryName,
-        value: id,
-      })),
-    ]
-  } catch (e) {
-    console.log(e)
-  }
 }
 
 // 获取用户列表的option数据
 const getUserOptions = async () => {
   try {
-    const { data: res } = await getAllUserOptions()
-    if (res.code !== 200 || res.message !== 'Success') return
-    articleListState.authorOptionList = res.data
+    const { data: res }: AxiosResponse<UserOptionData> = await getAllUserOptions()
+    const { code, message, data } = res
+    if (code !== 200 || message !== 'Success') return
+    articleListState.authorOptionList = data
   } catch (e) {
     console.log(e)
   }
@@ -425,9 +334,7 @@ const resetFilterGetDataList = () => {
 watch(
   () => articleListState.authorIds,
   () => resetFilterGetDataList(),
-  {
-    deep: true,
-  }
+  { deep: true }
 )
 
 // 文章列表触底
@@ -439,15 +346,11 @@ const load = () => {
 
 // 处理删除文章
 const handleDelete = async (id: number, title: string) => {
-  const confirmRes = await ElMessageBox.confirm(
-    `此操作将永久文章：“${title}”，是否继续?`,
-    '提示',
-    {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
-      type: 'warning',
-    }
-  ).catch(() => false)
+  const confirmRes = await ElMessageBox.confirm(`此操作将永久文章：“${title}”，是否继续?`, '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
   if (!confirmRes) return
   const delRes = await deleteArticle(id)
   if (delRes) resetFilterGetDataList()
@@ -456,7 +359,7 @@ const handleDelete = async (id: number, title: string) => {
 // 删除文章
 const deleteArticle = async (id: number): Promise<boolean> => {
   try {
-    const { data: res } = await delArticleById(id)
+    const { data: res }: AxiosResponse<ResResponse> = await delArticleById(id)
     const { code, data, message } = res
     if (code !== 200 || message !== 'Success') {
       ElMessage.error(data)
@@ -480,11 +383,9 @@ const handleEditArticle = (aid: number) => {
 }
 
 // 预览组件
-const PreviewArticleDialog = defineAsyncComponent(
-  () => import('./components/PreviewArticle.vue')
-)
+const PreviewArticleDialog = defineAsyncComponent(() => import('./components/PreviewArticle.vue'))
 
-const previewDialogRef = ref<any>(null)
+const previewDialogRef = ref<RefType>(null)
 // 处理预览操作
 const handlePreViewArticle = async (aid: number) => {
   await previewDialogRef.value.getArticleDetailById(aid)
@@ -496,8 +397,7 @@ const handlePreViewArticle = async (aid: number) => {
 // 根据 登录用户 判断 是否展示编辑按钮
 const isShowEdit = (aId: number): boolean => userStore.userInfos.id === aId
 
-const isShowDelete = (aId: number): boolean =>
-  userStore.userInfos.id === aId || userStore.userInfos.id === 1
+const isShowDelete = (aId: number): boolean => userStore.userInfos.id === aId || userStore.userInfos.id === 1
 // 根据 登录用户 判断是否展示删除按钮 admin 默认可以删除任何
 // const isShowEdit = computed<boolean>(
 //   (aId: number) => userStore.userInfos.id === aId
@@ -505,23 +405,12 @@ const isShowDelete = (aId: number): boolean =>
 
 onMounted(async () => {
   articleListState.filterLoading = true
-  await Promise.all([
-    articleInfoStore.getAllCategoryList(),
-    articleInfoStore.getAllTagList(),
-    ,
-    getUserOptions(),
-  ])
+  await Promise.all([articleInfoStore.getAllCategoryList(), articleInfoStore.getAllTagList(), getUserOptions()])
   articleListState.filterLoading = false
 
-  articleListState.categoryList = [
-    ...articleListState.categoryList,
-    ...articleInfoState.allCategoryOptions.value,
-  ]
+  articleListState.categoryList = [...articleListState.categoryList, ...articleInfoState.allCategoryOptions.value]
 
-  articleListState.tagList = [
-    ...articleListState.tagList,
-    ...articleInfoState.allTagOptions.value,
-  ]
+  articleListState.tagList = [...articleListState.tagList, ...articleInfoState.allTagOptions.value]
 
   getArticleDataList()
 })
@@ -543,10 +432,7 @@ onMounted(async () => {
   :deep(.el-card__body) {
     overflow-y: auto;
   }
-  :deep(.el-tag__content) {
-  }
 }
-
 .article-item {
   p {
     max-width: 720px;
@@ -558,7 +444,6 @@ onMounted(async () => {
     overflow-y: auto;
   }
 }
-
 .article-statistics {
   color: rgba(0, 0, 0, 0.45);
 }

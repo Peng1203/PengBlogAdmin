@@ -17,3 +17,9 @@ interface User {
   createdTime: string
   avatarUrl: string
 }
+
+interface UserOptionData {
+  code: number
+  message: MessageEnum
+  data: OptionItem[]
+}

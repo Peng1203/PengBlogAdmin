@@ -1,9 +1,5 @@
 <template>
-  <Peng-Dialog
-    width="60%"
-    :title="articleInfo.title"
-    v-model="previewDialogStatus"
-  >
+  <Peng-Dialog width="60%" :title="articleInfo.title" v-model="previewDialogStatus">
     <template #main>
       <MdPreview :editorId="id" :modelValue="articleInfo.content" />
       <MdCatalog :editorId="id" />
@@ -24,6 +20,7 @@ import { useArticleApi } from '@/api/article'
 import { MdPreview, MdCatalog } from 'md-editor-v3'
 // preview.css相比style.css少了编辑器那部分样式
 import 'md-editor-v3/lib/preview.css'
+import { AxiosResponse } from 'axios'
 
 const { getArticleDetailById: getArticle } = useArticleApi()
 const previewDialogStatus = ref<boolean>(false)
@@ -38,7 +35,7 @@ const id = 'preview-only'
 // 获取文章详情
 const getArticleDetailById = async (aid: number): Promise<void> => {
   try {
-    const { data: res }: any = await getArticle(aid)
+    const { data: res }: AxiosResponse<ResResponse<Article>> = await getArticle(aid)
     const { data, message, code } = res
     if (code !== 200 || message !== 'Success') return
     articleInfo.value = data
@@ -47,7 +44,7 @@ const getArticleDetailById = async (aid: number): Promise<void> => {
   }
 }
 
-watch(previewDialogStatus, (val) => {
+watch(previewDialogStatus, val => {
   if (val) return
   setTimeout(() => {
     articleInfo.value = {

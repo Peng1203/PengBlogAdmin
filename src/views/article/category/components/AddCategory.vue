@@ -12,31 +12,17 @@
     </template>
 
     <template #footer>
-      <el-button size="small" @click="addCategoryDialogStatus = false">
-        取消
-      </el-button>
-      <el-button type="primary" size="small" @click="handleAdd">
-        确认
-      </el-button>
+      <el-button size="small" @click="addCategoryDialogStatus = false">取消</el-button>
+      <el-button type="primary" size="small" @click="handleAdd">确认</el-button>
     </template>
   </Peng-Dialog>
 </template>
 
 <script lang="ts" setup>
-import {
-  ref,
-  reactive,
-  watch,
-  PropType,
-  computed,
-  defineAsyncComponent,
-} from 'vue'
+import { ref, reactive, watch } from 'vue'
+import { AxiosResponse } from 'axios'
 import { ElMessage } from 'element-plus'
 import { useCategoryApi } from '@/api/category/index'
-
-const IconSelector = defineAsyncComponent(
-  () => import('@/components/iconSelector/index.vue')
-)
 
 const { addCategory } = useCategoryApi()
 
@@ -92,7 +78,7 @@ const addNewCategory = async (): Promise<boolean> => {
   try {
     const { categoryName, categoryDesc } = addCategoryState.data
     const params = { categoryName, categoryDesc }
-    const { data: res } = await addCategory(params)
+    const { data: res }: AxiosResponse<ResResponse<string>> = await addCategory(params)
     const { code, data, message } = res
     if (code !== 200 || message !== 'Success') {
       ElMessage.error(data)
@@ -108,7 +94,7 @@ const addNewCategory = async (): Promise<boolean> => {
 }
 
 // 弹框关闭时清除表单信息
-watch(addCategoryDialogStatus, async (val) => {
+watch(addCategoryDialogStatus, async val => {
   if (val) return
   addFormRef.value.getRef().resetFields()
 
