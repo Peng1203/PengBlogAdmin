@@ -12,7 +12,7 @@ declare interface PengTableAttribute {
 // 表格column 可选属性
 declare interface ColumnItem<T = any> {
   label: string
-  prop: string
+  prop?: string
   width?: number | string | 'auto'
   minWidth?: number | string
   sort?: boolean | 'custom'
@@ -30,10 +30,13 @@ declare interface PageInfo {
   total: number
   pageSizeList?: number[]
 }
+
+type OrderEnum = 'ASC' | 'DESC' | ''
+
 // 表格排序切换 参数
 interface ColumnChangeParams {
   column: string
-  order: string
+  order: OrderEnum
 }
 // 分页器切换 参数
 interface PageChangeParams {

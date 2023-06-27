@@ -4,16 +4,7 @@ interface OperationItem {
   [key: string]: T
 }
 
-type FormItemEnum =
-  | 'slot'
-  | 'input'
-  | 'select'
-  | 'switch'
-  | 'checkbox'
-  | 'radio'
-  | 'pwd'
-  | 'transparent'
-  | 'textarea'
+type FormItemEnum = 'slot' | 'input' | 'select' | 'switch' | 'checkbox' | 'radio' | 'pwd' | 'transparent' | 'textarea'
 
 // 封装表单formItem属性
 interface FormItem<T = any> {

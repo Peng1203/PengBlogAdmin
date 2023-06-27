@@ -12,33 +12,13 @@
     @sort-change="handleColumnSort"
     @selection-change="handleSelectionChange"
   >
-    <el-table-column
-      v-if="props.isSelection"
-      type="selection"
-      width="35"
-      :selectable="checkBoxIsEnableCallBack"
-    />
+    <el-table-column v-if="props.isSelection" type="selection" width="35" :selectable="checkBoxIsEnableCallBack" />
     <!-- :selectable="handleCheckboxIsEnable" -->
     <slot name="expand"></slot>
 
     <template
       :key="i"
-      v-for="(
-        {
-          label,
-          prop,
-          width,
-          minWidth,
-          sort,
-          tooltip,
-          fixed,
-          align,
-          slotName,
-          childrenColumns,
-          classNname,
-        },
-        i
-      ) in tableColumns"
+      v-for="({ label, prop, width, minWidth, sort, tooltip, fixed, align, slotName, childrenColumns, classNname }, i) in tableColumns"
     >
       <!-- 自定义某列 -->
       <el-table-column
@@ -50,9 +30,7 @@
         :min-width="minWidth"
         :class-name="classNname"
         :show-overflow-tooltip="tooltip"
-        :fixed="
-          deviceClientType === 'pc' ? fixed : fixed === 'left' ? false : fixed
-        "
+        :fixed="deviceClientType === 'pc' ? fixed : fixed === 'left' ? false : fixed"
         :align="align || 'left'"
       >
         <template #default="scope">
@@ -62,16 +40,8 @@
 
       <!-- 二级表头 -->
       <!-- :width="width || 'auto'" -->
-      <el-table-column
-        :label="label"
-        :align="align || 'center'"
-        :class-name="classNname"
-        v-else-if="childrenColumns && childrenColumns.length"
-      >
-        <template
-          :key="childrenItem.prop"
-          v-for="childrenItem in childrenColumns"
-        >
+      <el-table-column :label="label" :align="align || 'center'" :class-name="classNname" v-else-if="childrenColumns && childrenColumns.length">
+        <template :key="childrenItem.prop" v-for="childrenItem in childrenColumns">
           <!-- 自定义内容 -->
           <el-table-column
             v-if="childrenItem.slotName"
@@ -84,11 +54,7 @@
             :width="childrenItem.width || 'auto'"
           >
             <template #defult="scope">
-              <slot
-                :row="scope.row"
-                :name="childrenItem.slotName"
-                :prop="childrenItem.prop"
-              ></slot>
+              <slot :row="scope.row" :name="childrenItem.slotName" :prop="childrenItem.prop"></slot>
             </template>
           </el-table-column>
 
@@ -197,13 +163,7 @@ const props = withDefaults(defineProps<PengTableAttribute>(), {
   pagerInfo: () => ({ page: 1, pageSize: 10, total: 0 }),
 })
 
-const emits = defineEmits([
-  'columnSort',
-  'pageChange',
-  'pageSizeChange',
-  'pageNumOrSizeChange',
-  'selectionChange',
-])
+const emits = defineEmits(['columnSort', 'pageChange', 'pageSizeChange', 'pageNumOrSizeChange', 'selectionChange'])
 
 // 表格展示的 columns
 let tableColumns = ref<ColumnItem[]>([])
@@ -218,9 +178,7 @@ watch(
   () => props.isFilterShowColumn,
   val => {
     if (!val) return
-    props.columns.forEach(({ label, prop }) =>
-      filterList.push({ text: label, value: prop })
-    )
+    props.columns.forEach(({ label, prop }) => prop && filterList.push({ text: label, value: prop }))
   },
   {
     deep: true,
@@ -233,13 +191,7 @@ type OrderProp = {
   ascending: string
   descending: string
 }
-const handleColumnSort = ({
-  prop,
-  order,
-}: {
-  prop: string
-  order: keyof OrderProp
-}) => {
+const handleColumnSort = ({ prop, order }: { prop: string; order: keyof OrderProp }) => {
   const orderProp: OrderProp = {
     ascending: 'ASC',
     descending: 'DESC',
@@ -260,9 +212,7 @@ const handleFilterTable = (filters: any) => {
   const { filter } = filters
 
   if (!filter.length) return (tableColumns.value = props.columns)
-  tableColumns.value = props.columns.filter(
-    (column: ColumnItem) => !filter.includes(column.prop)
-  )
+  tableColumns.value = props.columns.filter((column: ColumnItem) => !filter.includes(column.prop))
 }
 const Page = ref<number>(0)
 const PageSize = ref<number>(0)

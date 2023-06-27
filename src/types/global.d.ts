@@ -112,6 +112,21 @@ declare interface TableType<T = any> {
     pageSize: number
     [key: string]: T
   }
+  queryStr: string
+  column: string
+  order
+}
+
+interface TableStateType<T = any> {
+  loading: boolean
+  data: T[]
+  tableColumns: ColumnItem[]
+
+  column: string
+  order: OrderEnum
+  queryStr: string
+  pagerInfo: PageInfo
+  [key: string]: any
 }
 
 type MessageEnum = 'Success' | 'Failed'
@@ -124,4 +139,17 @@ interface ResResponse<T = any> {
   [key: string]: T
 }
 
+// 表格默认响应数据结构
+interface TableRes<T> {
+  code: number
+  message: MessageEnum
+  data: T[]
+  total: number
+}
+
 type SizeEnum = 'large' | 'default' | 'small'
+
+interface OptionItem {
+  label: string
+  value: any
+}
