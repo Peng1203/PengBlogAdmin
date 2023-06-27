@@ -4,5 +4,6 @@
   "bracketSpacing": true,
   "arrowParens": "avoid",
   "bracketSameLine": false,
-  "htmlWhitespaceSensitivity": "ignore"
+  "htmlWhitespaceSensitivity": "ignore",
+  "printWidth": 150
 }
