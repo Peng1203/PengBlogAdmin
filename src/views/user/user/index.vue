@@ -170,7 +170,7 @@ const tableState = reactive({
   column: '',
   order: '',
   queryStr: '',
-  roleId: '',
+  roleId: 0,
   // 分页器信息
   pagerInfo: ref<PageInfo>({
     page: 1,
